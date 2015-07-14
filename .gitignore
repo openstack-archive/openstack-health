@@ -1,4 +1,3 @@
-node_modules
-stackviz/static/bundle.js
 *.pyc
 .idea
+stackviz/static/components/*
