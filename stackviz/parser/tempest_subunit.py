@@ -153,6 +153,8 @@ def _descend(root, path):
     path_parts = path.split('.')
     path_parts.reverse()
 
+    root['name'] = path_parts.pop()
+
     return _descend_recurse(root, path_parts)
 
 
