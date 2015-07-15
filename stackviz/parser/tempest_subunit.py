@@ -55,8 +55,12 @@ def _clean_name(name):
     return name
 
 
+def _strip(text):
+    return re.sub(r'\W', '', text)
+
+
 def _clean_details(details):
-    return {k.replace(':', ''): v.as_text() for k, v in details.iteritems()
+    return {_strip(k): v.as_text() for k, v in details.iteritems()
             if v.as_text()}
 
 
