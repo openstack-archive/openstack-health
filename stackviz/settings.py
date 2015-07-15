@@ -82,3 +82,8 @@ STATICFILES_DIRS = [
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'stackviz', 'templates')
 ]
+
+TEST_REPOSITORIES = [
+    '/opt/stack/tempest/',
+    BASE_DIR
+]
