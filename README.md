@@ -1,7 +1,8 @@
 StackViz
 ========
 
-A visualization utility to help analyze the performance of DevStack setup and Tempest executions.
+A visualization utility to help analyze the performance of DevStack setup and
+Tempest executions.
 
 Installation
 ------------
@@ -20,10 +21,26 @@ bower install
 
 Usage
 -----
-The Django development server can be used to view the interface. Run:
+First, install the necessary dependencies with Pip:
+
+```bash
+sudo pip install -r requirements.txt
+```
+
+The Django development server may then be used to view the interface. Run:
 
 ```bash
 python manage.py runserver
 ```
 
 You can then browse to the printed URL in your browser of choice.
+
+Log Locations
+-------------
+Log locations are configured along with normal Django settings in
+`stackviz/settings.py`. Several different types of logs are rendered by
+StackViz:
+
+ * Tempest (`testr` repositories): `./`, `/opt/stack/tempest/`
+ * DevStack: *TODO*
+ * Dstat: *TODO*
