@@ -13,9 +13,10 @@ sudo npm install -g bower
 ```
 
 Then, install the Bower components by running, from the project directory,
+
 ```bash
 bower install
-```
+````
 
 Usage
 -----
