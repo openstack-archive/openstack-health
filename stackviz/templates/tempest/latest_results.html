@@ -19,7 +19,7 @@
 
     </div>
 </div>
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
 <script>
 
 var width = 960,
@@ -49,7 +49,7 @@ var arc = d3.svg.arc()
     .innerRadius(function(d) { return Math.max(0, y(d.y)); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-d3.json("file:///home/clark/OpenStack/devstack-testing/stackviz/stackviz.git/stackviz/templates/tempest/logs.json", function(error, root) {
+d3.json("logs.json", function(error, root) {
   if (error) throw error;
 
   var path = svg.selectAll("path")
