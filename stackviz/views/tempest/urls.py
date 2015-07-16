@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     url(r'^results/(?P<run_id>\d+)/$',
         ResultsView.as_view(),
         name='tempest_results'),
-    url(r'^latest_results$',
+    url(r'^results/$',
         LatestResultsView.as_view(),
         name='tempest_results_latest'),
 

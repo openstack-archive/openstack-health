@@ -16,7 +16,7 @@ class ResultsView(TemplateView):
 
 
 class LatestResultsView(RedirectView):
-    def get_redirect_url(self, run_id):
+    def get_redirect_url(self):
         repos = get_repositories()
         if not repos:
             raise Http404("No testr repositories could be loaded")
