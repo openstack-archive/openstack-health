@@ -22,7 +22,7 @@
 
     <div class="col-lg-4">
          <div class="panel panel-default">
-             <div class="panel-heading">Test Run Info</div>
+             <div class="panel-heading" id="table-heading">Test Run Info</div>
              <div class="panel-body">
                    <div class="table-responsive" id="result-table-div">
                        <table class="table table-bordered table-hover table-striped" id="test-table">
@@ -33,7 +33,21 @@
     </div>
 
 </div>
+        <script>
 
+                        function calculateChildrenTime(i) {
+                            var dur = 0;
+                            if (typeof i["duration"] !== "undefined") {
+                                dur = i.duration;
+                            }
+                            else {
+                                for (var k in i.children) {
+                                    dur += calculateChildrenTime(i.children[k]);
+                                }
+                            }
+                            return dur;
+                        }
+        </script>
         <script>
 
         window.addEventListener('load', function() {
@@ -84,33 +98,32 @@
                 tbl = document.createElement('table');
                 tbl.setAttribute("id","test-table");
                 tbl.setAttribute("class","table table-bordered table-hover table-striped");
+                if (typeof d.children == "undefined") {
+                    for (var key in d) {
+                        var row = tbl.insertRow();
+                        var td1 = row.insertCell();
+                        var td2 = row.insertCell();
+                        td1.innerHTML = key;
+                        td2.innerHTML = d[key];
+                    }
+                    document.getElementById("result-table-div").appendChild(tbl);
+                    document.getElementById("table-heading").innerHTML=d.name
+                }
+                else {
                     for (var j in d.children) {
                         var row = tbl.insertRow();
                         var td1 = row.insertCell();
                         var td2 = row.insertCell();
                         td1.innerHTML = d.children[j].name;
+                        td2.innerHTML = calculateChildrenTime(d.children[j]).toFixed(2);
 
-                        function calculateChildrenTime(i) {
-                            var dur = 0;
-                            if (typeof i["duration"] !== "undefined") {
-                                dur = i.duration;
-                            }
-                            else {
-                                for (var k in i.children) {
-                                    dur += calculateChildrenTime(i.children[k]);
-                                }
-                            }
-                            return dur;
-                        }
-
-                        td2.innerHTML = calculateChildrenTime(d.children[j]);
-                     }
-
-                document.getElementById("result-table-div").appendChild(tbl);
-                $( "table-test" ).DataTable();
-
+                        document.getElementById("result-table-div").appendChild(tbl);
+                        document.getElementById("table-heading").innerHTML=d.name +
+                            ": " + calculateChildrenTime(d).toFixed(2) + " seconds"
+                        $( "table-test" ).DataTable();
+                    }
+                }
                }
-
 
             });
 
@@ -127,6 +140,7 @@
                     : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
               };
             }
+
 
         }, false);
 
