@@ -169,6 +169,8 @@ def reorganize(converted_test_run):
     ret = {}
 
     for entry in converted_test_run:
+        entry['name_full'] = entry['name']
+
         dest_node = _descend(ret, entry['name'])
 
         # update the dest node with info from the current entry, but hold on to
