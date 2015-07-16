@@ -1,3 +1,4 @@
+from django.http import Http404
 from restless.views import Endpoint
 
 from stackviz.parser.tempest_subunit import (get_repositories,
@@ -17,6 +18,9 @@ class NoRunDataException(Exception):
 class RunNotFoundException(Exception):
     pass
 
+class TestNotFoundException(Http404):
+    pass
+
 
 def _load_run(run_id):
     if run_id in _cached_run:
@@ -24,7 +28,7 @@ def _load_run(run_id):
 
     repos = get_repositories()
     if not repos:
-        raise NoRunDataException()
+        raise NoRunDataException("No test repositories could be loaded")
 
     try:
         # assume first repo for now
@@ -38,7 +42,7 @@ def _load_run(run_id):
 
         return converted_run
     except KeyError:
-        raise RunNotFoundException()
+        raise RunNotFoundException("Requested test run could not be found")
 
 
 def _load_tree(run_id):
@@ -52,13 +56,21 @@ def _load_tree(run_id):
     return tree
 
 
-class TempestRunEndpoint(Endpoint):
+class TempestRunRawEndpoint(Endpoint):
+    def get(self, request, run_id):
+        return _load_run(run_id)
+
+
+class TempestRunTreeEndpoint(Endpoint):
     def get(self, request, run_id):
         return _load_tree(run_id)
 
 
-# TODO: run details
-# class TempestRunDetailsEndpoint(Endpoint):
-#     def get(self, request, run_id, test_path):
-#         ...
+class TempestRunDetailsEndpoint(Endpoint):
+    def get(self, request, run_id, test_name):
+        for test in _load_run(run_id):
+            if test['name'] == test_name:
+                return test['details']
+
+        raise TestNotFoundException('No test with matching name found')
 
