@@ -11,6 +11,10 @@ _cached_run = {}
 #: Cached results converted into tree form
 _cached_tree = {}
 
+#: Cached results for loaded subunit logs without details stripped out. Indexed
+#: initially by log number, but contains nested dicts indexed by the test name.
+_cached_details = {}
+
 
 class NoRunDataException(Exception):
     pass
@@ -56,6 +60,33 @@ def _load_tree(run_id):
     return tree
 
 
+def _load_details(run_id, test_name):
+    if run_id not in _cached_details:
+        repos = get_repositories()
+        if not repos:
+            raise NoRunDataException("No test repositories could be loaded")
+
+        try:
+            # assume first repo for now
+            run = repos[0].get_test_run(run_id)
+            converted_run = convert_run(run, strip_details=False)
+
+            # remap dict to allow direct access to details via test name
+            dest = {}
+            for entry in converted_run:
+                dest[entry['name']] = entry['details']
+
+            _cached_details[run_id] = dest
+        except KeyError:
+            raise RunNotFoundException("Requested test run could not be found")
+
+    details_map = _cached_details[run_id]
+    if test_name in details_map:
+        return details_map[test_name]
+    else:
+        raise TestNotFoundException("Requested test could not be found in run")
+
+
 class TempestRunRawEndpoint(Endpoint):
     def get(self, request, run_id):
         return _load_run(run_id)
@@ -68,9 +99,5 @@ class TempestRunTreeEndpoint(Endpoint):
 
 class TempestRunDetailsEndpoint(Endpoint):
     def get(self, request, run_id, test_name):
-        for test in _load_run(run_id):
-            if test['name'] == test_name:
-                return test['details']
-
-        raise TestNotFoundException('No test with matching name found')
+        return _load_details(run_id, test_name)
 
