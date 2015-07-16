@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from stackviz.views.devstack.latest_results import LatestResultsView
+from stackviz.views.devstack.results import ResultsView
 
 
 urlpatterns = patterns('',
@@ -9,5 +9,5 @@ urlpatterns = patterns('',
     # url(r'^$', 'stackviz.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^latest_results$', LatestResultsView.as_view()),
+    url(r'^results$', ResultsView.as_view()),
 )

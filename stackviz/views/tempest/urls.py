@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from .latest_results import LatestResultsView
+from .results import ResultsView,LatestResultsView
 from .timeline import TimelineView, TimelineLatestView
 
 from .api import (TempestRunTreeEndpoint,
@@ -9,7 +9,12 @@ from .api import (TempestRunTreeEndpoint,
 
 
 urlpatterns = patterns('',
-    url(r'^latest_results$', LatestResultsView.as_view()),
+    url(r'^results/(?P<run_id>\d+)/$',
+        ResultsView.as_view(),
+        name='tempest_results'),
+    url(r'^latest_results$',
+        LatestResultsView.as_view(),
+        name='tempest_results_latest'),
 
     url(r'^timeline/(?P<run_id>\d+)/$',
         TimelineView.as_view(),

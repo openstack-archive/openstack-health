@@ -1,12 +1,12 @@
 {% extends 'template.html' %}
 
-{% block title %}Tempest Latest Results{% endblock %}
+{% block title %}Tempest Results{% endblock %}
 
 {% block body %}
 
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Latest Results</h1>
+        <h1 class="page-header">Results</h1>
     </div>
 </div>
 
@@ -107,6 +107,7 @@
                      }
 
                 document.getElementById("result-table-div").appendChild(tbl);
+                $( "table-test" ).DataTable();
 
                }
 
