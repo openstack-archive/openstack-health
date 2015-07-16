@@ -5,24 +5,35 @@
 {% block body %}
 
 <div class="row">
+    <div class="col-lg-12">
         <h1 class="page-header">Latest Results</h1>
+    </div>
 </div>
 
-<div id="container" class="row">
-    <div class="col-lg-5">
-        <div id="sunburst" class="panel panel-default">
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Pick-a-Run</div>
+            <div class="panel-body">
+                <div id="sunburst"></div>
+            </div>
         </div>
     </div>
 
-    <div class="col-lg-5">
-        <div id="chart" class="panel panel-default">
-                <p>Jquery me baby</p>
-                <p>Right there</p>
-                <p>Oh yeah</p>
+    <div class="col-lg-4">
+         <div class="panel panel-default">
+             <div class="panel-heading">Test Run Info</div>
+             <div class="panel-body">
+                   <div class="table-responsive" id="result-table-div">
+                       <table class="table table-bordered table-hover table-striped" id="test-table">
+                       </table>
+                   </div>
+             </div>
         </div>
     </div>
 
 </div>
+
         <script>
 
         window.addEventListener('load', function() {
@@ -54,7 +65,7 @@
                 .innerRadius(function(d) { return Math.max(0, y(d.y)); })
                 .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-            d3.json("/tempest/api/0/", function(error, root) {
+            d3.json("/tempest/api/tree/5", function(error, root) {
               if (error) throw error;
 
               var path = svg.selectAll("path")
@@ -68,7 +79,38 @@
                 path.transition()
                   .duration(750)
                   .attrTween("d", arcTween(d));
-              }
+                oldtbl = document.getElementById("result-table-div");
+                oldtbl.innerHTML = "";
+                tbl = document.createElement('table');
+                tbl.setAttribute("id","test-table");
+                tbl.setAttribute("class","table table-bordered table-hover table-striped");
+                    for (var j in d.children) {
+                        var row = tbl.insertRow();
+                        var td1 = row.insertCell();
+                        var td2 = row.insertCell();
+                        td1.innerHTML = d.children[j].name;
+
+                        function calculateChildrenTime(i) {
+                            var dur = 0;
+                            if (typeof i["duration"] !== "undefined") {
+                                dur = i.duration;
+                            }
+                            else {
+                                for (var k in i.children) {
+                                    dur += calculateChildrenTime(i.children[k]);
+                                }
+                            }
+                            return dur;
+                        }
+
+                        td2.innerHTML = calculateChildrenTime(d.children[j]);
+                     }
+
+                document.getElementById("result-table-div").appendChild(tbl);
+
+               }
+
+
             });
 
             d3.select(self.frameElement).style("height", height + "px");
