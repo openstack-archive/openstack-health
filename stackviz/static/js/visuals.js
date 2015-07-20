@@ -46,6 +46,7 @@
             }
 
             document.getElementById("failure-table-div").appendChild(tbl);
+            $( "#failure-table-div" ).hide();
         }
 
         function createSunburst(run_id) {
@@ -100,11 +101,10 @@
                 tbl.setAttribute("class","table table-bordered table-hover table-striped");
                 if (typeof d.children == "undefined") {
                     for (var key in d) {
-                        var row = tbl.insertRow();
-                        var td1 = row.insertCell();
-                        var td2 = row.insertCell();
-                        td1.innerHTML = key;
-                        td2.innerHTML = d[key];
+                            var row = tbl.insertRow();
+                            var td1 = row.insertCell();
+                            var td2 = row.insertCell();
+                            td1.innerHTML = key;
                     }
                     document.getElementById("result-table-div").appendChild(tbl);
                     document.getElementById("table-heading").innerHTML=d.name
