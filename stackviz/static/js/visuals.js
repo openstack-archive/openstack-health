@@ -105,9 +105,10 @@
                             var td1 = row.insertCell();
                             var td2 = row.insertCell();
                             td1.innerHTML = key;
+                            td2.innerHTML = d[key];
                     }
                     document.getElementById("result-table-div").appendChild(tbl);
-                    document.getElementById("table-heading").innerHTML=d.name
+                    document.getElementById("table-heading").innerHTML=d.name;
                 }
                 else {
                     for (var j in d.children) {
