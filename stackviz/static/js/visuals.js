@@ -1,4 +1,6 @@
 
+
+
         function calculateChildrenTime(i) {
              var dur = 0;
              if (typeof i["duration"] !== "undefined") {
@@ -10,6 +12,40 @@
                 }
              }
              return dur;
+        }
+
+        function displayFailingTests(d) {
+
+            document.getElementById("failure-table-div").innerHTML="";
+            tbl = document.createElement('table');
+            tbl.setAttribute("id","failure-table");
+            tbl.setAttribute("class","table table-bordered table-hover table-striped");
+
+            function findFailingTests(i,result) {
+                    if (i["status"] == "fail") {
+                        result.push(i);
+                    }
+                    else {
+                        for (var k in i.children) {
+                            findFailingTests(i.children[k],result);
+
+                        }
+                    }
+                    return;
+            }
+
+            var failureList=[];
+
+            findFailingTests(d,failureList);
+            for (var row in failureList) {
+                var newRow = tbl.insertRow();
+                var td1 = newRow.insertCell();
+                var td2 = newRow.insertCell();
+                td1.innerHTML = failureList[row].name_full;
+                td2.innerHTML = failureList[row].duration;
+            }
+
+            document.getElementById("failure-table-div").appendChild(tbl);
         }
 
         function createSunburst(run_id) {
@@ -44,6 +80,7 @@
             d3.json("/tempest/api/tree/" + run_id + "/", function(error, root) {
               if (error) throw error;
 
+              displayFailingTests(root);
               var path = svg.selectAll("path")
                   .data(partition.nodes(root))
                 .enter().append("path")
@@ -55,6 +92,7 @@
                 path.transition()
                   .duration(750)
                   .attrTween("d", arcTween(d));
+
                 oldtbl = document.getElementById("result-table-div");
                 oldtbl.innerHTML = "";
                 tbl = document.createElement('table');
@@ -85,7 +123,7 @@
                         $( "table-test" ).DataTable();
                     }
                 }
-               }
+              }
 
             });
 
