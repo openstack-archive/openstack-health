@@ -3,6 +3,25 @@
 
 {% block title %}Tempest: Execution Timeline (run #{{run_id}}){% endblock %}
 
+{% block head-extra %}
+<style>
+#timeline-info table {
+    table-layout: fixed;
+    width: 100%;
+    word-wrap: break-word
+}
+
+#timeline-info table td:nth-child(1) {
+    width: 20%;
+}
+
+#timeline-log pre {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="row">
     <div class="col-lg-12">
@@ -11,7 +30,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-8">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-clock-o fa-fw"></i> Timeline
@@ -22,13 +41,179 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-info fa-fw"></i> Info
+            </div>
+
+            <div id="timeline-info" class="panel-body">
+                <em>Mouse over an item to view info.</em>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-file-text fa-fw"></i> Log Output
+            </div>
+
+            <div id="timeline-details" class="panel-body">
+                <em>Click an item to view log details.</em>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="{% static 'js/timeline.js' %}"></script>
 <script>
+var originalInfoContent = null;
+var originalDetailsContent = null;
+
+var showInfo = function(item) {
+    var parent = $("#timeline-info");
+    if (originalInfoContent === null) {
+        originalInfoContent = parent.html();
+    }
+
+    var e = $("<table>", {
+        "class": 'table table-bordered table-hover table-striped'
+    });
+
+    var nameParts = item.name.split(".");
+    var pkg = nameParts.slice(0, nameParts.length - 2).join('.');
+
+    e.append($("<tr>")
+            .append($("<td>", { text: 'Name' }))
+            .append($("<td>", { text: nameParts[nameParts.length - 1] })));
+
+    e.append($("<tr>")
+            .append($("<td>", { text: 'Class' }))
+            .append($("<td>", { text: nameParts[nameParts.length - 2] })));
+
+    e.append($("<tr>")
+            .append($("<td>", { text: 'Module' }))
+            .append($("<td>", { text: pkg })));
+
+    e.append($("<tr>")
+            .append($("<td>", { text: 'Status' }))
+            .append($("<td>", { text: item.status })));
+
+    e.append($("<tr>")
+            .append($("<td>", { text: 'Tags' }))
+            .append($("<td>", { text: item.tags.join(", ") })));
+
+    e.append($("<tr>")
+            .append($("<td>", { text: 'Duration' }))
+            .append($("<td>", { text: item.duration + " seconds" })));
+
+    parent.empty();
+    e.appendTo(parent);
+};
+
+var hideInfo = function() {
+    $("#timeline-info").html(originalInfoContent);
+};
+
+var showDetails = function(item) {
+    var parent = $("#timeline-details");
+
+    showInfo(item);
+
+    d3.json("/tempest/api/details/{{run_id}}/" + item.name, function(error, data) {
+        if (error) {
+            throw error;
+        }
+
+        if (originalDetailsContent === null) {
+            originalDetailsContent = parent.html();
+        }
+
+        parent.empty();
+        for (var prop in data) {
+            $("<h3>").text(prop).appendTo(parent);
+            $("<pre>").text(data[prop]).appendTo(parent);
+        }
+
+    });
+};
+
+var hideDetails = function() {
+    $("#timeline-details").html(originalDetailsContent);
+};
 
 window.addEventListener('load', function() {
-    loadTimeline("/tempest/api/raw/{{run_id}}/");
+    var selectedItem = null;
+    var selectedValue = null;
+
+    loadTimeline("/tempest/api/raw/{{run_id}}/", {
+        container: $("#timeline-container")[0],
+        onClick: function(d) {
+            var self = d3.select(this);
+
+            // deselect old item, if any
+            if (selectedItem !== null) {
+                console.log("deselect");
+                if (selectedItem.attr("data-old-fill")) {
+                    selectedItem.attr("fill", selectedItem.attr("data-old-fill"));
+                    selectedItem.attr("data-old-fill", null);
+                }
+
+                if (selectedValue.name === d.name) {
+                    // remove selection on 2nd click - don't continue
+                    selectedItem = null;
+                    selectedValue = null;
+                    hideDetails()
+                    return;
+                }
+
+                selectedItem = null;
+            }
+
+            // select new item
+            if (!self.attr("data-old-fill")) {
+                self.attr("data-old-fill", self.attr("fill"));
+            }
+
+            self.attr("fill", "goldenrod");
+            selectedItem = self;
+            selectedValue = d;
+
+            showDetails(d);
+        },
+
+        onMouseover: function(d) {
+            if (selectedItem != null) {
+                return;
+            }
+
+            var self = d3.select(this);
+            if (!self.attr("data-old-fill")) {
+                self.attr("data-old-fill", self.attr("fill"));
+            }
+
+            d3.select(this).attr("fill", "darkturquoise");
+
+            showInfo(d);
+        },
+
+        onMouseout: function(d) {
+            if (selectedItem != null) {
+                return;
+            }
+
+            var self = d3.select(this);
+            if (self.attr("data-old-fill")) {
+                self.attr("fill", self.attr("data-old-fill"));
+                self.attr("data-old-fill", null);
+            }
+
+            hideInfo();
+        }
+    });
 });
 </script>
 {% endblock %}

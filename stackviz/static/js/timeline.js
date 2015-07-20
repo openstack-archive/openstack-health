@@ -20,18 +20,16 @@ var parseWorker = function(tags) {
     return null;
 };
 
-var initTimeline = function(data, timeExtents) {
+var initTimeline = function(options, data, timeExtents) {
     "use strict";
 
-    console.log("extents:", timeExtents);
-
     // http://bl.ocks.org/bunkat/2338034
-    var margin = { top: 10, right: 10, bottom: 100, left: 80 };
-    var width = 960 - margin.left - margin.right;
-    var height = 500 - margin.top - margin.bottom;
+    var margin = { top: 10, right: 10, bottom: 10, left: 80 };
+    var width = 800 - margin.left - margin.right;
+    var height = 350 - margin.top - margin.bottom;
 
-    var miniHeight = data.length * 12 + 50;
-    var mainHeight = height - miniHeight - 50;
+    var miniHeight = data.length * 12 + 30;
+    var mainHeight = height - miniHeight - 10;
 
     var x = d3.time.scale()
             .range([0, width])
@@ -46,7 +44,7 @@ var initTimeline = function(data, timeExtents) {
             .domain([0, data.length])
             .range([0, miniHeight]);
 
-    var chart = d3.select("#timeline-container")
+    var chart = d3.select(options.container)
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -78,22 +76,32 @@ var initTimeline = function(data, timeExtents) {
             .attr("height", mainHeight)
             .attr("class", "mini");
 
+    var miniGroups = mini.append("g");
+
+    // performance hack: performance in Firefox as of 39.0 is poor due to some
+    // d3 bugs
+    // Limit the initial selection to ~1/6th of the total to make things
+    // bearable (user can still increase as desired)
+    var start = timeExtents[0];
+    var end = timeExtents[1];
+    var reducedEnd = new Date(start.getTime() + ((end - start) / 8));
+
     var brush = d3.svg.brush()
             .x(x)
-            .extent(timeExtents);
+            .extent([start, reducedEnd]);
 
     function updateLanes() {
         var lines = laneLines.selectAll(".laneLine")
                 .data(data, function(d) { return d.key; });
 
         lines.enter().append("line")
-                .attr("x1", margin.right)
+                .attr("x1", 0)
                 .attr("x2", width)
                 .attr("stroke", "lightgray")
                 .attr("class", "laneLine");
 
-        lines.attr("y1", function(d, i) { return y1(i); })
-                .attr("y2", function(d, i) { return y1(i); });
+        lines.attr("y1", function(d, i) { return y1(i - 0.1); })
+                .attr("y2", function(d, i) { return y1(i - 0.1); });
 
         lines.exit().remove();
 
@@ -145,24 +153,41 @@ var initTimeline = function(data, timeExtents) {
                 .attr("width", function(d) {
                     return x1(d.end_date) - x1(d.start_date);
                 })
-                .attr("fill", function(d) { return statusColorMap[d.status]; });
+                .attr("fill", function(d) { return statusColorMap[d.status]; })
+                .on("mouseover", options.onMouseover)
+                .on("mouseout", options.onMouseout)
+                .on("click", options.onClick);
+
+        rects.exit().remove();
+        groups.exit().remove();
+    }
+
+    function updateMiniItems() {
+        var groups = miniGroups.selectAll("g")
+                .data(data, function(d) { return d.key; });
+
+        groups.enter().append("g");
+
+        var rects = groups.selectAll("rect").data(
+                function(d) { return d.values; },
+                function(d) { return d.name; });
+
+        rects.enter().append("rect")
+                .attr("x", function(d) { return x(d.start_date); })
+                .attr("y", function(d) { return y2(parseWorker(d.tags) + 0.5) - 5; })
+                .attr("width", function(d) { return x(d.end_date) - x(d.start_date); })
+                .attr("height", 10);
 
         rects.exit().remove();
         groups.exit().remove();
     }
 
     function update() {
-        // TODO: move all of the data enter() blocks into update() ?
-        // the example seems to be relatively non-idiotmatic d3
-
-        //mini.select(".brush").call(brush.extent(brush.extent())); // ???
-
         x1.domain(brush.extent());
 
         updateLanes();
         updateItems();
     }
-
 
     brush.on("brush", update);
 
@@ -171,12 +196,15 @@ var initTimeline = function(data, timeExtents) {
             .call(brush)
             .selectAll("rect")
             .attr("y", 1)
-            .attr("height", miniHeight - 1);
+            .attr("height", miniHeight - 1)
+            .attr("fill", "dodgerblue")
+            .attr("fill-opacity", 0.365);
 
+    updateMiniItems();
     update();
 };
 
-function loadTimeline(path) { // eslint-disable-line no-unused-vars
+function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
     "use strict";
 
     d3.json(path, function(error, data) {
@@ -200,14 +228,15 @@ function loadTimeline(path) { // eslint-disable-line no-unused-vars
             /*eslint-enable camelcase*/
         });
 
+        data = data.filter(function (d) { return d.duration > 0; });
+
         var nested = d3.nest()
                 .key(function(d) { return parseWorker(d.tags); })
                 .sortKeys(d3.ascending)
                 .entries(data);
 
-        console.log(nested);
         window.nested = nested;
 
-        initTimeline(nested, [ minStart, maxEnd ]);
+        initTimeline(options, nested, [ minStart, maxEnd ]);
     });
 }

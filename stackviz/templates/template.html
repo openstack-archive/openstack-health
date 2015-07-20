@@ -54,7 +54,7 @@
     <script src="{% static 'js/sb-admin-2.js' %}"></script>
 
     <!-- d3.js -->
-    <script src="{% static 'components/d3/d3.min.js' %}"></script>
+    <script src="{% static 'components/d3/d3.js' %}"></script>
 
     <!-- DataTable for jQuery -->
     <script src="{% static 'components/datatables/media/js/jquery.dataTables.min.js' %}"></script>
@@ -62,7 +62,7 @@
     <!-- Scripts for visualization-->
     <script src="{% static 'js/visuals.js' %}"></script>
 
-
+    {% block head-extra %}{% endblock %}
 </head>
 
 <body>
@@ -83,7 +83,7 @@
             <!-- /.navbar-header -->
 
             <ul class="nav navbar-top-links navbar-right">
-                
+
             </ul>
             <!-- /.navbar-top-links -->
 
