@@ -156,7 +156,6 @@ window.addEventListener('load', function() {
 
             // deselect old item, if any
             if (selectedItem !== null) {
-                console.log("deselect");
                 if (selectedItem.attr("data-old-fill")) {
                     selectedItem.attr("fill", selectedItem.attr("data-old-fill"));
                     selectedItem.attr("data-old-fill", null);
