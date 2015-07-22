@@ -1,9 +1,9 @@
 
-
+"use strict";
 
         function calculateChildrenTime(i) {
              var dur = 0;
-             if (typeof i["duration"] !== "undefined") {
+             if (typeof i.duration !== "undefined") {
                  dur = i.duration;
              }
              else {
@@ -17,12 +17,12 @@
         function displayFailingTests(d) {
 
             document.getElementById("failure-table-div").innerHTML="";
-            tbl = document.createElement('table');
+            var tbl = document.createElement('table');
             tbl.setAttribute("id","failure-table");
             tbl.setAttribute("class","table table-bordered table-hover table-striped");
 
             function findFailingTests(i,result) {
-                    if (i["status"] == "fail") {
+                    if (i.status == "fail") {
                         result.push(i);
                     }
                     else {
@@ -73,58 +73,59 @@
                 .value(function(d) { return d.duration; });
 
             var arc = d3.svg.arc()
-                .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
+               .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
                 .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
                 .innerRadius(function(d) { return Math.max(0, y(d.y)); })
                 .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
             d3.json("/tempest/api/tree/" + run_id + "/", function(error, root) {
-              if (error) throw error;
+                if (error) throw error;
 
-              displayFailingTests(root);
-              var path = svg.selectAll("path")
-                  .data(partition.nodes(root))
-                .enter().append("path")
-                  .attr("d", arc)
-                  .style("fill", function(d) { return color(d.name); })
-                  .on("click", click);
+                displayFailingTests(root);
 
-              function click(d) {
-                path.transition()
-                  .duration(750)
-                  .attrTween("d", arcTween(d));
+                var path = svg.selectAll("path")
+                    .data(partition.nodes(root))
+                  .enter().append("path")
+                    .attr("d", arc)
+                    .style("fill", function(d) { return color(d.name); })
+                    .on("click", click);
 
-                oldtbl = document.getElementById("result-table-div");
-                oldtbl.innerHTML = "";
-                tbl = document.createElement('table');
-                tbl.setAttribute("id","test-table");
-                tbl.setAttribute("class","table table-bordered table-hover table-striped");
-                if (typeof d.children == "undefined") {
-                    for (var key in d) {
+                function click(d) {
+                    path.transition()
+                      .duration(750)
+                      .attrTween("d", arcTween(d));
+
+                    var oldtbl = document.getElementById("result-table-div");
+                    oldtbl.innerHTML = "";
+                    var tbl = document.createElement('table');
+                    tbl.setAttribute("id","test-table");
+                    tbl.setAttribute("class","table table-bordered table-hover table-striped");
+                    if (typeof d.children == "undefined") {
+                        for (var key in d) {
+                                var row = tbl.insertRow();
+                                var td1 = row.insertCell();
+                                var td2 = row.insertCell();
+                                td1.innerHTML = key;
+                                td2.innerHTML = d[key];
+                        }
+                        document.getElementById("result-table-div").appendChild(tbl);
+                        document.getElementById("table-heading").innerHTML=d.name;
+                    }
+                    else {
+                        for (var j in d.children) {
                             var row = tbl.insertRow();
                             var td1 = row.insertCell();
                             var td2 = row.insertCell();
-                            td1.innerHTML = key;
-                            td2.innerHTML = d[key];
+                            td1.innerHTML = d.children[j].name;
+                            td2.innerHTML = calculateChildrenTime(d.children[j]).toFixed(2);
+                            td1.style.color = color(d.children[j].name);
+                            document.getElementById("result-table-div").appendChild(tbl);
+                            document.getElementById("table-heading").innerHTML=d.name +
+                                ": " + calculateChildrenTime(d).toFixed(2) + " seconds"
+                            $( "table-test" ).DataTable();
+                        }
                     }
-                    document.getElementById("result-table-div").appendChild(tbl);
-                    document.getElementById("table-heading").innerHTML=d.name;
-                }
-                else {
-                    for (var j in d.children) {
-                        var row = tbl.insertRow();
-                        var td1 = row.insertCell();
-                        var td2 = row.insertCell();
-                        td1.innerHTML = d.children[j].name;
-                        td2.innerHTML = calculateChildrenTime(d.children[j]).toFixed(2);
-                        td1.style.color = color(d.children[j].name);
-                        document.getElementById("result-table-div").appendChild(tbl);
-                        document.getElementById("table-heading").innerHTML=d.name +
-                            ": " + calculateChildrenTime(d).toFixed(2) + " seconds"
-                        $( "table-test" ).DataTable();
-                    }
-                }
-              }
+                  }
 
             });
 
@@ -136,7 +137,7 @@
                   yd = d3.interpolate(y.domain(), [d.y, 1]),
                   yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
               return function(d, i) {
-                return i
+                  return i
                     ? function(t) { return arc(d); }
                     : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
               };
