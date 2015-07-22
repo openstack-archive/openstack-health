@@ -24,7 +24,7 @@ var initTimeline = function(options, data, timeExtents) {
     "use strict";
 
     // http://bl.ocks.org/bunkat/2338034
-    var margin = { top: 10, right: 10, bottom: 10, left: 80 };
+    var margin = { top: 20, right: 10, bottom: 10, left: 80 };
     var width = 800 - margin.left - margin.right;
     var height = 350 - margin.top - margin.bottom;
 
@@ -69,6 +69,24 @@ var initTimeline = function(options, data, timeExtents) {
 
     var itemGroups = main.append("g");
 
+    var cursorGroup = main.append("g")
+            .style("opacity", 0)
+            .style("pointer-events", "none");
+
+    var cursor = cursorGroup.append("line")
+            .attr("x1", 0)
+            .attr("x2", 0)
+            .attr("y1", y1(-0.1))
+            .attr("stroke", "blue");
+
+    var cursorText = cursorGroup.append("text")
+            .attr("x", 0)
+            .attr("y", -10)
+            .attr("dy", "-.5ex")
+            .text("asdfasdf")
+            .style("text-anchor", "middle")
+            .style("font", "9px sans-serif");
+
     var mini = chart.append("g")
             .attr("transform",
                   "translate(" + margin.left + "," + (mainHeight + margin.top) + ")")
@@ -89,6 +107,28 @@ var initTimeline = function(options, data, timeExtents) {
     var brush = d3.svg.brush()
             .x(x)
             .extent([start, reducedEnd]);
+
+    chart.on("mouseout", function() {
+        cursorGroup.style("opacity", 0);
+    });
+
+    chart.on("mousemove", function() {
+        var pos = d3.mouse(this);
+        var px = pos[0];
+        var py = pos[1];
+
+        if (px >= margin.left && px < (width + margin.left)
+                && py > margin.top && py < (mainHeight + margin.top)) {
+            var relX = px - margin.left;
+
+            var currentTime = new Date(x1.invert(relX));
+
+            cursorGroup.style("opacity", "0.5");
+            cursorGroup.attr("transform", "translate(" + relX + ", 0)");
+
+            cursorText.text(d3.time.format("%X")(currentTime));
+        }
+    });
 
     function updateLanes() {
         var lines = laneLines.selectAll(".laneLine")
@@ -118,6 +158,8 @@ var initTimeline = function(options, data, timeExtents) {
         labels.attr("y", function(d, i) { return y1(i + 0.5); });
 
         labels.exit().remove();
+
+        cursor.attr("y2", y1(data.length - 0.1));
     }
 
     function updateItems() {
