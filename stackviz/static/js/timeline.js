@@ -23,9 +23,11 @@ var parseWorker = function(tags) {
 var initTimeline = function(options, data, timeExtents) {
     "use strict";
 
+    var container = $(options.container);
+
     // http://bl.ocks.org/bunkat/2338034
     var margin = { top: 20, right: 10, bottom: 10, left: 80 };
-    var width = 800 - margin.left - margin.right;
+    var width = container.width() - margin.left - margin.right;
     var height = 350 - margin.top - margin.bottom;
 
     var miniHeight = data.length * 12 + 30;
@@ -50,7 +52,7 @@ var initTimeline = function(options, data, timeExtents) {
             .attr("height", height + margin.top + margin.bottom)
             .attr("class", "chart");
 
-    chart.append("defs")
+    var defs = chart.append("defs")
             .append("clipPath")
             .attr("id", "clip")
             .append("rect")
@@ -83,7 +85,7 @@ var initTimeline = function(options, data, timeExtents) {
             .attr("x", 0)
             .attr("y", -10)
             .attr("dy", "-.5ex")
-            .text("asdfasdf")
+            .text("")
             .style("text-anchor", "middle")
             .style("font", "9px sans-serif");
 
@@ -117,8 +119,8 @@ var initTimeline = function(options, data, timeExtents) {
         var px = pos[0];
         var py = pos[1];
 
-        if (px >= margin.left && px < (width + margin.left)
-                && py > margin.top && py < (mainHeight + margin.top)) {
+        if (px >= margin.left && px < (width + margin.left) &&
+                py > margin.top && py < (mainHeight + margin.top)) {
             var relX = px - margin.left;
 
             var currentTime = new Date(x1.invert(relX));
@@ -215,10 +217,11 @@ var initTimeline = function(options, data, timeExtents) {
                 function(d) { return d.name; });
 
         rects.enter().append("rect")
-                .attr("x", function(d) { return x(d.start_date); })
                 .attr("y", function(d) { return y2(parseWorker(d.tags) + 0.5) - 5; })
-                .attr("width", function(d) { return x(d.end_date) - x(d.start_date); })
                 .attr("height", 10);
+
+        rects.attr("x", function(d) { return x(d.start_date); })
+                .attr("width", function(d) { return x(d.end_date) - x(d.start_date); });
 
         rects.exit().remove();
         groups.exit().remove();
@@ -244,6 +247,24 @@ var initTimeline = function(options, data, timeExtents) {
 
     updateMiniItems();
     update();
+
+    $(window).resize(function() {
+        var brushExtent = brush.extent();
+
+        width = container.width() - margin.left - margin.right;
+        x.range([0, width]);
+        x1.range([0, width]);
+
+        chart.attr("width", container.width());
+        defs.attr("width", width);
+        main.attr("width", width);
+        mini.attr("width", width);
+
+        brush.extent(brushExtent);
+
+        updateMiniItems();
+        update();
+    });
 };
 
 function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
