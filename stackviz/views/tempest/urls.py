@@ -2,6 +2,8 @@ from django.conf.urls import patterns, include, url
 
 from .results import ResultsView,LatestResultsView
 from .timeline import TimelineView, TimelineLatestView
+from .aggregate import AggregateResultsView
+from .summary import SummaryView
 
 from .api import (TempestRunTreeEndpoint,
                   TempestRunRawEndpoint,
@@ -32,4 +34,12 @@ urlpatterns = patterns('',
     url(r'^api/details/(\d+)/([^/]+)/$',
         TempestRunDetailsEndpoint.as_view(),
         name='tempest_api_details'),
+
+    url(r'^aggregate/$',
+        AggregateResultsView.as_view(),
+        name='aggregate_results'),
+
+    url(r'^summary/$',
+        SummaryView.as_view(),
+        name='summary_results')
 )

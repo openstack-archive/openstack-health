@@ -28,7 +28,6 @@
                     else {
                         for (var k in i.children) {
                             findFailingTests(i.children[k],result);
-
                         }
                     }
                     return;
@@ -42,7 +41,7 @@
                 var td1 = newRow.insertCell();
                 var td2 = newRow.insertCell();
                 td1.innerHTML = failureList[row].name_full;
-                td2.innerHTML = failureList[row].duration;
+                td2.innerHTML = parseFloat(failureList[row].duration).toFixed(2);
             }
 
             document.getElementById("failure-table-div").appendChild(tbl);
@@ -102,11 +101,13 @@
                     tbl.setAttribute("class","table table-bordered table-hover table-striped");
                     if (typeof d.children == "undefined") {
                         for (var key in d) {
+                            if (key=="status" || key=="name_full" || key=="name" || key=="duration" || key=="tags" || key=="timestamps") {
                                 var row = tbl.insertRow();
                                 var td1 = row.insertCell();
                                 var td2 = row.insertCell();
                                 td1.innerHTML = key;
                                 td2.innerHTML = d[key];
+                            }
                         }
                         document.getElementById("result-table-div").appendChild(tbl);
                         document.getElementById("table-heading").innerHTML=d.name;
