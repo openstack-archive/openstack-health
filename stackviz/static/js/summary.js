@@ -71,7 +71,7 @@ function createTable(data, run) {
     tbl.setAttribute("id","table-run-" + run);
     tbl.setAttribute("class","table table-bordered table-hover table-striped");
     var header = tbl.createTHead();
-    header.innerHTML = '<tr><th><a href="/tempest/results/' + run + '"> Run #' + run + '</a></th></tr>';
+    header.innerHTML = '<tr><th><a href="/tempest/timeline/' + run + '"> Run #' + run + '</a></th></tr>';
     for (var key in data_dict) {
             var row = tbl.insertRow();
             var c1 = row.insertCell();
