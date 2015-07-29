@@ -77,7 +77,7 @@
                 .innerRadius(function(d) { return Math.max(0, y(d.y)); })
                 .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-            d3.json("/tempest/api/tree/" + run_id + "/", function(error, root) {
+            d3.json("tempest_api_tree_" + run_id + ".json", function(error, root) {
                 if (error) throw error;
 
                 displayFailingTests(root);

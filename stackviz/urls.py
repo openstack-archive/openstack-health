@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^$', IndexView.as_view()),
-    url(r'^tempest/', include('stackviz.views.tempest.urls')),
-    url(r'^devstack/', include('stackviz.views.devstack.urls')),
+    url(r'^index.html$', IndexView.as_view(), name="index"),
+    url(r'^tempest_', include('stackviz.views.tempest.urls')),
+    url(r'^devstack_', include('stackviz.views.devstack.urls')),
 )

@@ -123,7 +123,7 @@ var showDetails = function(item) {
 
     showInfo(item);
 
-    d3.json("/tempest/api/details/{{run_id}}/" + item.name, function(error, data) {
+    d3.json("tempest_api_details_{{run_id}}_" + item.name + ".json", function(error, data) {
         if (error) {
             throw error;
         }
@@ -149,7 +149,7 @@ window.addEventListener('load', function() {
     var selectedItem = null;
     var selectedValue = null;
 
-    loadTimeline("/tempest/api/raw/{{run_id}}/", {
+    loadTimeline("tempest_api_raw_{{run_id}}.json", {
         container: $("#timeline-container")[0],
         onClick: function(d) {
             var self = d3.select(this);

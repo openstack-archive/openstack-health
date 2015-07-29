@@ -71,7 +71,7 @@ function createTable(data, run) {
     tbl.setAttribute("id","table-run-" + run);
     tbl.setAttribute("class","table table-bordered table-hover table-striped");
     var header = tbl.createTHead();
-    header.innerHTML = '<tr><th><a href="/tempest/timeline/' + run + '"> Run #' + run + '</a></th></tr>';
+    header.innerHTML = '<tr><th><a href="tempest_timeline_' + run + '.html"> Run #' + run + '</a></th></tr>';
     for (var key in data_dict) {
             var row = tbl.insertRow();
             var c1 = row.insertCell();
@@ -92,7 +92,7 @@ function createTables(run_id) {
         //outer function so callback can use i "synchronously"
         //TODO: Sort tables when inserting so they appear in correct order
         !function(ii) {
-            d3.json("/tempest/api/tree/" + i + "/", function(error, data) {
+            d3.json("tempest_api_tree_" + i + ".json", function(error, data) {
                 if (error) throw error;
                 //create a table for the info
                 createTable(data, ii);

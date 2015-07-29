@@ -11,35 +11,32 @@ from .api import (TempestRunTreeEndpoint,
 
 
 urlpatterns = patterns('',
-    url(r'^results/(?P<run_id>\d+)/$',
+    url(r'^results_(?P<run_id>\d+).html$',
         ResultsView.as_view(),
         name='tempest_results'),
-    url(r'^results/$',
+    url(r'^results.html$',
         LatestResultsView.as_view(),
         name='tempest_results_latest'),
 
-    url(r'^timeline/(?P<run_id>\d+)/$',
+    url(r'^timeline_(?P<run_id>\d+).html$',
         TimelineView.as_view(),
         name='tempest_timeline'),
-    url(r'^timeline/$',
-        TimelineLatestView.as_view(),
-        name='tempest_timeline_latest'),
 
-    url(r'^api/tree/(?P<run_id>\d+)/$',
+    url(r'^api_tree_(?P<run_id>\d+).json$',
         TempestRunTreeEndpoint.as_view(),
         name='tempest_api_tree'),
-    url(r'^api/raw/(?P<run_id>\d+)/$',
+    url(r'^api_raw_(?P<run_id>\d+).json$',
         TempestRunRawEndpoint.as_view(),
         name='tempest_api_raw'),
-    url(r'^api/details/(\d+)/([^/]+)/$',
+    url(r'^api_details_(\d+)_([^/]+).json$',
         TempestRunDetailsEndpoint.as_view(),
         name='tempest_api_details'),
 
-    url(r'^aggregate/$',
+    url(r'^aggregate.html$',
         AggregateResultsView.as_view(),
-        name='aggregate_results'),
+        name='tempest_aggregate_results'),
 
-    url(r'^summary/$',
+    url(r'^summary.html$',
         SummaryView.as_view(),
-        name='summary_results')
+        name='tempest_summary_results')
 )
