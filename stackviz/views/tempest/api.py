@@ -81,10 +81,14 @@ def _load_details(run_id, test_name):
             raise RunNotFoundException("Requested test run could not be found")
 
     details_map = _cached_details[run_id]
-    if test_name in details_map:
-        return details_map[test_name]
+    if test_name is None:
+        return details_map
     else:
-        raise TestNotFoundException("Requested test could not be found in run")
+        if test_name in details_map:
+            return details_map[test_name]
+        else:
+            raise TestNotFoundException(
+                "Requested test could not be found in run")
 
 
 class TempestRunRawEndpoint(Endpoint):
@@ -98,6 +102,6 @@ class TempestRunTreeEndpoint(Endpoint):
 
 
 class TempestRunDetailsEndpoint(Endpoint):
-    def get(self, request, run_id, test_name):
+    def get(self, request, run_id, test_name=None):
         return _load_details(run_id, test_name)
 
