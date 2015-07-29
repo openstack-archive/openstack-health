@@ -91,3 +91,8 @@ TEST_REPOSITORIES = [
     '/opt/stack/tempest/',
     BASE_DIR
 ]
+
+# If true, AJAX calls should attempt to load `*.json.gz` files rather than plain
+# `*.json` files. This should only ever be toggled `True` for static site
+# exports and is not currently supported on live servers.
+USE_GZIP = False

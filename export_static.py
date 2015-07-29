@@ -1,4 +1,5 @@
 import os
+import gzip
 import shutil
 import django
 
@@ -8,6 +9,7 @@ from django.test import RequestFactory
 from django.core.urlresolvers import resolve
 
 from stackviz.parser import tempest_subunit
+from stackviz import settings
 
 
 EXPORT_PATHS = [
@@ -30,15 +32,29 @@ def fake_render_view(path):
     return response
 
 
-def export_single_page(path, dest_dir):
+def export_single_page(path, dest_dir, use_gzip=False):
     dest_file = path
     if dest_file.startswith('/'):
         dest_file = dest_file[1:]
 
-    with open(os.path.join(dest_dir, dest_file), 'w') as f:
+    open_func = open
+    if use_gzip:
+        open_func = gzip.open
+        dest_file += ".gz"
+
+    with open_func(os.path.join(dest_dir, dest_file), 'wb') as f:
         content = fake_render_view(path).content
 
         f.write(content)
+
+
+def init_django(args):
+    # remove leading / from static URL to give them correct filesystem paths
+    settings.STATIC_URL = settings.STATIC_URL[1:]
+    settings.USE_GZIP = args.gzip
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "stackviz.settings")
+    django.setup()
 
 
 def main():
@@ -49,6 +65,9 @@ def main():
                              "doesn't already exist.")
     parser.add_argument("--ignore-bower",
                         help="Ignore missing Bower components.")
+    parser.add_argument("--gzip",
+                        help="Enable gzip compression for data files.",
+                        action="store_true")
 
     args = parser.parse_args()
 
@@ -65,6 +84,8 @@ def main():
 
         os.mkdir(args.path)
 
+    init_django(args)
+
     print "Copying static files ..."
     shutil.copytree(os.path.join('stackviz', 'static'),
                     os.path.join(args.path, 'static'))
@@ -79,20 +100,13 @@ def main():
         export_single_page('/tempest_results_%d.html' % run_id, args.path)
 
         print "Exporting data for tempest run #%d" % run_id
-        export_single_page('/tempest_api_tree_%d.json' % run_id, args.path)
-        export_single_page('/tempest_api_raw_%d.json' % run_id, args.path)
-
-        # TODO
-        # export_single_page('tempest_api_details_%d.json' % run_id, args.path)
+        export_single_page('/tempest_api_tree_%d.json' % run_id,
+                           args.path, args.gzip)
+        export_single_page('/tempest_api_raw_%d.json' % run_id,
+                           args.path, args.gzip)
+        export_single_page('/tempest_api_details_%d.json' % run_id,
+                           args.path, args.gzip)
 
 
 if __name__ == '__main__':
-    # remove leading / from static URL to give them correct filesystem paths
-    import stackviz.settings as settings
-    settings.STATIC_URL = settings.STATIC_URL[1:]
-
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "stackviz.settings")
-
-    django.setup()
-
     main()

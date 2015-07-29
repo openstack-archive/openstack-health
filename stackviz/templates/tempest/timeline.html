@@ -149,7 +149,14 @@ window.addEventListener('load', function() {
     var selectedItem = null;
     var selectedValue = null;
 
-    loadTimeline("tempest_api_raw_{{run_id}}.json", {
+    var url = "tempest_api_raw_{{run_id}}.json";
+    if ("{{use_gzip}}" === "True") {
+        url += ".gz";
+    }
+
+    console.log("url is", url);
+
+    loadTimeline(url, {
         container: $("#timeline-container")[0],
         onClick: function(d) {
             var self = d3.select(this);
