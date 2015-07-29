@@ -73,6 +73,10 @@
 var originalInfoContent = null;
 var originalDetailsContent = null;
 
+var detailsCache = null;
+var detailsInProgress = false;
+var detailsWaiting = [];
+
 var showInfo = function(item) {
     var parent = $("#timeline-info");
     if (originalInfoContent === null) {
@@ -118,14 +122,43 @@ var hideInfo = function() {
     $("#timeline-info").html(originalInfoContent);
 };
 
+var loadDetails = function(callback) {
+    if (detailsCache === null) {
+        detailsWaiting.push(callback);
+
+        if (!detailsInProgress) {
+            var url = "tempest_api_details_{{run_id}}.json";
+            if ("{{use_gzip}}" === "True") {
+                url += ".gz";
+            }
+
+            detailsInProgress = true;
+
+            d3.json(url, function(error, data) {
+                if (error) {
+                    throw error;
+                }
+
+                detailsCache = data;
+                detailsWaiting.forEach(function(cb) {
+                    cb(detailsCache);
+                });
+            });
+        }
+    } else {
+        callback(detailsCache);
+    }
+};
+
 var showDetails = function(item) {
     var parent = $("#timeline-details");
 
     showInfo(item);
 
-    d3.json("tempest_api_details_{{run_id}}_" + item.name + ".json", function(error, data) {
-        if (error) {
-            throw error;
+    loadDetails(function(details) {
+        if (!details.hasOwnProperty(item.name)) {
+            console.log("Details not found for item:", item.name);
+            return;
         }
 
         if (originalDetailsContent === null) {
@@ -133,11 +166,10 @@ var showDetails = function(item) {
         }
 
         parent.empty();
-        for (var prop in data) {
+        for (var prop in details[item.name]) {
             $("<h3>").text(prop).appendTo(parent);
-            $("<pre>").text(data[prop]).appendTo(parent);
+            $("<pre>").text(details[item.name][prop]).appendTo(parent);
         }
-
     });
 };
 
