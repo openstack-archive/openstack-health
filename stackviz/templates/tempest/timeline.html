@@ -154,8 +154,6 @@ window.addEventListener('load', function() {
         url += ".gz";
     }
 
-    console.log("url is", url);
-
     loadTimeline(url, {
         container: $("#timeline-container")[0],
         onClick: function(d) {
@@ -172,7 +170,7 @@ window.addEventListener('load', function() {
                     // remove selection on 2nd click - don't continue
                     selectedItem = null;
                     selectedValue = null;
-                    hideDetails()
+                    hideDetails();
                     return;
                 }
 
@@ -192,7 +190,7 @@ window.addEventListener('load', function() {
         },
 
         onMouseover: function(d) {
-            if (selectedItem != null) {
+            if (selectedItem !== null) {
                 return;
             }
 
@@ -207,7 +205,7 @@ window.addEventListener('load', function() {
         },
 
         onMouseout: function(d) {
-            if (selectedItem != null) {
+            if (selectedItem !== null) {
                 return;
             }
 
