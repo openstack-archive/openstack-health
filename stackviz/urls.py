@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^index.html$', IndexView.as_view(), name="index"),
     url(r'^tempest_', include('stackviz.views.tempest.urls')),
     url(r'^devstack_', include('stackviz.views.devstack.urls')),
+    url(r'^upstream_', include ('stackviz.views.upstream.urls'))
 )

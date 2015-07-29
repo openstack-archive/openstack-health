@@ -1,6 +1,13 @@
 {% extends 'template.html' %}
 
+{% load staticfiles %}
+
 {% block title %}Tempest Summary{% endblock %}
+
+{% block head-extra %}
+<!-- Script for summary page-->
+    <script src="{% static 'js/summary.js' %}"></script>
+{% endblock %}
 
 {% block body %}
 
@@ -11,7 +18,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">Overview</div>
             <div class="panel-body" id="run-summary-div">
