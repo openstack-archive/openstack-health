@@ -1,26 +1,14 @@
 "use strict";
 
 /*
-                <div class="table-responsive" id="overview-table-div">
-                    <table class="table table-bordered table-hover table-striped" id="overview-table">
-                        <tr>
-                            <td>    Total Time: </td>
-                            <td id="cell-total-time"></td>
-                        </tr>
-                        <tr>
-                            <td>    Successes: </td>
-                            <td id="cell-successes"></td>
-                        </tr>
-                        <tr>
-                            <td>    Failures: </td>
-                            <td id="cell-failures"></td>
-                        </tr>
-                        <tr>
-                            <td>    Longest Test: </td>
-                            <td id="cell-longest-test"></td>
-                        </tr>
-                    </table>
-                </div>
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Test Runs</div>
+            <div class="panel-body" id="run-summary-div">
+
+            </div>
+        </div>
+    </div>
 */
 
 //@param data: JSON data of the test run
@@ -66,12 +54,14 @@ function getData(data) {
 
 function createTable(data, run) {
 
+    $('#run-summary-div').append("<div class='col-lg-6'><div class='panel panel-default'> " +
+    "<div class='panel-heading'><a href='tempest_timeline_" + run + ".html'>Run #" + run + "</a>" +
+    "</div><div class='panel-body' id='run-" + run + "-div'></div>");
+
     var data_dict = getData(data);
     var tbl = document.createElement('table');
     tbl.setAttribute("id","table-run-" + run);
     tbl.setAttribute("class","table table-bordered table-hover table-striped");
-    var header = tbl.createTHead();
-    header.innerHTML = '<tr><th><a href="tempest_timeline_' + run + '.html"> Run #' + run + '</a></th></tr>';
     for (var key in data_dict) {
             var row = tbl.insertRow();
             var c1 = row.insertCell();
@@ -80,7 +70,7 @@ function createTable(data, run) {
             c2.innerHTML=data_dict[key];
     }
 
-    document.getElementById("run-summary-div").appendChild(tbl);
+    document.getElementById("run-"+run+"-div").appendChild(tbl);
 
 }
 
