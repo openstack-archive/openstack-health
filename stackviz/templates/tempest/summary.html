@@ -28,6 +28,19 @@
     </div>
 </div>
 
-<script>window.addEventListener('load', createTables( {{run_id}} ));</script>
+<script>
+var tempest_runs = '{{tempest_runs|join:","}}'.split(",");
+var urls = [];
+for (var run in tempest_runs) {
+    var url = "tempest_api_tree_" + run + ".json";
+    if ("{{use_gzip}}" === "True") {
+        url += ".gz";
+    }
+
+    urls.push({ url: url, run: run });
+}
+
+window.addEventListener('load', createTables( urls ));
+</script>
 
 {% endblock %}

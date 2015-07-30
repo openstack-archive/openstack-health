@@ -76,19 +76,13 @@ function createTable(data, run) {
 
 
 //@param run_id: The method is passed the latest run_id so it can populate the tables moving backwards
-function createTables(run_id) {
-
-    for (var i=run_id; i>=0; --i) {
-        //outer function so callback can use i "synchronously"
+function createTables(entries) {
+    entries.forEach(function(entry) {
         //TODO: Sort tables when inserting so they appear in correct order
-        !function(ii) {
-            d3.json("tempest_api_tree_" + i + ".json", function(error, data) {
-                if (error) throw error;
-                //create a table for the info
-                createTable(data, ii);
-
-            });
-        }(i)
-    }
-
+        d3.json(entry.url, function(error, data) {
+            if (error) throw error;
+            //create a table for the info
+            createTable(data, entry.run);
+        });
+    })
 }
