@@ -199,7 +199,13 @@ window.addEventListener('load', function() {
         url += ".gz";
     }
 
+    var dstatUrl = "dstat_log.csv";
+    if ("{{use_gzip}}" === "True") {
+        dstatUrl += ".gz";
+    }
+
     loadTimeline(url, {
+        dstatPath: dstatUrl,
         container: $("#timeline-container")[0],
         onClick: function(d) {
             var self = d3.select(this);

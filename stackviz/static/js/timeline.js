@@ -267,8 +267,89 @@ var initTimeline = function(options, data, timeExtents) {
     });
 };
 
+function fillArrayRight(array) {
+    // "fill" the array to the right, overwriting empty values with the next
+    // non-empty value to the left
+    // only false values will be overwritten (e.g. "", null, etc)
+    for (var i = 0; i < array.length - 1; i++) {
+        if (!array[i + 1]) {
+            array[i + 1] = array[i];
+        }
+    }
+}
+
+function mergeNames(primary, secondary) {
+    // "zip" together strings in the same position in each array, and do some
+    // basic cleanup of results
+    var ret = [];
+    for (var i = 0; i < primary.length; i++) {
+        ret.push((primary[i] + '_' + secondary[i]).replace(/[ /]/g, '_'));
+    }
+    return ret;
+}
+
+function chainLoadDstat(path, callback) {
+    "use strict";
+
+    d3.text(path, function(error, data) {
+        if (error) {
+            throw error;
+        }
+
+        var primaryNames = null;
+        var secondaryNames = null;
+        var names = null;
+
+        var dateFormat = d3.time.format("%d-%m %H:%M:%S");
+
+        var parsed = d3.csv.parseRows(data, function(row, i) {
+            if (i <= 4) { // header rows - ignore
+                return null;
+            } else if (i == 5) { // primary
+                primaryNames = row;
+                fillArrayRight(primaryNames);
+                return null;
+            } else if (i == 6) { // secondary
+                secondaryNames = row;
+
+                names = mergeNames(primaryNames, secondaryNames);
+                return null;
+            } else {
+                var ret = {};
+
+                for (var col = 0; col < row.length; col++) {
+                    var name = names[col];
+                    var value = row[col];
+
+                    if (name == "system_time") {
+                        value = dateFormat.parse(value);
+                    } else {
+                        value = parseFloat(value);
+                    }
+
+                    ret[name] = value;
+                }
+
+                return ret;
+            }
+        });
+        console.log(parsed);
+        callback(parsed);
+    });
+}
+
 function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
     "use strict";
+
+    if (options.dstatPath && !options.dstatData) {
+        // inject dstat asynchronously and retry
+        chainLoadDstat(options.dstatPath, function(data) {
+            options.dstatData = data;
+            loadTimeline(path, options);
+        });
+
+        return;
+    }
 
     d3.json(path, function(error, data) {
         if (error) {
@@ -297,8 +378,6 @@ function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
                 .key(function(d) { return parseWorker(d.tags); })
                 .sortKeys(d3.ascending)
                 .entries(data);
-
-        window.nested = nested;
 
         initTimeline(options, nested, [ minStart, maxEnd ]);
     });
