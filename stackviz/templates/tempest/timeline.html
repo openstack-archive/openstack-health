@@ -34,6 +34,19 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-clock-o fa-fw"></i> Timeline
+                <div class="pull-right">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            View Run...
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            {% for run_id in tempest_runs %}
+                                <li><a href="tempest_timeline_{{run_id}}.html">Run #{{run_id}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div id="timeline-container" class="panel-body">
