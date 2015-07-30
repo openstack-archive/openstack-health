@@ -48,7 +48,7 @@ function displayFailingTests(d) {
     $( "#failure-table-div" ).hide();
 }
 
-function createSunburst(run_id) {
+function createSunburst(url) {
 
     var width = 700,
         height = 500,
@@ -77,7 +77,7 @@ function createSunburst(run_id) {
         .innerRadius(function(d) { return Math.max(0, y(d.y)); })
         .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-    d3.json("tempest_api_tree_" + run_id + ".json", function(error, root) {
+    d3.json(url, function(error, root) {
         if (error) throw error;
 
         displayFailingTests(root);

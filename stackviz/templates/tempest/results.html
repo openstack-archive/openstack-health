@@ -68,7 +68,16 @@
     </div>
 </div>
 
-<script>window.addEventListener('load', createSunburst( {{run_id}} ));</script>
+<script>
+window.addEventListener('load', function() {
+    var url = "tempest_api_tree_{{run_id}}.json";
+    if ("{{use_gzip}}" === "True") {
+        url += ".gz";
+    }
+
+     createSunburst( url );
+});
+</script>
 <script>
 $(document).ready(function(){
     $("#show-hide-failures").click(function() {
