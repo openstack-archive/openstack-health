@@ -14,14 +14,3 @@ class TimelineView(TemplateView):
 
         return context
 
-
-class TimelineLatestView(RedirectView):
-    def get_redirect_url(self):
-        repos = get_repositories()
-        if not repos:
-            raise Http404("No testr repositories could be loaded")
-
-        return reverse('tempest_timeline', kwargs={
-            'run_id': repos[0].get_latest_run().get_id()
-        })
-
