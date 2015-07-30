@@ -92,6 +92,8 @@ TEST_REPOSITORIES = [
     BASE_DIR
 ]
 
+DSTAT_CSV = 'dstat.log'
+
 # If true, AJAX calls should attempt to load `*.json.gz` files rather than plain
 # `*.json` files. This should only ever be toggled `True` for static site
 # exports and is not currently supported on live servers.
