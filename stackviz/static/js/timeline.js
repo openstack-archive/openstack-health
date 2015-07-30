@@ -293,7 +293,9 @@ function chainLoadDstat(path, callback) {
 
     d3.text(path, function(error, data) {
         if (error) {
-            throw error;
+            console.log("Skipping load of dstat log due to error: ", error);
+            callback(null);
+            return;
         }
 
         var primaryNames = null;
@@ -333,7 +335,7 @@ function chainLoadDstat(path, callback) {
                 return ret;
             }
         });
-        console.log(parsed);
+
         callback(parsed);
     });
 }
