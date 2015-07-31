@@ -70,6 +70,29 @@ var parseWorker = function(tags) {
     return null;
 };
 
+var getDstatLanes = function(data) {
+    var row = data[0];
+    var lanes = [];
+
+    if ('total_cpu_usage_usr' in row && 'total_cpu_usage_sys' in row) {
+        lanes.push([{
+            scale: d3.scale.linear().domain([0, 100]),
+            value: function(d) {
+                return d.total_cpu_usage_wai;
+            },
+            color: "#e0bcbc"
+        }, {
+            scale: d3.scale.linear().domain([0, 100]),
+            value: function(d) {
+                return d.total_cpu_usage_usr + d.total_cpu_usage_sys;
+            },
+            color: "#668cb2"
+        }]);
+    }
+
+    return lanes;
+};
+
 var initTimeline = function(options, data, timeExtents) {
     "use strict";
 
@@ -78,10 +101,14 @@ var initTimeline = function(options, data, timeExtents) {
     // http://bl.ocks.org/bunkat/2338034
     var margin = { top: 20, right: 10, bottom: 10, left: 80 };
     var width = container.width() - margin.left - margin.right;
-    var height = 350 - margin.top - margin.bottom;
+    var height = 450 - margin.top - margin.bottom;
+
+    var dstatLanes = getDstatLanes(options.dstatData);
+    var lanes = data.length + dstatLanes.length;
 
     var miniHeight = data.length * 12 + 30;
-    var mainHeight = height - miniHeight - 10;
+    var dstatHeight = dstatLanes.length * 20 + 30;
+    var mainHeight = height - miniHeight - dstatHeight - 10;
 
     var x = d3.time.scale()
             .range([0, width])
@@ -95,6 +122,9 @@ var initTimeline = function(options, data, timeExtents) {
     var y2 = d3.scale.linear()
             .domain([0, data.length])
             .range([0, miniHeight]);
+    var y3 = d3.scale.linear()
+            .domain([0, dstatLanes.length])
+            .range([0, dstatHeight]);
 
     var chart = d3.select(options.container)
             .append("svg")
@@ -121,6 +151,32 @@ var initTimeline = function(options, data, timeExtents) {
 
     var itemGroups = main.append("g");
 
+    var dstatOffset = margin.top + mainHeight;
+    var dstatGroup = chart.append("g")
+            .attr("transform",
+                  "translate(" + margin.left + "," + dstatOffset + ")")
+            .attr("width", width)
+            .attr("height", dstatHeight);
+
+    dstatLanes.forEach(function(lane, i) {
+        var laneGroup = dstatGroup.append("g");
+
+        // precompute some known info for each lane's paths
+        lane.forEach(function(pathDef) {
+            var laneHeight = 0.8 * y3(1);
+
+            pathDef.scale.range([laneHeight, 0]);
+            pathDef.area = d3.svg.area()
+                    .x(function(d) { return x1(d.system_time); })
+                    .y0(function(d) { return y3(i) + laneHeight; })
+                    .y1(function(d) {
+                        return y3(i) + pathDef.scale(pathDef.value(d));
+                    });
+            pathDef.path = laneGroup.append("path")
+                    .style("fill", pathDef.color);
+        });
+    });
+
     var cursorGroup = main.append("g")
             .style("opacity", 0)
             .style("pointer-events", "none");
@@ -139,9 +195,10 @@ var initTimeline = function(options, data, timeExtents) {
             .style("text-anchor", "middle")
             .style("font", "9px sans-serif");
 
+    var miniOffset = margin.top + mainHeight + dstatHeight;
     var mini = chart.append("g")
             .attr("transform",
-                  "translate(" + margin.left + "," + (mainHeight + margin.top) + ")")
+                  "translate(" + margin.left + "," + miniOffset + ")")
             .attr("width", width)
             .attr("height", mainHeight)
             .attr("class", "mini");
@@ -218,6 +275,8 @@ var initTimeline = function(options, data, timeExtents) {
         var minExtent = brush.extent()[0];
         var maxExtent = brush.extent()[1];
 
+        // filter visible items to include only those within the current extent
+        // additionally prune extremely small values to improve performance
         var visibleItems = data.map(function(group) {
             return {
                 key: group.key,
@@ -275,6 +334,16 @@ var initTimeline = function(options, data, timeExtents) {
             binaryMinIndex(minExtent, dstat, timeFunc),
             binaryMaxIndex(maxExtent, dstat, timeFunc)
         );
+
+        // apply the current dataset (visibleEntries) to each dstat path
+        //
+        dstatLanes.forEach(function(lane) {
+            lane.forEach(function(pathDef) {
+                pathDef.path
+                        .datum(visibleEntries)
+                        .attr("d", pathDef.area);
+            });
+        });
     }
 
     function updateMiniItems() {
