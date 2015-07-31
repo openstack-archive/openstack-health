@@ -6,6 +6,56 @@ var statusColorMap = {
     "skip": "DodgerBlue"
 };
 
+var binaryMinIndex = function(min, array, func) {
+    "use strict";
+
+    var left = 0;
+    var right = array.length - 1;
+
+    while (left < right) {
+        var mid = Math.floor((left + right) / 2);
+
+        if (min < func(array[mid])) {
+            right = mid - 1;
+        } else if (min > func(array[mid])) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    if (func(array[left]) <= min) {
+        return left;
+    } else {
+        return left - 1;
+    }
+};
+
+var binaryMaxIndex = function(max, array, func) {
+    "use strict";
+
+    var left = 0;
+    var right = array.length - 1;
+
+    while (left < right) {
+        var mid = Math.floor((left + right) / 2);
+
+        if (max < func(array[mid])) {
+            right = mid - 1;
+        } else if (max > func(array[mid])) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    if (func(array[right]) <= max) {
+        return right + 1; // exclusive index
+    } else {
+        return right;
+    }
+};
+
 var parseWorker = function(tags) {
     "use strict";
 
@@ -206,6 +256,18 @@ var initTimeline = function(options, data, timeExtents) {
         groups.exit().remove();
     }
 
+    function updateDstat() {
+        var minExtent = brush.extent()[0];
+        var maxExtent = brush.extent()[1];
+
+        var dstat = options.dstatData;
+
+        var visibleEntries = dstat.slice(
+            binaryMinIndex(minExtent, dstat, function(d) { return d.system_time; }),
+            binaryMaxIndex(maxExtent, dstat, function(d) { return d.system_time; })
+        );
+    }
+
     function updateMiniItems() {
         var groups = miniGroups.selectAll("g")
                 .data(data, function(d) { return d.key; });
@@ -232,6 +294,7 @@ var initTimeline = function(options, data, timeExtents) {
 
         updateLanes();
         updateItems();
+        updateDstat();
     }
 
     brush.on("brush", update);
@@ -288,7 +351,7 @@ function mergeNames(primary, secondary) {
     return ret;
 }
 
-function chainLoadDstat(path, callback) {
+function chainLoadDstat(path, yearOverride, callback) {
     "use strict";
 
     d3.text(path, function(error, data) {
@@ -302,7 +365,8 @@ function chainLoadDstat(path, callback) {
         var secondaryNames = null;
         var names = null;
 
-        var dateFormat = d3.time.format("%d-%m %H:%M:%S");
+        // assume UTC - may not necessarily be the case?
+        var dateFormat = d3.time.format.utc("%d-%m %H:%M:%S");
 
         var parsed = d3.csv.parseRows(data, function(row, i) {
             if (i <= 4) { // header rows - ignore
@@ -325,6 +389,7 @@ function chainLoadDstat(path, callback) {
 
                     if (name == "system_time") {
                         value = dateFormat.parse(value);
+                        value.setFullYear(1900 + yearOverride);
                     } else {
                         value = parseFloat(value);
                     }
@@ -342,16 +407,6 @@ function chainLoadDstat(path, callback) {
 
 function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
     "use strict";
-
-    if (options.dstatPath && !options.dstatData) {
-        // inject dstat asynchronously and retry
-        chainLoadDstat(options.dstatPath, function(data) {
-            options.dstatData = data;
-            loadTimeline(path, options);
-        });
-
-        return;
-    }
 
     d3.json(path, function(error, data) {
         if (error) {
@@ -381,6 +436,16 @@ function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
                 .sortKeys(d3.ascending)
                 .entries(data);
 
-        initTimeline(options, nested, [ minStart, maxEnd ]);
+        // include dstat if available
+        if (options.dstatPath && !options.dstatData) {
+            var year = data[0].start_date.getYear();
+            chainLoadDstat(options.dstatPath, year, function(data) {
+                options.dstatData = data;
+                console.log(options);
+                initTimeline(options, nested, [ minStart, maxEnd ]);
+            });
+        } else {
+            initTimeline(options, nested, [ minStart, maxEnd ]);
+        }
     });
 }
