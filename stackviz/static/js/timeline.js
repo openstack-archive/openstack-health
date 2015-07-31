@@ -222,7 +222,15 @@ var initTimeline = function(options, data, timeExtents) {
             return {
                 key: group.key,
                 values: group.values.filter(function(e) {
-                    return e.start_date <= maxExtent && e.end_date >= minExtent;
+                    if (x1(e.end_date) - x1(e.start_date) < 2) {
+                        return false;
+                    }
+
+                    if (e.start_date > maxExtent || e.end_date < minExtent) {
+                        return false;
+                    }
+
+                    return true;
                 })
             };
         });
@@ -261,10 +269,11 @@ var initTimeline = function(options, data, timeExtents) {
         var maxExtent = brush.extent()[1];
 
         var dstat = options.dstatData;
+        var timeFunc = function(d) { return d.system_time; };
 
         var visibleEntries = dstat.slice(
-            binaryMinIndex(minExtent, dstat, function(d) { return d.system_time; }),
-            binaryMaxIndex(maxExtent, dstat, function(d) { return d.system_time; })
+            binaryMinIndex(minExtent, dstat, timeFunc),
+            binaryMaxIndex(maxExtent, dstat, timeFunc)
         );
     }
 
@@ -366,6 +375,8 @@ function chainLoadDstat(path, yearOverride, callback) {
         var names = null;
 
         // assume UTC - may not necessarily be the case?
+        // dstat doesn't include the year in its logs, so we'll need to copy it
+        // from the subunit logs
         var dateFormat = d3.time.format.utc("%d-%m %H:%M:%S");
 
         var parsed = d3.csv.parseRows(data, function(row, i) {
