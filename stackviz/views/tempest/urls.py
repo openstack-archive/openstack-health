@@ -3,7 +3,6 @@ from django.conf.urls import patterns, include, url
 from .results import ResultsView
 from .timeline import TimelineView
 from .aggregate import AggregateResultsView
-from .summary import SummaryView
 
 from .api import (TempestRunTreeEndpoint,
                   TempestRunRawEndpoint,
@@ -32,7 +31,4 @@ urlpatterns = patterns('',
     url(r'^aggregate.html$',
         AggregateResultsView.as_view(),
         name='tempest_aggregate_results'),
-    url(r'^summary.html$',
-        SummaryView.as_view(),
-        name='tempest_summary_results')
 )
