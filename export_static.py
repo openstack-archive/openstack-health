@@ -14,7 +14,6 @@ from stackviz import settings
 
 EXPORT_PATHS = [
     '/index.html',
-    '/tempest_summary.html',
     '/tempest_aggregate.html'
 ]
 
