@@ -78,3 +78,32 @@ StackViz:
   :code:`/opt/stack/tempest/`
 * DevStack: *TODO*
 * Dstat: *TODO*
+
+Testing
+=======
+
+Server (Python)
+---------------
+Server-side tests can be run using Tox::
+
+    tox
+
+A linter (flake8) will be run automatically and its output included in the
+report.
+
+Client (JavaScript)
+-------------------
+Client-side tests are run via `Karma <http://karma-runner.github.io/>`_.
+To run, install the :code:`karma-cli` and the npm dependencies::
+
+    npm install
+    sudo npm install --global karma-cli
+
+Then, run Karma::
+
+    karma start --single-run
+
+Tests will be executed using `PhantomJS <http://phantomjs.org/>`_ by default.
+Similarly, `ESLint <http://eslint.org/>`_ can be used to verify formatting::
+
+    eslint stackviz/static/
