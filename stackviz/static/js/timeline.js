@@ -71,6 +71,10 @@ var parseWorker = function(tags) {
 };
 
 var getDstatLanes = function(data) {
+    if (!data) {
+        return [];
+    }
+
     var row = data[0];
     var lanes = [];
 
@@ -324,6 +328,10 @@ var initTimeline = function(options, data, timeExtents) {
     }
 
     function updateDstat() {
+        if (dstatLanes.length == 0) {
+            return;
+        }
+
         var minExtent = brush.extent()[0];
         var maxExtent = brush.extent()[1];
 
