@@ -89,7 +89,7 @@ TEMPLATE_DIRS = [
 
 TEST_REPOSITORIES = [
     '/opt/stack/tempest/',
-    BASE_DIR
+    os.path.join(BASE_DIR, 'test_data')
 ]
 
 DSTAT_CSV = 'dstat.log'

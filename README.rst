@@ -74,6 +74,7 @@ Log locations are configured along with normal Django settings in
 :code:`stackviz/settings.py`. Several different types of logs are rendered by
 StackViz:
 
-* Tempest (`testr` repositories): :code:`./`, :code:`/opt/stack/tempest/`
+* Tempest (`testr` repositories): :code:`./test_data/`,
+  :code:`/opt/stack/tempest/`
 * DevStack: *TODO*
 * Dstat: *TODO*
