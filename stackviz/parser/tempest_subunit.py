@@ -11,7 +11,7 @@ from testrepository.repository.file import (RepositoryFactory,
                                             Repository,
                                             RepositoryNotFound)
 
-from stackviz.settings import TEST_REPOSITORIES
+from stackviz import settings
 
 
 NAME_SCENARIO_PATTERN = re.compile(r'^(.+) \((.+)\)$')
@@ -31,7 +31,7 @@ def get_repositories():
 
     ret = []
 
-    for path in TEST_REPOSITORIES:
+    for path in settings.TEST_REPOSITORIES:
         try:
             ret.append(factory.open(path))
         except (ValueError, RepositoryNotFound) as ex:
