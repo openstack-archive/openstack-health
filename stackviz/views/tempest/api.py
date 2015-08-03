@@ -16,10 +16,10 @@ _cached_tree = {}
 _cached_details = {}
 
 
-class NoRunDataException(Exception):
+class NoRunDataException(Http404):
     pass
 
-class RunNotFoundException(Exception):
+class RunNotFoundException(Http404):
     pass
 
 class TestNotFoundException(Http404):

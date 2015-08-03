@@ -27,6 +27,7 @@ class DStatCSVEndpoint(View):
         csv = _load_csv()
 
         if not csv:
-            raise Http404("DStat log not loaded.")
+            raise Http404("DStat log could not be loaded at path %s"
+                          % settings.DSTAT_CSV)
 
         return HttpResponse(csv, content_type="text/csv")

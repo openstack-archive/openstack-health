@@ -4,6 +4,7 @@ import shutil
 import django
 
 from argparse import ArgumentParser
+from django.http import Http404
 
 from django.test import RequestFactory
 from django.core.urlresolvers import resolve
@@ -41,10 +42,13 @@ def export_single_page(path, dest_dir, use_gzip=False):
         open_func = gzip.open
         dest_file += ".gz"
 
-    with open_func(os.path.join(dest_dir, dest_file), 'wb') as f:
+    try:
         content = fake_render_view(path).content
 
-        f.write(content)
+        with open_func(os.path.join(dest_dir, dest_file), 'wb') as f:
+            f.write(content)
+    except Http404 as ex:
+        print "Warning: skipping %s due to error: %s" % (path, ex.message)
 
 
 def init_django(args):
@@ -108,18 +112,23 @@ def main():
         print "Rendering:", path
         export_single_page(path, args.path)
 
-    for run_id in range(tempest_subunit.get_repositories()[0].count()):
-        print "Rendering views for tempest run #%d" % run_id
-        export_single_page('/tempest_timeline_%d.html' % run_id, args.path)
-        export_single_page('/tempest_results_%d.html' % run_id, args.path)
+    repos = tempest_subunit.get_repositories()
+    if repos:
+        for run_id in range(repos[0].count()):
+            print "Rendering views for tempest run #%d" % run_id
+            export_single_page('/tempest_timeline_%d.html' % run_id, args.path)
+            export_single_page('/tempest_results_%d.html' % run_id, args.path)
 
-        print "Exporting data for tempest run #%d" % run_id
-        export_single_page('/tempest_api_tree_%d.json' % run_id,
-                           args.path, args.gzip)
-        export_single_page('/tempest_api_raw_%d.json' % run_id,
-                           args.path, args.gzip)
-        export_single_page('/tempest_api_details_%d.json' % run_id,
-                           args.path, args.gzip)
+            print "Exporting data for tempest run #%d" % run_id
+            export_single_page('/tempest_api_tree_%d.json' % run_id,
+                               args.path, args.gzip)
+            export_single_page('/tempest_api_raw_%d.json' % run_id,
+                               args.path, args.gzip)
+            export_single_page('/tempest_api_details_%d.json' % run_id,
+                               args.path, args.gzip)
+    else:
+        print "Warning: no test repository could be loaded, no data will be " \
+              "available!"
 
     print "Exporting DStat log: dstat_log.csv"
     export_single_page('/dstat_log.csv', args.path, args.gzip)
