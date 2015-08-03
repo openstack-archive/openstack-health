@@ -121,6 +121,9 @@ def main():
         export_single_page('/tempest_api_details_%d.json' % run_id,
                            args.path, args.gzip)
 
+    print "Exporting DStat log: dstat_log.csv"
+    export_single_page('/dstat_log.csv', args.path, args.gzip)
+
 
 if __name__ == '__main__':
     main()
