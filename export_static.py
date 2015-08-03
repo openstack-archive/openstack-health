@@ -53,6 +53,12 @@ def init_django(args):
     settings.STATIC_URL = settings.STATIC_URL[1:]
     settings.USE_GZIP = args.gzip
 
+    if args.repository:
+        settings.TEST_REPOSITORIES = (args.repository,)
+
+    if args.dstat:
+        settings.DSTAT_CSV = args.dstat
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "stackviz.settings")
     django.setup()
 
@@ -64,10 +70,19 @@ def main():
                         help="The output directory. Will be created if it "
                              "doesn't already exist.")
     parser.add_argument("--ignore-bower",
-                        help="Ignore missing Bower components.")
+                        help="Ignore missing Bower components.",
+                        action="store_true")
     parser.add_argument("--gzip",
                         help="Enable gzip compression for data files.",
                         action="store_true")
+    parser.add_argument("--repository",
+                        help="The directory containing the `.testrepository` "
+                             "to export. If not provided, the `settings.py` "
+                             "configured value will be used.")
+    parser.add_argument("--dstat",
+                        help="The path to the DStat log file (CSV-formatted) "
+                             "to include. If not provided, the `settings.py` "
+                             "configured value will be used.")
 
     args = parser.parse_args()
 
