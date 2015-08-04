@@ -12,8 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.conf.urls import patterns, include, url
-from django.contrib import admin
+from django.conf.urls import include
+from django.conf.urls import patterns
+from django.conf.urls import url
 
 from stackviz.views.index import IndexView
 
@@ -23,6 +24,6 @@ urlpatterns = patterns(
     url(r'^index.html$', IndexView.as_view(), name="index"),
     url(r'^tempest_', include('stackviz.views.tempest.urls')),
     url(r'^devstack_', include('stackviz.views.devstack.urls')),
-    url(r'^upstream_', include ('stackviz.views.upstream.urls')),
-    url(r'^dstat_', include ('stackviz.views.dstat.urls'))
+    url(r'^upstream_', include('stackviz.views.upstream.urls')),
+    url(r'^dstat_', include('stackviz.views.dstat.urls'))
 )

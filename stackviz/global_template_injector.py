@@ -15,6 +15,7 @@
 from stackviz.parser.tempest_subunit import get_repositories
 from stackviz.settings import USE_GZIP
 
+
 def inject_extra_context(request):
     ret = {
         'use_gzip': USE_GZIP

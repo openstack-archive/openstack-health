@@ -15,9 +15,9 @@
 from django.http import Http404
 from restless.views import Endpoint
 
-from stackviz.parser.tempest_subunit import (get_repositories,
-                                             convert_run,
-                                             reorganize)
+from stackviz.parser.tempest_subunit import convert_run
+from stackviz.parser.tempest_subunit import get_repositories
+from stackviz.parser.tempest_subunit import reorganize
 
 #: Cached results from loaded subunit logs indexed by their run number
 _cached_run = {}
@@ -33,8 +33,10 @@ _cached_details = {}
 class NoRunDataException(Http404):
     pass
 
+
 class RunNotFoundException(Http404):
     pass
+
 
 class TestNotFoundException(Http404):
     pass
@@ -53,7 +55,7 @@ def _load_run(run_id):
         run = repos[0].get_test_run(run_id)
 
         # strip details for now
-        # TODO: provide method for getting details on demand
+        # TODO(provide method for getting details on demand)
         # (preferably for individual tests to avoid bloat)
         converted_run = convert_run(run, strip_details=True)
         _cached_run[run_id] = converted_run
@@ -118,4 +120,3 @@ class TempestRunTreeEndpoint(Endpoint):
 class TempestRunDetailsEndpoint(Endpoint):
     def get(self, request, run_id, test_name=None):
         return _load_details(run_id, test_name)
-

@@ -12,16 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
-import gzip
-import shutil
+from __future__ import print_function
+
 import django
+import gzip
+import os
+import shutil
 
 from argparse import ArgumentParser
 from django.http import Http404
 
-from django.test import RequestFactory
 from django.core.urlresolvers import resolve
+from django.test import RequestFactory
 
 from stackviz.parser import tempest_subunit
 from stackviz import settings
@@ -62,7 +64,7 @@ def export_single_page(path, dest_dir, use_gzip=False):
         with open_func(os.path.join(dest_dir, dest_file), 'wb') as f:
             f.write(content)
     except Http404 as ex:
-        print "Warning: skipping %s due to error: %s" % (path, ex.message)
+        print("Warning: skipping %s due to error: %s" % (path, ex.message))
 
 
 def init_django(args):
@@ -105,35 +107,35 @@ def main():
 
     if not args.ignore_bower:
         if not os.listdir(os.path.join('stackviz', 'static', 'components')):
-            print "Bower components have not been installed, please run " \
-                  "`bower install`"
+            print("Bower components have not been installed, please run "
+                  "`bower install`")
             return 1
 
     if os.path.exists(args.path):
         if os.listdir(args.path):
-            print "Destination exists and is not empty, cannot continue"
+            print("Destination exists and is not empty, cannot continue")
             return 1
 
         os.mkdir(args.path)
 
     init_django(args)
 
-    print "Copying static files ..."
+    print("Copying static files ...")
     shutil.copytree(os.path.join('stackviz', 'static'),
                     os.path.join(args.path, 'static'))
 
     for path in EXPORT_PATHS:
-        print "Rendering:", path
+        print("Rendering:", path)
         export_single_page(path, args.path)
 
     repos = tempest_subunit.get_repositories()
     if repos:
         for run_id in range(repos[0].count()):
-            print "Rendering views for tempest run #%d" % run_id
+            print("Rendering views for tempest run #%d" % (run_id))
             export_single_page('/tempest_timeline_%d.html' % run_id, args.path)
             export_single_page('/tempest_results_%d.html' % run_id, args.path)
 
-            print "Exporting data for tempest run #%d" % run_id
+            print("Exporting data for tempest run #%d" % (run_id))
             export_single_page('/tempest_api_tree_%d.json' % run_id,
                                args.path, args.gzip)
             export_single_page('/tempest_api_raw_%d.json' % run_id,
@@ -141,10 +143,10 @@ def main():
             export_single_page('/tempest_api_details_%d.json' % run_id,
                                args.path, args.gzip)
     else:
-        print "Warning: no test repository could be loaded, no data will be " \
-              "available!"
+        print("Warning: no test repository could be loaded, no data will "
+              "be available!")
 
-    print "Exporting DStat log: dstat_log.csv"
+    print("Exporting DStat log: dstat_log.csv")
     export_single_page('/dstat_log.csv', args.path, args.gzip)
 
 

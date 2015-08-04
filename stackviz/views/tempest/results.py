@@ -12,11 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.core.urlresolvers import reverse
-from django.views.generic import TemplateView, RedirectView
-from django.http import Http404
-
-from stackviz.parser.tempest_subunit import get_repositories
+from django.views.generic import TemplateView
 
 
 class ResultsView(TemplateView):
@@ -27,4 +23,3 @@ class ResultsView(TemplateView):
         context['run_id'] = self.kwargs['run_id']
 
         return context
-

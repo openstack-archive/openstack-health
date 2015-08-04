@@ -17,13 +17,13 @@ import re
 from functools import partial
 
 from subunit import ByteStreamToStreamResult
-from testtools import (StreamResult, StreamSummary,
-                       StreamToDict, CopyStreamResult)
+from testtools import CopyStreamResult
+from testtools import StreamResult
+from testtools import StreamSummary
+from testtools import StreamToDict
 
-from testrepository.repository import AbstractTestRun
-from testrepository.repository.file import (RepositoryFactory,
-                                            Repository,
-                                            RepositoryNotFound)
+from testrepository.repository.file import RepositoryFactory
+from testrepository.repository.file import RepositoryNotFound
 
 from stackviz import settings
 
@@ -33,6 +33,7 @@ NAME_TAGS_PATTERN = re.compile(r'^(.+)\[(.+)\]$')
 
 
 def get_repositories():
+
     """
     Loads all test repositories from locations configured in
     `settings.TEST_REPOSITORIES`. Only locations with a valid `.testrepository`
@@ -41,6 +42,7 @@ def get_repositories():
     :return: a list of loaded :class:`Repository` instances
     :rtype: list[Repository]
     """
+
     factory = RepositoryFactory()
 
     ret = []
@@ -48,7 +50,7 @@ def get_repositories():
     for path in settings.TEST_REPOSITORIES:
         try:
             ret.append(factory.open(path))
-        except (ValueError, RepositoryNotFound) as ex:
+        except (ValueError, RepositoryNotFound):
             # skip
             continue
 
@@ -56,7 +58,7 @@ def get_repositories():
 
 
 def _clean_name(name):
-    # TODO: currently throwing away other info - any worth keeping?
+    # TODO(currently throwing away other info - any worth keeping?)
     m = NAME_TAGS_PATTERN.match(name)
     if m:
         # tags = m.group(2).split(',')
@@ -94,16 +96,18 @@ def _read_test(test, out, strip_details):
 
 
 def convert_run(test_run, strip_details=False):
+
     """
-    Converts the given test run into a raw list of test dicts, using the subunit
-    stream as an intermediate format.
+    Converts the given test run into a raw list of test dicts, using the
+    subunit stream as an intermediate format.(see: read_subunit.py from
+    subunit2sql)
 
     :param test_run: the test run to convert
     :type test_run: AbstractTestRun
     :param strip_details: if True, remove test details (e.g. stdout/stderr)
     :return: a list of individual test results
     """
-    # see: read_subunit.py from subunit2sql
+
     ret = []
 
     stream = test_run.get_subunit_stream()
@@ -150,6 +154,7 @@ def _descend_recurse(parent, parts_remaining):
 
 
 def _descend(root, path):
+
     """
     Retrieves the node within the `root` dict denoted by the series of
     '.'-separated children as specified in `path`. Children for each node must
@@ -164,6 +169,7 @@ def _descend(root, path):
     :type path: str
     :return: the dict node representing the last child
     """
+
     path_parts = path.split('.')
     path_parts.reverse()
 
@@ -173,6 +179,7 @@ def _descend(root, path):
 
 
 def reorganize(converted_test_run):
+
     """
     Reorganizes and categorizes the given test run, forming tree of tests
     categorized by their module paths.
@@ -180,6 +187,7 @@ def reorganize(converted_test_run):
     :param converted_test_run:
     :return: a dict tree of test nodes, organized by module path
     """
+
     ret = {}
 
     for entry in converted_test_run:

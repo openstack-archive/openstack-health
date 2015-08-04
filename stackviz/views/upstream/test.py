@@ -14,9 +14,10 @@
 
 from django.views.generic import TemplateView
 
-# TODO: Planned f(x):
+# TODO(Planned functionality)
 # Compare one specific test against its moving average
 #
+
 
 class TestView(TemplateView):
     template_name = 'upstream/test.html'

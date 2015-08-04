@@ -12,12 +12,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-from .run import RunView
-from .test import TestView
+from run import RunView
+from test import TestView
 
-from .api import GerritURLEndpoint
+from api import GerritURLEndpoint
 
 urlpatterns = patterns('',
 

@@ -12,15 +12,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.conf.urls import patterns, include, url
 
-from .results import ResultsView
-from .timeline import TimelineView
-from .aggregate import AggregateResultsView
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-from .api import (TempestRunTreeEndpoint,
-                  TempestRunRawEndpoint,
-                  TempestRunDetailsEndpoint)
+from aggregate import AggregateResultsView
+from results import ResultsView
+from timeline import TimelineView
+
+from api import TempestRunDetailsEndpoint
+from api import TempestRunRawEndpoint
+from api import TempestRunTreeEndpoint
 
 
 urlpatterns = patterns('',

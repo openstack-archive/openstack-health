@@ -12,10 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-from .api import DStatCSVEndpoint
+from api import DStatCSVEndpoint
 
-urlpatterns = patterns('',
-    url(r'^log.csv$', DStatCSVEndpoint.as_view()),
-)
+
+urlpatterns = patterns('', url(r'^log.csv$', DStatCSVEndpoint.as_view()))

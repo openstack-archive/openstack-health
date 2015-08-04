@@ -33,7 +33,8 @@
 
 import os
 
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 from log_node import LogNode
 
 #: The format of the timestamp prefixing each log entry
@@ -41,6 +42,7 @@ TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 def extract_date(line):
+
     """
     Extracts a date from the given line, returning the parsed date and
     remaining contents of the line.
@@ -48,6 +50,7 @@ def extract_date(line):
     :param line: the line to extract a date from
     :return: a tuple of the parsed date and remaining line contents
     """
+
     date_str, message = line.split(' | ', 1)
     date = datetime.strptime(date_str, TIMESTAMP_FORMAT)
 
@@ -55,6 +58,7 @@ def extract_date(line):
 
 
 def parse_summary(summary_path):
+
     """
     Parses a summary logfile. Summary entries are prefixed with identical
     datestamps to those in the main log, but have only explicit log messages
@@ -66,6 +70,7 @@ def parse_summary(summary_path):
     :param summary_path: the path to the summary file to parse
     :return: a list of ordered `LogNode` instances
     """
+
     ret = []
 
     last_node = None
@@ -85,6 +90,7 @@ def parse_summary(summary_path):
 
 
 def parse_log(log_path):
+
     """
     Parses a general `stack.sh` logfile, forming a full log tree based on the
     hierarchy of nested commands as presented in the log.
@@ -96,6 +102,7 @@ def parse_log(log_path):
     :param log_path: the path to the logfile to parse
     :return: a list of parsed `LogNode` instances
     """
+
     last_depth = 1
     last_node = None
 
@@ -144,6 +151,7 @@ def parse_log(log_path):
 
 
 def merge(summary, log):
+
     """
     Merges general log entries into parent categories based on their timestamp
     relative to the summary output timestamp.
@@ -157,6 +165,7 @@ def merge(summary, log):
     :param log: the list of general log nodes
     :return: the original summary nodes with children set to the log nodes
     """
+
     if not summary:
         return []
 
@@ -180,6 +189,7 @@ def merge(summary, log):
 
 
 def bootstrap(log_path, summary_path=None):
+
     """
     Loads, parses, and merges the given log and summary files. The path to the
     summary file will be determined automatically based on the path to the
@@ -193,6 +203,7 @@ def bootstrap(log_path, summary_path=None):
     :return: a list of merged `LogNode` instances, or `None` if no matching
              summary file can be located automatically
     """
+
     if summary_path:
         return merge(parse_summary(summary_path), parse_log(log_path))
 
@@ -244,4 +255,3 @@ def get_command_totals(node, totals=None):
         totals[combined] += entry.duration_self
 
     return totals
-

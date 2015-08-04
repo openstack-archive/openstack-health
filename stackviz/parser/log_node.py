@@ -12,15 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from datetime import datetime
+from datetime import timedelta
+
 from inspect import getmembers
 from numbers import Number
-from datetime import datetime, timedelta
 
 #: The default cutoff for log entries when pruning takes place, in seconds
 DEFAULT_PRUNE_CUTOFF = 0.05
 
 
-class LogNode:
+class LogNode(object):
+
     """
     Represents an entry in an ordered event log, consisting of a date, message,
     and an arbitrary set of child nodes.
@@ -41,10 +44,12 @@ class LogNode:
 
     @property
     def duration(self):
+
         """
         Determines the overall duration for this node, beginning at this parent
         node's start time through the final child's ending time.
         """
+
         if self.children:
             last_sibling = self.children[-1].next_sibling
             if not last_sibling:
@@ -69,6 +74,7 @@ class LogNode:
         return self.next_sibling.date - self.date
 
     def traverse(self):
+
         """
         A generator that will traverse all child nodes of this log tree
         sequentially.
@@ -155,17 +161,18 @@ class LogNode:
 
 
 def prune(nodes, cutoff=DEFAULT_PRUNE_CUTOFF, fill=None):
+
     """
     Prunes the given list of `LogNode` instances, removing nodes whose duration
     is less than the given cutoff value. If a `fill` value is provided, removed
     nodes will be replaced with a single filler value accounting for the lost
-    duration. This filler value will be inserted at the end of the list and will
-    not be properly linked to other values.
+    duration. This filler value will be inserted at the end of the list and
+    will not be properly linked to other values.
 
     Note that returned values will not necessarily be a continuous list of
-    nodes. The original list will remain unchanged; sibling and child references
-    will not be modified to point to account any modified, removed, or added
-    nodes.
+    nodes. The original list will remain unchanged; sibling and child
+    references will not be modified to point to account any modified, removed,
+    or added nodes.
 
     :param nodes: the list of log nodes to prune
     :type nodes: list[LogNode]
@@ -176,6 +183,7 @@ def prune(nodes, cutoff=DEFAULT_PRUNE_CUTOFF, fill=None):
     :type cutoff: float
     :return: a (potentially) reduced list of nodes
     """
+
     ret = []
 
     fill_amount = 0.0

@@ -12,9 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
+from django.http import Http404
+from django.http import HttpResponse
 
-from django.http import HttpResponse, Http404
 from django.views.generic import View
 
 from stackviz import settings
