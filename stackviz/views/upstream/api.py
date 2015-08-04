@@ -21,13 +21,13 @@ from sqlalchemy.orm import sessionmaker
 
 
 def _get_runs(change_id):
+    """Returns the dict of run objects associated with a changeID
 
-    '''
     When given the change_id of a Gerrit change, a connection will be made to
     the upstream subunit2sql db and query all run meta having that change_id
     :param change_id: the Gerrit change_id to query
     :return: a json dict of run_meta objects
-    '''
+    """
 
     engine = create_engine('mysql://query:query@logstash.openstack.org' +
                            ':3306/subunit2sql')
@@ -51,12 +51,4 @@ def _get_runs(change_id):
 class GerritURLEndpoint(Endpoint):
 
     def get(self, request, change_id):
-
-        '''
-        :param request:
-        :param change_id:
-        :return: Collection of run objects associated with a
-                 specific CID
-        '''
-
         return _get_runs(change_id)

@@ -33,11 +33,11 @@ NAME_TAGS_PATTERN = re.compile(r'^(.+)\[(.+)\]$')
 
 
 def get_repositories():
+    """Loads all test repositories from locations configured in settings
 
-    """
-    Loads all test repositories from locations configured in
-    `settings.TEST_REPOSITORIES`. Only locations with a valid `.testrepository`
-    subdirectory containing valid test entries will be returned.
+    Where settings is found in`settings.TEST_REPOSITORIES`. Only locations
+    with a valid `.testrepository` subdirectory containing valid test entries
+    will be returned.
 
     :return: a list of loaded :class:`Repository` instances
     :rtype: list[Repository]
@@ -96,11 +96,10 @@ def _read_test(test, out, strip_details):
 
 
 def convert_run(test_run, strip_details=False):
+    """Converts the given test run into a raw list of test dicts.
 
-    """
-    Converts the given test run into a raw list of test dicts, using the
-    subunit stream as an intermediate format.(see: read_subunit.py from
-    subunit2sql)
+    Uses the subunit stream as an intermediate format.(see: read_subunit.py
+    from subunit2sql)
 
     :param test_run: the test run to convert
     :type test_run: AbstractTestRun
@@ -154,8 +153,8 @@ def _descend_recurse(parent, parts_remaining):
 
 
 def _descend(root, path):
+    """Retrieves the node within the 'root' dict
 
-    """
     Retrieves the node within the `root` dict denoted by the series of
     '.'-separated children as specified in `path`. Children for each node must
     be contained in a list `children`, and name comparison will be
@@ -179,8 +178,8 @@ def _descend(root, path):
 
 
 def reorganize(converted_test_run):
+    """Reorganizes test run, forming trees based on module paths
 
-    """
     Reorganizes and categorizes the given test run, forming tree of tests
     categorized by their module paths.
 

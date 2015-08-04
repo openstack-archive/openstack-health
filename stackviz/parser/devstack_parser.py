@@ -42,10 +42,9 @@ TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 def extract_date(line):
+    """Extracts a date from the given line
 
-    """
-    Extracts a date from the given line, returning the parsed date and
-    remaining contents of the line.
+    Returns the parsed date and remaining contents of the line.
 
     :param line: the line to extract a date from
     :return: a tuple of the parsed date and remaining line contents
@@ -58,11 +57,11 @@ def extract_date(line):
 
 
 def parse_summary(summary_path):
+    """Parses a summary logfile
 
-    """
-    Parses a summary logfile. Summary entries are prefixed with identical
-    datestamps to those in the main log, but have only explicit log messages
-    denoting the overall execution progress.
+    Summary entries are prefixed with identical datestamps to those in the
+    main log, but have only explicit log messages denoting the overall
+    execution progress.
 
     While summary entries are also printed into the main log, the explicit
     summary file is used to simplify parsing.
@@ -90,10 +89,10 @@ def parse_summary(summary_path):
 
 
 def parse_log(log_path):
+    """Parses a general `stack.sh` logfile, forming a full log tree
 
-    """
-    Parses a general `stack.sh` logfile, forming a full log tree based on the
-    hierarchy of nested commands as presented in the log.
+    The log tree is based on the hierarchy of nested commands as presented
+    in the log.
 
     Note that command output (that is, lines not prefixed with one or more '+'
     symbols) is ignored and will not be included it the returned list of log
@@ -151,8 +150,8 @@ def parse_log(log_path):
 
 
 def merge(summary, log):
+    """Merges log entries into parent categories based on timestamp.
 
-    """
     Merges general log entries into parent categories based on their timestamp
     relative to the summary output timestamp.
 
@@ -189,11 +188,10 @@ def merge(summary, log):
 
 
 def bootstrap(log_path, summary_path=None):
+    """Loads, parses, and merges the given log and summary files.
 
-    """
-    Loads, parses, and merges the given log and summary files. The path to the
-    summary file will be determined automatically based on the path to the
-    general logfile, but it must exist within the same directory.
+    The path to the summary file will be determined automatically based on the
+    path to the general logfile, but it must exist within the same directory.
 
     If the log file names are changed from their default values, a summary path
     can be explicitly provided using the optional `summary_path` parameter.

@@ -25,7 +25,7 @@ def inject_extra_context(request):
     if repos:
         ret.update({
             'tempest_latest_run': get_repositories()[0].latest_id(),
-            'tempest_runs': xrange(get_repositories()[0].count()),
+            'tempest_runs': range(get_repositories()[0].count()),
         })
 
     return ret

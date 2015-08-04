@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import six
+
 from datetime import datetime
 from datetime import timedelta
 
@@ -23,9 +25,9 @@ DEFAULT_PRUNE_CUTOFF = 0.05
 
 
 class LogNode(object):
+    """Represents an entry in an ordered event log.
 
-    """
-    Represents an entry in an ordered event log, consisting of a date, message,
+    Represents an entry in an ordered event log. consisting of a date, message,
     and an arbitrary set of child nodes.
 
     Note that entries are assumed to be strictly sequential and linear, and all
@@ -44,8 +46,8 @@ class LogNode(object):
 
     @property
     def duration(self):
+        """Determines aggregate duration for this node
 
-        """
         Determines the overall duration for this node, beginning at this parent
         node's start time through the final child's ending time.
         """
@@ -74,11 +76,7 @@ class LogNode(object):
         return self.next_sibling.date - self.date
 
     def traverse(self):
-
-        """
-        A generator that will traverse all child nodes of this log tree
-        sequentially.
-        """
+        """A generator that traverses all nodes of this tree sequentially"""
 
         for child in self.children:
             yield child
@@ -149,7 +147,7 @@ class LogNode(object):
                 else:
                     if value is None:
                         p.text(tc.Blue)
-                    elif isinstance(value, basestring):
+                    elif isinstance(value, six.string_types):
                         p.text(tc.Red)
                     elif isinstance(value, Number):
                         p.text(tc.DarkGray)
@@ -161,8 +159,8 @@ class LogNode(object):
 
 
 def prune(nodes, cutoff=DEFAULT_PRUNE_CUTOFF, fill=None):
+    """Prunes given list of `LogNode` instances.
 
-    """
     Prunes the given list of `LogNode` instances, removing nodes whose duration
     is less than the given cutoff value. If a `fill` value is provided, removed
     nodes will be replaced with a single filler value accounting for the lost
