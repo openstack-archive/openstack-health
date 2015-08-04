@@ -1,14 +1,36 @@
 {% extends 'template.html' %}
+{% load staticfiles %}
 
 {% block title %}Upstream Run Metadata{% endblock %}
 
+{% block head-extra %}<script src="{% static 'js/upstream_run.js' %}"></script>{% endblock %}
+
 {% block body %}
+
+
 
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Upstream Run Metadata</h1>
+        <h1 class="page-header">Upstream Run Data</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel panel-heading" id="runs-panel-heading">Analyze Run</div>
+                <div class="panel panel-body">
+                    <div id="gerrit-panel">
+                        Enter a Gerrit ChangeID: <input type="text" id="gerrit-id">
+                        <input id="gerrit-id-button" type="button" value="Submit">
+                    </div>
+                    <div id="runs-panel"></div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
 
 {% endblock %}
