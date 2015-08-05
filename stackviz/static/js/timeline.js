@@ -532,9 +532,9 @@ function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
     data = data.filter(function (d) { return d.duration > 0; });
 
     var nested = d3.nest()
-    .key(function(d) { return parseWorker(d.tags); })
-    .sortKeys(d3.ascending)
-    .entries(data);
+        .key(function(d) { return parseWorker(d.tags); })
+        .sortKeys(d3.ascending)
+        .entries(data);
 
     // include dstat if available
     if (options.dstatPath && !options.dstatData) {
