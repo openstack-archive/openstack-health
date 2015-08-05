@@ -16,6 +16,41 @@
 
 "use strict";
 
+function populateTable(d, textColor) {
+    var oldtbl = document.getElementById("result-table-div");
+    oldtbl.innerHTML = "";
+    var tbl = document.createElement('table');
+    tbl.setAttribute("id","test-table");
+    tbl.setAttribute("class","table table-bordered table-hover table-striped");
+        if (typeof d.children == "undefined") {
+            for (var key in d) {
+                if (key=="status" || key=="name_full" || key=="name" || key=="duration" || key=="tags" || key=="timestamps") {
+                    var row = tbl.insertRow();
+                    var td1 = row.insertCell();
+                    var td2 = row.insertCell();
+                    td1.innerHTML = key;
+                    td2.innerHTML = d[key];
+                }
+            }
+            document.getElementById("result-table-div").appendChild(tbl);
+            document.getElementById("table-heading").innerHTML=d.name;
+        }
+        else {
+            for (var j in d.children) {
+                var row = tbl.insertRow();
+                var td1 = row.insertCell();
+                var td2 = row.insertCell();
+                td1.innerHTML = d.children[j].name;
+                td2.innerHTML = calculateChildrenTime(d.children[j]).toFixed(2);
+                td1.style.color = textColor(d.children[j]);
+                document.getElementById("result-table-div").appendChild(tbl);
+                document.getElementById("table-heading").innerHTML=d.name +
+                    ": " + calculateChildrenTime(d).toFixed(2) + " seconds"
+                $( "table-test" ).DataTable();
+            }
+        }
+}
+
 function calculateChildrenTime(i) {
      var dur = 0;
      if (typeof i.duration !== "undefined") {
@@ -53,6 +88,7 @@ function displayFailingTests(d) {
     findFailingTests(d,failureList);
     for (var row in failureList) {
         var newRow = tbl.insertRow();
+        newRow.setAttribute("class","failure-row");
         var td1 = newRow.insertCell();
         var td2 = newRow.insertCell();
         td1.innerHTML = failureList[row].name_full;
@@ -62,6 +98,7 @@ function displayFailingTests(d) {
     document.getElementById("failure-table-div").appendChild(tbl);
     $( "#failure-table-div" ).hide();
 }
+
 
 function createSunburst(url) {
 
@@ -108,40 +145,10 @@ function createSunburst(url) {
             path.transition()
               .duration(750)
               .attrTween("d", arcTween(d));
+            populateTable(d,mouse);
+        }
 
-            var oldtbl = document.getElementById("result-table-div");
-            oldtbl.innerHTML = "";
-            var tbl = document.createElement('table');
-            tbl.setAttribute("id","test-table");
-            tbl.setAttribute("class","table table-bordered table-hover table-striped");
-            if (typeof d.children == "undefined") {
-                for (var key in d) {
-                    if (key=="status" || key=="name_full" || key=="name" || key=="duration" || key=="tags" || key=="timestamps") {
-                        var row = tbl.insertRow();
-                        var td1 = row.insertCell();
-                        var td2 = row.insertCell();
-                        td1.innerHTML = key;
-                        td2.innerHTML = d[key];
-                    }
-                }
-                document.getElementById("result-table-div").appendChild(tbl);
-                document.getElementById("table-heading").innerHTML=d.name;
-            }
-            else {
-                for (var j in d.children) {
-                    var row = tbl.insertRow();
-                    var td1 = row.insertCell();
-                    var td2 = row.insertCell();
-                    td1.innerHTML = d.children[j].name;
-                    td2.innerHTML = calculateChildrenTime(d.children[j]).toFixed(2);
-                    td1.style.color = color(d.children[j].name);
-                    document.getElementById("result-table-div").appendChild(tbl);
-                    document.getElementById("table-heading").innerHTML=d.name +
-                        ": " + calculateChildrenTime(d).toFixed(2) + " seconds"
-                    $( "table-test" ).DataTable();
-                }
-            }
-          }
+        function mouse(d) { return color(d.name); }
 
     });
 

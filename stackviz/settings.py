@@ -102,13 +102,17 @@ TEMPLATE_DIRS = [
 ]
 
 TEST_REPOSITORIES = [
-    '/opt/stack/tempest/',
+    '/home/clark/Shared',
     os.path.join(BASE_DIR, 'test_data')
 ]
 
 DSTAT_CSV = 'dstat.log'
 
-# If true, AJAX calls should attempt to load `*.json.gz` files rather than plain
-# `*.json` files. This should only ever be toggled `True` for static site
+# If true, AJAX calls should attempt to load `*.json.gz` files rather than
+# plain `*.json` files. This should only ever be toggled `True` for static site
 # exports and is not currently supported on live servers.
 USE_GZIP = False
+
+# Toggles offline/online mode for static export. Will trigger menu to show
+# either the full site or only links supported by static exporter.
+OFFLINE = False

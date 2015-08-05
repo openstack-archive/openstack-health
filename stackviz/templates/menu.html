@@ -30,18 +30,18 @@
                 <!--<li>
                     <a href="/tempest/"><i class="fa fa-database fa-fw"></i> Compare</a>
                 </li>-->
-                <li>
+                <li class="online">
                     <a href="tempest_aggregate.html"><i class="fa fa-bar-chart-o fa-fw"></i> Aggregate Results</a>
                 </li>
             </ul>
             <!-- /.nav-second-level -->
         </li>
-        <li>
+        <li class="online">
             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Upstream<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                <!--<li>
+                <li>
                     <a href="upstream_test.html"><i class="fa fa-bar-chart-o fa-fw"></i> Test Stats</a>
-                </li>-->
+                </li>
                 <li>
                     <a href="upstream_run.html"><i class="fa fa-clock-o fa-fw"></i> Run Data</a>
                 </li>
@@ -49,5 +49,12 @@
             <!-- /.nav-second-level -->
         </li>
     </ul>
+    <script>
+    window.addEventListener('load', function() {
+        if ("{{offline}}" === "True") {
+            $(".online").hide();
+        }
+    });
+    </script>
 </div>
 <!-- /.sidebar-collapse -->

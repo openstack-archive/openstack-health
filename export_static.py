@@ -71,6 +71,7 @@ def init_django(args):
     # remove leading / from static URL to give them correct filesystem paths
     settings.STATIC_URL = settings.STATIC_URL[1:]
     settings.USE_GZIP = args.gzip
+    settings.OFFLINE = True
 
     if args.repository:
         settings.TEST_REPOSITORIES = (args.repository,)
