@@ -102,7 +102,6 @@ TEMPLATE_DIRS = [
 ]
 
 TEST_REPOSITORIES = [
-    '/home/clark/Shared',
     os.path.join(BASE_DIR, 'test_data')
 ]
 
