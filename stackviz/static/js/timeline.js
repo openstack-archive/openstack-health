@@ -100,13 +100,15 @@ var getDstatLanes = function(data) {
       value: function(d) {
         return d.total_cpu_usage_wai;
       },
-      color: "#e0bcbc"
+      color: "#e0bcbc",
+      text: "CPU wait"
     }, {
       scale: d3.scale.linear().domain([0, 100]),
       value: function(d) {
         return d.total_cpu_usage_usr + d.total_cpu_usage_sys;
       },
-      color: "#668cb2"
+      color: "#668cb2",
+      text: "CPU (user+sys)"
     }]);
   }
 
@@ -179,9 +181,27 @@ var initTimeline = function(options, data, timeExtents) {
   dstatLanes.forEach(function(lane, i) {
     var laneGroup = dstatGroup.append("g");
 
+    var text = laneGroup.append("text")
+        .attr("y", function(d) { return y3(i + 0.5); })
+        .attr("dy", ".5ex")
+        .attr("text-anchor", "end")
+        .style("font", "10px sans-serif");
+
+    var dy = 0;
+
     // precompute some known info for each lane's paths
     lane.forEach(function(pathDef) {
       var laneHeight = 0.8 * y3(1);
+
+      if ('text' in pathDef) {
+        text.append("tspan")
+            .attr("x", -margin.right)
+            .attr("dy", dy)
+            .text(pathDef.text)
+            .attr("fill", function(d) { return pathDef.color; });
+
+        dy += 10;
+      }
 
       pathDef.scale.range([laneHeight, 0]);
       pathDef.area = d3.svg.area()
