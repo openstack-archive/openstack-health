@@ -16,6 +16,8 @@
 
 "use strict";
 
+var runId = null;
+
 function populateTable(d, textColor) {
     var oldtbl = document.getElementById("result-table-div");
     oldtbl.innerHTML = "";
@@ -34,6 +36,8 @@ function populateTable(d, textColor) {
             }
             document.getElementById("result-table-div").appendChild(tbl);
             document.getElementById("table-heading").innerHTML=d.name;
+            addDialogButton("#result-table-div",runId);
+            showDetails(d);
         }
         else {
             for (var j in d.children) {
@@ -100,7 +104,8 @@ function displayFailingTests(d) {
 }
 
 
-function createSunburst(url) {
+function createSunburst(url, run_id) {
+    runId = run_id;
 
     var width = 700,
         height = 500,
