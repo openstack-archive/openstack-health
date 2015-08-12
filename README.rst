@@ -9,7 +9,7 @@ Installation
 ============
 Installation of the frontend requires Node.js and Bower. On Ubuntu::
 
-    sudo apt-get install nodejs npm
+    sudo apt-get install nodejs npm nodejs-legacy
     sudo npm install -g bower
 
 Then, install the Bower components by running, from the project directory::
