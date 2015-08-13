@@ -119,7 +119,7 @@ def main():
         if os.listdir(args.path):
             print("Destination exists and is not empty, cannot continue")
             return 1
-
+    else:
         os.mkdir(args.path)
 
     init_django(args)
