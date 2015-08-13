@@ -35,6 +35,9 @@ EXPORT_PATHS = [
 ]
 
 
+_base = os.path.dirname(os.path.abspath(__file__))
+
+
 def fake_render_view(path):
     factory = RequestFactory()
     request = factory.get(path)
@@ -107,7 +110,7 @@ def main():
     args = parser.parse_args()
 
     if not args.ignore_bower:
-        if not os.listdir(os.path.join('stackviz', 'static', 'components')):
+        if not os.listdir(os.path.join(_base, 'static', 'components')):
             print("Bower components have not been installed, please run "
                   "`bower install`")
             return 1
@@ -122,7 +125,7 @@ def main():
     init_django(args)
 
     print("Copying static files ...")
-    shutil.copytree(os.path.join('stackviz', 'static'),
+    shutil.copytree(os.path.join(_base, 'static'),
                     os.path.join(args.path, 'static'))
 
     for path in EXPORT_PATHS:
