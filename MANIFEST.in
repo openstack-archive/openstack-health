@@ -4,3 +4,5 @@ exclude .gitignore
 exclude .gitreview
 
 global-exclude *.pyc
+
+graft stackviz/static/components
