@@ -13,6 +13,7 @@
 # under the License.
 
 import re
+import subunit
 
 from functools import partial
 
@@ -95,23 +96,17 @@ def _read_test(test, out, strip_details):
     })
 
 
-def convert_run(test_run, strip_details=False):
-    """Converts the given test run into a raw list of test dicts.
+def convert_stream(stream_file, strip_details=False):
+    '''Converts a subunit stream into a raw list of test dicts.
 
-    Uses the subunit stream as an intermediate format.(see: read_subunit.py
-    from subunit2sql)
-
-    :param test_run: the test run to convert
-    :type test_run: AbstractTestRun
+    :param stream_file: subunit stream to be converted
     :param strip_details: if True, remove test details (e.g. stdout/stderr)
     :return: a list of individual test results
-    """
+    '''
 
     ret = []
 
-    stream = test_run.get_subunit_stream()
-    result_stream = ByteStreamToStreamResult(stream)
-
+    result_stream = subunit.ByteStreamToStreamResult(stream_file)
     starts = StreamResult()
     summary = StreamSummary()
     outcomes = StreamToDict(partial(_read_test,
@@ -125,6 +120,22 @@ def convert_run(test_run, strip_details=False):
     result.stopTestRun()
 
     return ret
+
+
+
+def convert_run(test_run, strip_details=False):
+    """Converts the given test run into a raw list of test dicts.
+
+    Uses the subunit stream as an intermediate format.(see: read_subunit.py
+    from subunit2sql)
+
+    :param test_run: the test run to convert
+    :type test_run: AbstractTestRun
+    :param strip_details: if True, remove test details (e.g. stdout/stderr)
+    :return: a list of individual test results
+    """
+
+    return convert_stream(test_run.get_subunit_stream(), strip_details)
 
 
 def _descend_recurse(parent, parts_remaining):
