@@ -506,6 +506,8 @@ var initTimeline = function(options, data, timeExtents) {
     main.attr("width", width);
     mini.attr("width", width);
 
+    laneLines.selectAll(".laneLine").attr("x2", width);
+
     brush.extent(brushExtent);
 
     updateMiniItems();
