@@ -40,7 +40,9 @@ var binaryMinIndex = function(min, array, func) {
     }
   }
 
-  if (func(array[left]) <= min) {
+  if (left >= array.length) {
+    return array.length - 1;
+  } else if (func(array[left]) <= min) {
     return left;
   } else {
     return left - 1;
@@ -65,7 +67,9 @@ var binaryMaxIndex = function(max, array, func) {
     }
   }
 
-  if (func(array[right]) <= max) {
+  if (right < 0) {
+    return 0;
+  } else if (func(array[right]) <= max) {
     return right + 1; // exclusive index
   } else {
     return right;
