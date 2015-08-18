@@ -403,6 +403,7 @@ var initTimeline = function(options, data, timeExtents) {
     rects.enter().append("rect")
         .attr("y", function(d) { return y1(parseWorker(d.tags)); })
         .attr("height", 0.8 * y1(1))
+        .attr("stroke", 'rgba(100, 100, 100, 0.25)')
         .attr("clip-path", "url(#clip)");
 
     rects
@@ -463,7 +464,9 @@ var initTimeline = function(options, data, timeExtents) {
         .attr("height", 10);
 
     rects.attr("x", function(d) { return x(d.start_date); })
-        .attr("width", function(d) { return x(d.end_date) - x(d.start_date); });
+        .attr("width", function(d) { return x(d.end_date) - x(d.start_date); })
+        .attr("stroke", 'rgba(100, 100, 100, 0.25)')
+        .attr("fill", function(d) { return statusColorMap[d.status]; });
 
     rects.exit().remove();
     groups.exit().remove();
