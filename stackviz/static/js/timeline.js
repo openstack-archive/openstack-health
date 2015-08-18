@@ -90,7 +90,7 @@ var parseWorker = function(tags) {
   return null;
 };
 
-var getDstatLanes = function(data) {
+var getDstatLanes = function(data, mins, maxes) {
   if (!data) {
     return [];
   }
@@ -104,15 +104,55 @@ var getDstatLanes = function(data) {
       value: function(d) {
         return d.total_cpu_usage_wai;
       },
-      color: "#e0bcbc",
+      color: "rgba(224, 188, 188, 1)",
       text: "CPU wait"
     }, {
       scale: d3.scale.linear().domain([0, 100]),
       value: function(d) {
         return d.total_cpu_usage_usr + d.total_cpu_usage_sys;
       },
-      color: "#668cb2",
+      color: "rgba(102, 140, 178, 0.75)",
       text: "CPU (user+sys)"
+    }]);
+  }
+
+  if ('memory_usage_used' in row) {
+    lanes.push([{
+        scale: d3.scale.linear().domain([0, maxes.memory_usage_used]),
+        value: function(d) { return d.memory_usage_used; },
+        color: "rgba(102, 140, 178, 0.75)",
+        text: "Memory"
+    }]);
+  }
+
+  if ('net_total_recv' in row && 'net_total_send' in row) {
+    lanes.push([{
+      scale: d3.scale.linear().domain([0, maxes.net_total_recv]),
+      value: function(d) { return d.net_total_recv; },
+      color: "rgba(224, 188, 188, 1)",
+      text: "Net Down"
+    }, {
+      scale: d3.scale.linear().domain([0, maxes.net_total_send]),
+      value: function(d) { return d.net_total_send; },
+      color: "rgba(102, 140, 178, 0.75)",
+      text: "Net Up",
+      type: "line"
+    }]);
+  }
+
+  if ('dsk_total_read' in row && 'dsk_total_writ' in row) {
+    lanes.push([{
+      scale: d3.scale.linear().domain([0, maxes.dsk_total_read]),
+      value: function(d) { return d.dsk_total_read; },
+      color: "rgba(224, 188, 188, 1)",
+      text: "Disk Read",
+      type: "line"
+    }, {
+      scale: d3.scale.linear().domain([0, maxes.dsk_total_writ]),
+      value: function(d) { return d.dsk_total_writ; },
+      color: "rgba(102, 140, 178, 0.75)",
+      text: "Disk Write",
+      type: "line"
     }]);
   }
 
@@ -127,13 +167,16 @@ var initTimeline = function(options, data, timeExtents) {
   // http://bl.ocks.org/bunkat/2338034
   var margin = { top: 20, right: 10, bottom: 10, left: 80 };
   var width = container.width() - margin.left - margin.right;
-  var height = 450 - margin.top - margin.bottom;
+  var height = 550 - margin.top - margin.bottom;
 
-  var dstatLanes = getDstatLanes(options.dstatData);
+  var dstatLanes = getDstatLanes(
+    options.dstatData,
+    options.dstatMinimums,
+    options.dstatMaximums);
   var lanes = data.length + dstatLanes.length;
 
   var miniHeight = data.length * 12 + 30;
-  var dstatHeight = dstatLanes.length * 20 + 30;
+  var dstatHeight = dstatLanes.length * 30 + 30;
   var mainHeight = height - miniHeight - dstatHeight - 10;
 
   var x = d3.time.scale()
@@ -208,14 +251,28 @@ var initTimeline = function(options, data, timeExtents) {
       }
 
       pathDef.scale.range([laneHeight, 0]);
-      pathDef.area = d3.svg.area()
-          .x(function(d) { return x1(d.system_time); })
-          .y0(function(d) { return y3(i) + laneHeight; })
-          .y1(function(d) {
-            return y3(i) + pathDef.scale(pathDef.value(d));
-          });
-      pathDef.path = laneGroup.append("path")
-          .style("fill", pathDef.color);
+
+      pathDef.path = laneGroup.append("path");
+      if (pathDef.type === "line") {
+        pathDef.area = d3.svg.line()
+            .x(function(d) { return x1(d.system_time); })
+            .y(function(d) { return y3(i) + pathDef.scale(pathDef.value(d)); });
+
+        pathDef.path
+            .style("stroke", pathDef.color)
+            .style("stroke-width", "1.5px")
+            .style("fill", "none");
+            //.style("shape-rendering", 'crispEdges');
+      } else {
+        pathDef.area = d3.svg.area()
+            .x(function(d) { return x1(d.system_time); })
+            .y0(function(d) { return y3(i) + laneHeight; })
+            .y1(function(d) {
+              return y3(i) + pathDef.scale(pathDef.value(d));
+            });
+
+        pathDef.path.style("fill", pathDef.color);
+      }
     });
   });
 
@@ -487,6 +544,9 @@ function chainLoadDstat(path, yearOverride, callback) {
     var secondaryNames = null;
     var names = null;
 
+    var minimums = {};
+    var maximums = {};
+
     // assume UTC - may not necessarily be the case?
     // dstat doesn't include the year in its logs, so we'll need to copy it
     // from the subunit logs
@@ -518,6 +578,14 @@ function chainLoadDstat(path, yearOverride, callback) {
             value = parseFloat(value);
           }
 
+          if (!(name in minimums) || value < minimums[name]) {
+            minimums[name] = value;
+          }
+
+          if (!(name in maximums) || value > maximums[name]) {
+            maximums[name] = value;
+          }
+
           ret[name] = value;
         }
 
@@ -525,7 +593,7 @@ function chainLoadDstat(path, yearOverride, callback) {
       }
     });
 
-    callback(parsed);
+    callback(parsed, minimums, maximums);
   });
 }
 
@@ -563,8 +631,10 @@ function loadTimeline(path, options) { // eslint-disable-line no-unused-vars
     // include dstat if available
     if (options.dstatPath && !options.dstatData) {
       var year = data[0].start_date.getYear();
-      chainLoadDstat(options.dstatPath, year, function(data) {
+      chainLoadDstat(options.dstatPath, year, function(data, mins, maxes) {
         options.dstatData = data;
+        options.dstatMinimums = mins;
+        options.dstatMaximums = maxes;
 
         initTimeline(options, nested, [ minStart, maxEnd ]);
       });
