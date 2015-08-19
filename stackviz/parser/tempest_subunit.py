@@ -59,7 +59,7 @@ def get_repositories():
 
 
 def _clean_name(name):
-    # TODO(currently throwing away other info - any worth keeping?)
+    # TODO(Tim Buckley) currently throwing away other info - any worth keeping?
     m = NAME_TAGS_PATTERN.match(name)
     if m:
         # tags = m.group(2).split(',')
@@ -97,12 +97,12 @@ def _read_test(test, out, strip_details):
 
 
 def convert_stream(stream_file, strip_details=False):
-    '''Converts a subunit stream into a raw list of test dicts.
+    """Converts a subunit stream into a raw list of test dicts.
 
     :param stream_file: subunit stream to be converted
     :param strip_details: if True, remove test details (e.g. stdout/stderr)
     :return: a list of individual test results
-    '''
+    """
 
     ret = []
 
