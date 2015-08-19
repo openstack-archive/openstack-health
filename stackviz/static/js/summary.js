@@ -68,26 +68,38 @@ function getData(data) {
 }
 
 
-function createTable(data, run) {
+function createTable(data, entry) {
+    var container = $("<div>")
+            .addClass('col-lg-6' )
+            .appendTo($("#run-summary-div"));
+    
+    var panel = $("<div>")
+            .addClass('panel panel-default')
+            .appendTo(container);
+    
+    var head = $("<div>")
+            .addClass("panel-heading")
+            .appendTo(panel);
+    head.append($("<a>", {
+        href: 'tempest_timeline_' + entry.provider + '_' + entry.run + '.html',
+        text: entry.providerDescription + ", run #" + entry.run
+    }));
 
-    $('#run-summary-div').append("<div class='col-lg-6'><div class='panel panel-default'> " +
-    "<div class='panel-heading'><a href='tempest_timeline_" + run + ".html'>Run #" + run + "</a>" +
-    "</div><div class='panel-body' id='run-" + run + "-div'></div>");
+    var body = $("<div>")
+            .addClass("panel-body")
+            .appendTo(panel);
+    
+    var table = $("<table>")
+            .addClass("table table-bordered table-hover table-striped")
+            .appendTo(body);
 
     var data_dict = getData(data);
-    var tbl = document.createElement('table');
-    tbl.setAttribute("id","table-run-" + run);
-    tbl.setAttribute("class","table table-bordered table-hover table-striped");
     for (var key in data_dict) {
-            var row = tbl.insertRow();
-            var c1 = row.insertCell();
-            c1.innerHTML=key;
-            var c2 = row.insertCell();
-            c2.innerHTML=data_dict[key];
+        $("<tr>")
+                .append($("<td>").text(key))
+                .append($("<td>").text(data_dict[key]))
+                .appendTo(table);
     }
-
-    document.getElementById("run-"+run+"-div").appendChild(tbl);
-
 }
 
 
@@ -100,7 +112,7 @@ function createTables(entries) {
             //create a table for the info
             // TODO: entry now has provider description, etc which should be
             // shown (categorized?)
-            createTable(data, entry.run);
+            createTable(data, entry);
         });
     })
 }
