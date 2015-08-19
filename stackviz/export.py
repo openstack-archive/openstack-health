@@ -76,7 +76,10 @@ def init_django(args):
     settings.USE_GZIP = args.gzip
     settings.OFFLINE = True
 
-    print(repr(args))
+    if args.repository or args.stream_file or args.stdin:
+        settings.TEST_REPOSITORIES = []
+        settings.TEST_STREAMS = []
+        settings.TEST_STREAM_STDIN = False
 
     if args.repository:
         settings.TEST_REPOSITORIES = args.repository
