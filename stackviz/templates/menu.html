@@ -40,6 +40,7 @@
             </ul>
             <!-- /.nav-second-level -->
         </li>
+        {% if not offline %}
         <li class="online">
             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Upstream<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
@@ -52,13 +53,7 @@
             </ul>
             <!-- /.nav-second-level -->
         </li>
+        {% endif %}
     </ul>
-    <script>
-    window.addEventListener('load', function() {
-        if ("{{offline}}" === "True") {
-            $(".online").hide();
-        }
-    });
-    </script>
 </div>
 <!-- /.sidebar-collapse -->
