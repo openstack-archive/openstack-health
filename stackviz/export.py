@@ -76,8 +76,16 @@ def init_django(args):
     settings.USE_GZIP = args.gzip
     settings.OFFLINE = True
 
+    print(repr(args))
+
     if args.repository:
-        settings.TEST_REPOSITORIES = (args.repository,)
+        settings.TEST_REPOSITORIES = args.repository
+
+    if args.stream_file:
+        settings.TEST_STREAMS = args.stream_file
+
+    if args.stdin:
+        settings.TEST_STREAM_STDIN = True
 
     if args.dstat:
         settings.DSTAT_CSV = args.dstat
@@ -95,13 +103,21 @@ def main():
     parser.add_argument("--ignore-bower",
                         help="Ignore missing Bower components.",
                         action="store_true")
-    parser.add_argument("--gzip",
+    parser.add_argument("-z", "--gzip",
                         help="Enable gzip compression for data files.",
                         action="store_true")
-    parser.add_argument("--repository",
-                        help="The directory containing the `.testrepository` "
-                             "to export. If not provided, the `settings.py` "
-                             "configured value will be used.")
+    parser.add_argument("-f", "--stream-file",
+                        action="append",
+                        help="Include the given direct subunit stream.")
+    parser.add_argument("-r", "--repository",
+                        action="append",
+                        help="A directory containing a `.testrepository` to "
+                             "include. If not provided, the `settings.py` "
+                             "configured values will be used.")
+    parser.add_argument("-i", "--stdin",
+                        help="Read a direct subunit stream from standard "
+                             "input.",
+                        action="store_true")
     parser.add_argument("--dstat",
                         help="The path to the DStat log file (CSV-formatted) "
                              "to include. If not provided, the `settings.py` "
@@ -132,23 +148,23 @@ def main():
         print("Rendering:", path)
         export_single_page(path, args.path)
 
-    repos = tempest_subunit.get_repositories()
-    if repos:
-        for run_id in range(repos[0].count()):
-            print("Rendering views for tempest run #%d" % (run_id))
-            export_single_page('/tempest_timeline_%d.html' % run_id, args.path)
-            export_single_page('/tempest_results_%d.html' % run_id, args.path)
+    for provider in tempest_subunit.get_providers().values():
+        for i in range(provider.count):
+            param = (provider.name, i)
 
-            print("Exporting data for tempest run #%d" % (run_id))
-            export_single_page('/tempest_api_tree_%d.json' % run_id,
+            print("Rendering views for tempest run %s #%d" % param)
+            export_single_page('/tempest_timeline_%s_%d.html' % param,
+                               args.path)
+            export_single_page('/tempest_results_%s_%d.html' % param,
+                               args.path)
+
+            print("Exporting data for tempest run %s #%d" % param)
+            export_single_page('/tempest_api_tree_%s_%d.json' % param,
                                args.path, args.gzip)
-            export_single_page('/tempest_api_raw_%d.json' % run_id,
+            export_single_page('/tempest_api_raw_%s_%d.json' % param,
                                args.path, args.gzip)
-            export_single_page('/tempest_api_details_%d.json' % run_id,
+            export_single_page('/tempest_api_details_%s_%d.json' % param,
                                args.path, args.gzip)
-    else:
-        print("Warning: no test repository could be loaded, no data will "
-              "be available!")
 
     print("Exporting DStat log: dstat_log.csv")
     export_single_page('/dstat_log.csv', args.path, args.gzip)

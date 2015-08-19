@@ -20,6 +20,7 @@ class ResultsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ResultsView, self).get_context_data(**kwargs)
+        context['provider_name'] = self.kwargs['provider_name']
         context['run_id'] = self.kwargs['run_id']
 
         return context

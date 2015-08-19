@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from stackviz.parser.tempest_subunit import get_repositories
+from stackviz.parser.tempest_subunit import get_providers
 from stackviz.settings import OFFLINE
 from stackviz.settings import USE_GZIP
 
@@ -20,14 +20,16 @@ from stackviz.settings import USE_GZIP
 def inject_extra_context(request):
     ret = {
         'use_gzip': USE_GZIP,
-        'offline' : OFFLINE
+        'offline': OFFLINE
     }
 
-    repos = get_repositories()
-    if repos:
+    providers = get_providers()
+    if providers:
+        default = providers.values()[0]
+
         ret.update({
-            'tempest_latest_run': get_repositories()[0].latest_id(),
-            'tempest_runs': range(get_repositories()[0].count()),
+            'tempest_providers': providers.values(),
+            'tempest_default_provider': default,
         })
 
     return ret

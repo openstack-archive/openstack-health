@@ -22,10 +22,14 @@
             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Tempest<span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
                 <li>
-                    <a href="tempest_results_{{ tempest_latest_run }}.html"><i class="fa fa-clock-o fa-fw"></i> Sunburst</a>
+                    <a href="tempest_results_{{ tempest_default_provider.name }}_{{ tempest_default_provider.count | add:'-1' }}.html">
+                        <i class="fa fa-clock-o fa-fw"></i> Sunburst
+                    </a>
                 </li>
                 <li>
-                    <a href="tempest_timeline_{{ tempest_latest_run }}.html"><i class="fa fa-calendar fa-fw"></i> Timeline</a>
+                    <a href="tempest_timeline_{{ tempest_default_provider.name }}_{{ tempest_default_provider.count | add:'-1' }}.html">
+                        <i class="fa fa-calendar fa-fw"></i> Timeline
+                    </a>
                 </li>
                 <!--<li>
                     <a href="/tempest/"><i class="fa fa-database fa-fw"></i> Compare</a>

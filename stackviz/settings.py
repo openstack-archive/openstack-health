@@ -101,10 +101,19 @@ TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'stackviz', 'templates')
 ]
 
+# If True, read a stream from stdin (only valid for exported sites)
+TEST_STREAM_STDIN = False
+
+# A list of files containing directly-accessible subunit streams.
+TEST_STREAMS = []
+
+# A list of test repositories containing (potentially) multiple subunit
+# streams.
 TEST_REPOSITORIES = [
     os.path.join(BASE_DIR, 'test_data')
 ]
 
+# The input dstat file
 DSTAT_CSV = 'dstat.log'
 
 # If true, AJAX calls should attempt to load `*.json.gz` files rather than

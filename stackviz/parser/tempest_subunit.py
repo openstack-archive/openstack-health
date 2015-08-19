@@ -12,12 +12,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
 import re
+import shutil
 import subunit
+import sys
 
 from functools import partial
+from io import BytesIO
 
-from subunit import ByteStreamToStreamResult
 from testtools import CopyStreamResult
 from testtools import StreamResult
 from testtools import StreamSummary
@@ -33,29 +36,188 @@ NAME_SCENARIO_PATTERN = re.compile(r'^(.+) \((.+)\)$')
 NAME_TAGS_PATTERN = re.compile(r'^(.+)\[(.+)\]$')
 
 
-def get_repositories():
-    """Loads all test repositories from locations configured in settings
+_provider_cache = None
 
-    Where settings is found in`settings.TEST_REPOSITORIES`. Only locations
-    with a valid `.testrepository` subdirectory containing valid test entries
-    will be returned.
 
-    :return: a list of loaded :class:`Repository` instances
-    :rtype: list[Repository]
+class InvalidSubunitProvider(Exception):
+    pass
+
+
+class SubunitProvider(object):
+    @property
+    def name(self):
+        """Returns a unique name for this provider, such that a valid URL
+        fragment pointing to a particular stream from this provider is
+        `name_index`, applicable for paths to pages and data files making use
+        of the stream.
+
+        :return: a path fragment referring to the stream at `index` from this
+                 provider
+        """
+        raise NotImplementedError()
+
+    @property
+    def description(self):
+        """Returns a user-facing description for this provider.
+
+        This description may be used in UI contexts, but will not be used
+        within paths or other content-sensitive contexts.
+
+        :return: a description for this provider
+        """
+        raise NotImplementedError()
+
+    @property
+    def count(self):
+        raise NotImplementedError()
+
+    def describe(self, index):
+        """Returns a short, user-visible description for the contents of this
+        subunit stream provider.
+
+        :return: a description that can apply to all streams returned by this
+                 provider
+        """
+        raise NotImplementedError()
+
+    def get_stream(self, index):
+        """Returns a file-like object representing the subunit stream at the
+        given index.
+
+        :param index: the index of the stream; must be between `0` and
+                      `count - 1` (inclusive)
+        """
+        raise NotImplementedError()
+
+    @property
+    def indexes(self):
+        # for the benefit of django templates
+        return range(self.count)
+
+    @property
+    def streams(self):
+        """Creates a generator that iterates over each stream available in
+        this provider.
+
+        :return: each stream available from this generator
+        """
+        for i in range(self.count):
+            yield self.get_stream(i)
+
+
+class RepositoryProvider(SubunitProvider):
+    def __init__(self, repository_path):
+        self.repository_path = repository_path
+        self.repository = RepositoryFactory().open(repository_path)
+
+    @property
+    def name(self):
+        return "repo_%s" % os.path.basename(self.repository_path)
+
+    @property
+    def description(self):
+        return "Repository: %s" % os.path.basename(self.repository_path)
+
+    @property
+    def count(self):
+        return self.repository.count()
+
+    def describe(self, index):
+        return "Repository (%s): #%d" % (
+            os.path.basename(self.repository_path),
+            index
+        )
+
+    def get_stream(self, index):
+        return self.repository.get_latest_run().get_subunit_stream()
+
+
+class FileProvider(SubunitProvider):
+    def __init__(self, path):
+        if not os.path.exists(path):
+            raise InvalidSubunitProvider("Stream doesn't exist: %s" % path)
+
+        self.path = path
+
+    @property
+    def name(self):
+        return "file_%s" % os.path.basename(self.path)
+
+    @property
+    def description(self):
+        return "Subunit File: %s" % os.path.basename(self.path)
+
+    @property
+    def count(self):
+        return 1
+
+    def describe(self, index):
+        return "File: %s" % os.path.basename(self.path)
+
+    def get_stream(self, index):
+        if index != 0:
+            raise IndexError("Index out of bounds: %d" % index)
+
+        return open(self.path, "r")
+
+
+class StandardInputProvider(SubunitProvider):
+    def __init__(self):
+        self.buffer = BytesIO()
+        shutil.copyfileobj(sys.stdin, self.buffer)
+
+    @property
+    def name(self):
+        return "stdin"
+
+    @property
+    def description(self):
+        return "Subunit Stream (stdin)"
+
+    @property
+    def count(self):
+        return 1
+
+    def get_stream(self, index):
+        if index != 0:
+            raise IndexError()
+
+        return self.buffer
+
+
+def get_providers():
+    """Loads all test providers from locations configured in settings.
+
+    :return: a dict of loaded provider names and their associated
+             :class:`SubunitProvider` instances
+    :rtype: dict[str, SubunitProvider]
     """
+    global _provider_cache
 
-    factory = RepositoryFactory()
+    if _provider_cache is not None:
+        return _provider_cache
 
-    ret = []
+    _provider_cache = {}
 
     for path in settings.TEST_REPOSITORIES:
         try:
-            ret.append(factory.open(path))
+            p = RepositoryProvider(path)
+            _provider_cache[p.name] = p
         except (ValueError, RepositoryNotFound):
-            # skip
             continue
 
-    return ret
+    for path in settings.TEST_STREAMS:
+        try:
+            p = FileProvider(path)
+            _provider_cache[p.name] = p
+        except InvalidSubunitProvider:
+            continue
+
+    if settings.TEST_STREAM_STDIN:
+        p = StandardInputProvider()
+        _provider_cache[p.name] = p
+
+    return _provider_cache
 
 
 def _clean_name(name):
@@ -120,7 +282,6 @@ def convert_stream(stream_file, strip_details=False):
     result.stopTestRun()
 
     return ret
-
 
 
 def convert_run(test_run, strip_details=False):
