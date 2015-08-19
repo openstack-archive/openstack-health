@@ -169,11 +169,22 @@ var initTimeline = function(options, data, timeExtents) {
   var width = container.width() - margin.left - margin.right;
   var height = 550 - margin.top - margin.bottom;
 
-  var dstatLanes = getDstatLanes(
-    options.dstatData,
-    options.dstatMinimums,
-    options.dstatMaximums);
-  var lanes = data.length + dstatLanes.length;
+  // filter dstat data immediately. if no timestamps overlap, we want to throw
+  // it away quickly
+  options.dstatData = options.dstatData.slice(
+    binaryMinIndex(timeExtents[0], options.dstatData, function(d) { return d.system_time; }),
+    binaryMaxIndex(timeExtents[1], options.dstatData, function(d) { return d.system_time; })
+  );
+
+  var dstatLanes;
+  if (options.dstatData.length > 2) {
+    dstatLanes = getDstatLanes(
+      options.dstatData,
+      options.dstatMinimums,
+      options.dstatMaximums);
+  } else {
+    dstatLanes = [];
+  }
 
   var miniHeight = data.length * 12 + 30;
   var dstatHeight = dstatLanes.length * 30 + 30;
