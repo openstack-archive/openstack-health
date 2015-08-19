@@ -71,15 +71,6 @@ class SubunitProvider(object):
     def count(self):
         raise NotImplementedError()
 
-    def describe(self, index):
-        """Returns a short, user-visible description for the contents of this
-        subunit stream provider.
-
-        :return: a description that can apply to all streams returned by this
-                 provider
-        """
-        raise NotImplementedError()
-
     def get_stream(self, index):
         """Returns a file-like object representing the subunit stream at the
         given index.
@@ -122,12 +113,6 @@ class RepositoryProvider(SubunitProvider):
     def count(self):
         return self.repository.count()
 
-    def describe(self, index):
-        return "Repository (%s): #%d" % (
-            os.path.basename(self.repository_path),
-            index
-        )
-
     def get_stream(self, index):
         return self.repository.get_latest_run().get_subunit_stream()
 
@@ -150,9 +135,6 @@ class FileProvider(SubunitProvider):
     @property
     def count(self):
         return 1
-
-    def describe(self, index):
-        return "File: %s" % os.path.basename(self.path)
 
     def get_stream(self, index):
         if index != 0:
