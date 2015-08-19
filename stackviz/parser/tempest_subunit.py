@@ -165,6 +165,7 @@ class StandardInputProvider(SubunitProvider):
     def __init__(self):
         self.buffer = BytesIO()
         shutil.copyfileobj(sys.stdin, self.buffer)
+        self.buffer.seek(0)
 
     @property
     def name(self):
