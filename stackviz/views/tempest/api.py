@@ -94,7 +94,7 @@ def _load_details(provider_name, run_id, test_name):
 
         if provider_name not in providers:
             raise ProviderNotFoundException("Requested subunit provider could "
-                                            "not be found")
+                                            "not be found: " + provider_name)
 
         provider = providers[provider_name]
         try:
@@ -133,4 +133,4 @@ class TempestRunTreeEndpoint(Endpoint):
 
 class TempestRunDetailsEndpoint(Endpoint):
     def get(self, request, run_id, provider_name, test_name=None):
-        return _load_details(int(run_id), provider_name, test_name)
+        return _load_details(provider_name, int(run_id), test_name)
