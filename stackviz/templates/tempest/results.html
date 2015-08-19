@@ -33,8 +33,11 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            {% for run_id in tempest_runs %}
-                                <li><a href="tempest_results_{{run_id}}.html">Run #{{run_id}}</a></li>
+                            {% for provider in tempest_providers %}
+                                <li class="dropdown-header">{{ provider.description }}</li>
+                                {% for index in provider.indexes %}
+                                    <li><a href="tempest_timeline_{{ provider.name }}_{{ index }}.html">Run #{{ index }}</a></li>
+                                {% endfor %}
                             {% endfor %}
                         </ul>
                     </div>
@@ -76,7 +79,7 @@
 <script>
 window.addEventListener('load', function() {
     $("#details-dialog").hide();
-    var url = "tempest_api_tree_{{run_id}}.json";
+    var url = "tempest_api_tree_{{provider_name}}_{{run_id}}.json";
     if ("{{use_gzip}}" === "True") {
         url += ".gz";
     }

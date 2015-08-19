@@ -29,18 +29,25 @@
 </div>
 
 <script>
-var tempest_runs = '{{tempest_runs|join:","}}'.split(",");
-var urls = [];
-for (var run in tempest_runs) {
-    var url = "tempest_api_tree_" + run + ".json";
-    if ("{{use_gzip}}" === "True") {
-        url += ".gz";
-    }
-
-    urls.push({ url: url, run: run });
+var urlSuffix = "";
+if ("{{use_gzip}}" === "True") {
+    urlSuffix = ".gz";
 }
 
-window.addEventListener('load', createTables( urls ));
+var tempestRuns = [];
+
+/* {% for provider in tempest_providers %} begin generated */
+/* {% for index in provider.indexes %} */
+tempestRuns.push({
+    provider: "{{provider.name}}",
+    providerDescription: "{{provider.description}}",
+    run: parseInt("{{index}}"),
+    url: "tempest_api_tree_{{provider.name}}_{{index}}.json" + urlSuffix
+});
+/* {% endfor %} */
+/* {% endfor %} end generated */
+
+window.addEventListener('load', createTables( tempestRuns ));
 </script>
 
 {% endblock %}

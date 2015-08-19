@@ -98,6 +98,8 @@ function createTables(entries) {
         d3.json(entry.url, function(error, data) {
             if (error) throw error;
             //create a table for the info
+            // TODO: entry now has provider description, etc which should be
+            // shown (categorized?)
             createTable(data, entry.run);
         });
     })
