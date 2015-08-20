@@ -36,7 +36,7 @@
                             {% for provider in tempest_providers %}
                                 <li class="dropdown-header">{{ provider.description }}</li>
                                 {% for index in provider.indexes %}
-                                    <li><a href="tempest_timeline_{{ provider.name }}_{{ index }}.html">Run #{{ index }}</a></li>
+                                    <li><a href="tempest_results_{{ provider.name }}_{{ index }}.html">Run #{{ index }}</a></li>
                                 {% endfor %}
                             {% endfor %}
                         </ul>
