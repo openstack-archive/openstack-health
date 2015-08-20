@@ -17,6 +17,7 @@
 "use strict";
 
 var runId = null;
+var providerName = null;
 
 function populateTable(d, textColor) {
     var oldtbl = document.getElementById("result-table-div");
@@ -36,7 +37,7 @@ function populateTable(d, textColor) {
             }
             document.getElementById("result-table-div").appendChild(tbl);
             document.getElementById("table-heading").innerHTML=d.name;
-            addDialogButton("#result-table-div",runId);
+            addDialogButton("#result-table-div",providerName + "_" + runId);
             showDetails(d);
         }
         else {
@@ -104,8 +105,9 @@ function displayFailingTests(d) {
 }
 
 
-function createSunburst(url, run_id) {
+function createSunburst(url, provider_name, run_id) {
     runId = run_id;
+    providerName = provider_name;
 
     var width = 700,
         height = 500,
