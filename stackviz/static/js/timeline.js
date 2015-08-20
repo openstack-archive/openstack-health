@@ -552,7 +552,7 @@ function chainLoadDstat(path, yearOverride, callback) {
 
   d3.text(path, function(error, data) {
     if (error) {
-      callback(null);
+      callback([]);
       return;
     }
 
