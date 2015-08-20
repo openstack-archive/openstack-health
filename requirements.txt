@@ -3,4 +3,5 @@ DjangoRestless>=0.0.10
 python-subunit>=0.0.18
 testtools>=0.9.30
 testrepository>=0.0.18
-subunit2sql>=0.7.0
+mysql>=1.2.5
+subunit2sql>=0.8.0
