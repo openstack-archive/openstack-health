@@ -34,9 +34,11 @@
                 <!--<li>
                     <a href="/tempest/"><i class="fa fa-database fa-fw"></i> Compare</a>
                 </li>-->
+                {% if not offline %}
                 <li class="online">
                     <a href="tempest_aggregate.html"><i class="fa fa-bar-chart-o fa-fw"></i> Aggregate Results</a>
                 </li>
+                {% endif %}
             </ul>
             <!-- /.nav-second-level -->
         </li>

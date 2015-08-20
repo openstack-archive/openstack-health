@@ -165,6 +165,7 @@ class StandardInputProvider(SubunitProvider):
         if index != 0:
             raise IndexError()
 
+        self.buffer.seek(0)
         return self.buffer
 
 
