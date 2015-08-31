@@ -1,6 +1,8 @@
 # Project-specific ignores
 .idea
 stackviz/static/components/*
+node_modules
+build
 *.py[cod]
 
 # C extensions
