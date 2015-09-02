@@ -1,125 +1,57 @@
-========
-StackViz
-========
-
-A visualization utility to help analyze the performance of DevStack setup and
-Tempest executions.
+=================
+StackViz: Angular
+=================
+A temporary fork of StackViz while the conversion to Angular is in progress. Changes here will be merged back into the main StackViz repository when things have stabilized.
 
 Installation
 ============
-Installation of the frontend requires Node.js and Bower. On Ubuntu::
+Installation of the frontend requires Node.js and Gulp. On Ubuntu::
 
     sudo apt-get install nodejs npm nodejs-legacy
-    sudo npm install -g bower
+    sudo npm install -g gulp
 
-Then, install the Bower components by running, from the project directory::
-
-    bower install
-
-Lastly, install the project. Pip is recommended, like so::
-
-    sudo pip install .
-
-Usage - Server
-==============
-First, install the necessary dependencies with Pip::
-
-    sudo pip install -r requirements.txt
-
-The Django development server may then be used to view the interface. Run::
-
-    python manage.py runserver
-
-You can then browse to the printed URL in your browser of choice.
-
-Usage - Static Site
-===================
-The server can be "snapshotted" and exported to a static HTML site using the
-installed :code:`stackviz-export` utility. StackViz can then be viewed using any
-web browser with no requirement of any server-side processing.
-
-To generate, run::
-
-    stackviz-export -r path/to/testrepository/ dest_dir
-
-... where `dest_dir` is the path to a target directory where files should be
-written. When finished, the :code:`index.html` file can be opened in a browser.
-Note that the above gathers test data from a `testrepository` directory, though
-direct subunit streams either from files or standard input are also supported.
-For more information, see `stackviz-export --help`.
-
-Note that some browsers enforce content origin policies that may disallow
-XHRs when viewed directly from the local filesystem. To work around this, you
-can use something like the Python :code:`SimpleHTTPServer`::
-
-    python -m SimpleHTTPServer
-
-GZipped Data
-------------
-As the log data can become quite large, exported files can be compressed with
-GZip to significantly reduce the size of the data files. To enable, run::
-
-    stackviz-export -r path/to/testrepository/ --gzip dest_dir
-
-Data files will then be written in compressed form, and will be suffixed with
-:code:`*.json.gz`. Note that web servers must be properly configured to serve
-pre-compressed files. Notably, Python's :code:`SimpleHTTPServer` will not do
-this by default. However, `Twisted <https://twistedmatrix.com/trac/>`_ can be
-used as a drop-in replacement as follows::
-
-    twistd -no web --path=.
-
-Other web servers, such as Apache, should also serve these files correctly
-without any extra configuration.
-
-(Specifically, the response must have headers
-:code:`Content-Type: application/json` and :code:`Content-Encoding: gzip`.)
-
-DStat Data
-----------
-StackViz will also show charts generated from
-`DStat logs <http://dag.wiee.rs/home-made/dstat/>`_, if available. Note that
-console output from DStat is not sufficient - a CSV logfile must be used. Then,
-provide the logfile to :code:`stackviz-export`::
-
-    stackviz-export -r testrepository/ --dstat path/to/dstat.csv dest_dir
-
-Log Locations
-=============
-Log locations are configured along with normal Django settings in
-:code:`stackviz/settings.py`, or specified as command-line arguments to
-:code:`stackviz-export`. Several different types of logs are rendered by
-StackViz are read by default from:
-
-* Tempest (`testr` repositories): :code:`./test_data/`
-* Dstat: :code:`./dstat.log`
-* DevStack: *TODO*
-
-Testing
-=======
-
-Server (Python)
----------------
-Server-side tests can be run using Tox::
-
-    tox
-
-A linter (flake8) will be run automatically and its output included in the
-report.
-
-Client (JavaScript)
--------------------
-Client-side tests are run via `Karma <http://karma-runner.github.io/>`_.
-To run, install the :code:`karma-cli` and the npm dependencies::
+Then, install the Node modules by running, from the project directory::
 
     npm install
-    sudo npm install --global karma-cli
 
-Then, run Karma::
+Usage - Development
+===================
+A development server can be run as follows::
 
-    karma start --single-run
+    gulp dev
 
-Tests will be executed using `PhantomJS <http://phantomjs.org/>`_ by default.
-Similarly, `ESLint <http://eslint.org/>`_ can be used to verify formatting::
+This will open a web browser and reload code automatically as it changes on the filesystem.
 
-    eslint stackviz/static/
+Usage - Production
+==================
+The production application can be build using::
+
+    gulp prod
+
+The result will be written to :code:`./build` and should be appropriate for distribution. Note that all files are not required:
+
+- Directory structure (:code:`js/`, :code:`css/`, :code:`fonts/`, :code:`images/`): required.
+- Static resources (:code:`fonts/`, :code:`images/`): required.
+- Core files (:code:`index.html`, :code:`js/main.js`, :code:`css/main.css`): required unless gzipped versions are used.
+- Gzipped versions of core files (:code:`*.gz`): not required, but preferred. Use instead of plain core files.
+
+  - Note that filenames must have the :code:`.gz` extension removed as links are not currently rewritten to reflect the extension added during the gzip process. TODO: investigate use of `gulp-rebase <https://github.com/tunderdomb/rebase>`_ to avoid this.
+
+- Source maps (:code:`js/main.js.map`, :code:`js/main.js.map.gz`): only required for debugging purposes.
+
+
+Roadmap
+=======
+- Project split: All server-side components will be removed, and replaced with specialized data transformation tools.
+
+  - Data sources and processing: moving to external project, potentially integrated directly with `Testr <https://wiki.openstack.org/wiki/Testr>`_ and `subunit2sql <https://github.com/openstack-infra/subunit2sql>`_.
+
+  - Web interface:
+
+    - Will remain in this namespace (:code:`openstack-qa/stackviz`).
+    - Will decouple data processing from build process, allowing for distribution to nodes as a prebuilt static site.
+    - Data sources will be configured in in a :code:`config.json`.
+    - Will support local and remote sources via REST/JSONP (pending API spec).
+
+- Angular conversion: current codebase will be rewritten to use Angular.
+- Python dependency removal: all Python depedencies and build requirements will be removed from this project.
