@@ -4,6 +4,8 @@ var angular = require('angular');
 
 // angular modules
 require('angular-ui-router');
+require('angular-ui-bootstrap');
+require('angular-fontawesome');
 require('./templates');
 require('./controllers/_index');
 require('./services/_index');
@@ -14,10 +16,12 @@ angular.element(document).ready(function() {
 
   var requires = [
     'ui.router',
+    'ui.bootstrap',
     'templates',
     'app.controllers',
     'app.services',
-    'app.directives'
+    'app.directives',
+    'picardy.fontawesome'
   ];
 
   // mount on window for testing
