@@ -2,8 +2,8 @@
   "name": "stackviz",
   "version": "0.0.0",
   "authors": [
-    "Tim Buckley <timothy.jas.buckley@hp.com>",
-    "Austin Clark <austin.clark@hp.com>"
+    "Tim Buckley <timothy.jas.buckley@hpe.com>",
+    "Austin Clark <austin.clark@hpe.com>"
   ],
   "description": "A performance visualization utility for DevStack and Tempest",
   "license": "Apache 2.0",
