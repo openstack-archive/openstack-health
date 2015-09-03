@@ -14,7 +14,7 @@ Installation of the frontend requires Node.js and Gulp. On Ubuntu::
 
 Then, install the Node modules by running, from the project directory::
 
-    sudo npm install
+    npm install
 
 Usage - Development
 ===================
