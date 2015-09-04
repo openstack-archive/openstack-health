@@ -58,3 +58,4 @@ ChangeLog
 *~
 .*.swp
 .*sw?
+/nbproject/private/
