@@ -17,11 +17,11 @@ angular.element(document).ready(function() {
   var requires = [
     'ui.router',
     'ui.bootstrap',
+    'picardy.fontawesome',
     'templates',
     'app.controllers',
     'app.services',
-    'app.directives',
-    'picardy.fontawesome'
+    'app.directives'
   ];
 
   // mount on window for testing
