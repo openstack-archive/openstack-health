@@ -40,13 +40,7 @@ distribution. Note that all files are not required:
 - Core files (:code:`index.html`, :code:`js/main.js`, :code:`css/main.css`):
   required unless gzipped versions are used.
 - Gzipped versions of core files (:code:`*.gz`): not required, but preferred.
-  Use instead of plain core files.
-
-  - Note that filenames must have the :code:`.gz` extension removed as links are
-    not currently rewritten to reflect the extension added during the gzip
-    process. TODO: investigate use of
-    `gulp-rebase <https://github.com/tunderdomb/rebase>`_ to avoid this.
-
+  Use instead of plain core files to save on disk usage and bandwidth.
 - Source maps (:code:`js/main.js.map`, :code:`js/main.js.map.gz`): only required
   for debugging purposes.
 
