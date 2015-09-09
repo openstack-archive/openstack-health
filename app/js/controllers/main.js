@@ -2,8 +2,13 @@
 
 var controllersModule = require('./_index');
 
-function MainCtrl() {
-  var vm = this;
+/**
+ * @ngInject
+ */
+function MainCtrl($window, $scope) {
+  $window.addEventListener('resize', function () {
+    $scope.$broadcast('windowResize');
+  });
 }
 
 controllersModule.controller('MainCtrl', MainCtrl);
