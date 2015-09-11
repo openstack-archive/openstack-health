@@ -55,6 +55,11 @@ module.exports = {
   'test': {
     'karma': 'test/karma.conf.js',
     'protractor': 'test/protractor.conf.js'
+  },
+
+  'data': {
+    'src' : ['app/data/**/*'],
+    'dest': 'build/data'
   }
 
 };

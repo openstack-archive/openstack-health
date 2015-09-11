@@ -10,6 +10,7 @@ gulp.task('watch', ['browserSync', 'server'], function() {
   gulp.watch(config.styles.src,  ['styles']);
   gulp.watch(config.images.src,  ['images']);
   gulp.watch(config.fonts.src,   ['fonts']);
+  gulp.watch(config.data.src,    ['data']);
   gulp.watch(config.views.watch, ['views']);
 
 });
