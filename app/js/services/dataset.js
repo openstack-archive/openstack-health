@@ -17,6 +17,23 @@ function DatasetService($q, $http) {
     });
   };
 
+  service.get = function(id) {
+    return $q(function(resolve, reject) {
+      service.list().then(function(response) {
+        for (let entry of response.data.tempest) {
+          if (entry.id === id) {
+            resolve(entry);
+            return;
+          }
+        }
+
+        reject("Dataset not found with ID: " + id);
+      }, function(reason) {
+        reject(reason);
+      });
+    });
+  };
+
   service.raw = function(dataset) {
     return $http({
       cache: true,

@@ -1,15 +1,19 @@
 <header class="bs-header">
     <div class="container">
-        <h1 class="page-header">{{ timeline.title }}</h1>
+        <h1 class="page-header">Timeline: {{ timeline.dataset.name }}</h1>
     </div>
 </header>
 
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
+            <div class="alert alert-danger" ng-if="!!timeline.error">
+                {{ timeline.error }}
+            </div>
+
             Timeline stub, TODO.
 
-            <timeline dataset="1"></timeline>
+            <timeline dataset="timeline.dataset"></timeline>
         </div>
     </div>
 </div>

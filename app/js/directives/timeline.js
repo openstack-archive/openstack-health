@@ -2,6 +2,8 @@
 
 var directivesModule = require('./_index.js');
 
+var d3 = require('d3');
+
 /**
  * @ngInject
  */
@@ -24,7 +26,7 @@ function timeline() {
   return {
     restrict: 'EA',
     scope: {
-      'dataset': '&'
+      'dataset': '='
     },
     link: link
   };

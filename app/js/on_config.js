@@ -8,18 +8,18 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/',
-      controller: 'ExampleCtrl as home',
+      controller: 'HomeCtrl as home',
       templateUrl: 'home.html',
       title: 'Home'
     })
     .state('timeline', {
-      url: '/timeline/:dataset',
+      url: '/timeline/{datasetId:int}',
       controller: 'TimelineCtrl as timeline',
       templateUrl: 'timeline.html',
       title: 'Timeline'
     })
     .state('sunburst', {
-      url: '/sunburst/:dataset',
+      url: '/sunburst/{datasetId:int}',
       controller: 'SunburstCtrl as sunburst',
       templateUrl: 'sunburst.html',
       title: 'Sunburst'
