@@ -17,6 +17,12 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       controller: 'TimelineCtrl as timeline',
       templateUrl: 'timeline.html',
       title: 'Timeline'
+    })
+    .state('sunburst', {
+      url: '/sunburst/:dataset',
+      controller: 'SunburstCtrl as sunburst',
+      templateUrl: 'sunburst.html',
+      title: 'Sunburst'
     });
 
   $urlRouterProvider.otherwise('/');
