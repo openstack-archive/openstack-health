@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Highcharts Example</title>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<style type="text/css">
+${demo.css}
+</style>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/solid-gauge.js"></script>
+</head>
+<body>
+
+<button id="button" class"autocompare">Update</button>
+<div id="timegraph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="dial1" style="width: 300px; height: 200px; float: left"></div>
+<div id="dial2" style="width: 300px; height: 200px; float: left"></div>
+<div id="dial3" style="width: 300px; height: 200px; float: left"></div>
+<div id="dial4" style="width: 300px; height: 200px; float: left"></div>
+<div id="dial5" style="width: 300px; height: 200px; float: left"></div>
+<script type="text/javascript">
+var mock_text = '{ "timedata": [ { "datetime": "02 Jun 2015", "project_data":'+
+' [ { "project": "glance", "pass": 100, "fail": 50 },'+
+'{ "project": "cinder", "pass": 150, "fail": 25 },'+
+'{ "project": "swift", "pass": 200, "fail": 0 },'+
+'{ "project": "neutron", "pass": 230, "fail": 10 },'+
+'{ "project": "nova", "pass": 300, "fail": 0 }'+
+'] },'+
+'{ "datetime": "03 Jun 2015", "project_data": ['+
+'{ "project": "glance", "pass": 110, "fail": 40 },'+
+'{ "project": "cinder", "pass": 160, "fail": 15 },'+
+'{ "project": "swift", "pass": 195, "fail": 5 },'+
+'{ "project": "neutron", "pass": 225, "fail": 15 },'+
+'{ "project": "nova", "pass": 300, "fail": 5 }'+
+'] },'+
+'{ "datetime": "04 Jun 2015", "project_data": ['+
+'{ "project": "glance", "pass": 100, "fail": 50 },'+
+'{ "project": "cinder", "pass": 150, "fail": 25 },'+
+'{ "project": "swift", "pass": 200, "fail": 0 },'+
+'{ "project": "neutron", "pass": 230, "fail": 10 },'+
+'{ "project": "nova", "pass": 300, "fail": 5 }'+
+'] },'+
+'{ "datetime": "05 Jun 2015", "project_data": ['+
+'{ "project": "glance", "pass": 125, "fail": 25 },'+
+'{ "project": "cinder", "pass": 160, "fail": 15 },'+
+'{ "project": "swift", "pass": 200, "fail": 0 },'+
+'{ "project": "neutron", "pass": 230, "fail": 10 },'+
+'{ "project": "nova", "pass": 305, "fail": 5 }'+
+'] },'+
+'{ "datetime": "06 Jun 2015", "project_data": ['+
+'{ "project": "glance", "pass": 115, "fail": 0 },'+
+'{ "project": "cinder", "pass": 160, "fail": 5 },'+
+'{ "project": "swift", "pass": 220, "fail": 30 },'+
+'{ "project": "neutron", "pass": 230, "fail": 20 },'+
+'{ "project": "nova", "pass": 310, "fail": 0 }'+
+'] },'+
+'{ "datetime": "07 Jun 2015", "project_data": ['+
+'{ "project": "glance", "pass": 115, "fail": 0 },'+
+'{ "project": "cinder", "pass": 160, "fail": 5 },'+
+'{ "project": "swift", "pass": 220, "fail": 30 },'+
+'{ "project": "neutron", "pass": 230, "fail": 20 },'+
+'{ "project": "nova", "pass": 310, "fail": 0 }'+
+'] },'+
+'{ "datetime": "08 Jun 2015", "project_data": ['+
+'{ "project": "glance", "pass": 115, "fail": 0 },'+
+'{ "project": "cinder", "pass": 160, "fail": 5 },'+
+'{ "project": "swift", "pass": 220, "fail": 30 },'+
+'{ "project": "neutron", "pass": 230, "fail": 20 },'+
+'{ "project": "nova", "pass": 310, "fail": 0 }'+
+'] } ] }';
+
+var data = JSON.parse(mock_text);
+
+$(function () {
+
+    $('#timegraph').highcharts('StockChart',{
+        title: {
+            text: 'Builds',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: 'Counts'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '°C'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+    });
+
+    var gaugeOptions = {
+
+        chart: {
+            type: 'solidgauge'
+        },
+
+        title: null,
+
+        pane: {
+            center: ['50%', '85%'],
+            size: '140%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+
+        tooltip: {
+            enabled: false
+        },
+
+        // the value axis
+        yAxis: {
+            stops: [
+                [0.6, '#DF5353'], // red
+                [0.8, '#DFDF00'], // yellow
+                [1.0, '#00BF00'] // green
+            ],
+            lineWidth: 0,
+            minorTickInterval: null,
+            tickPixelInterval: 400,
+            tickWidth: 0,
+            title: {
+                y: -70
+            },
+            labels: {
+                y: 16
+            }
+        },
+
+        plotOptions: {
+            solidgauge: {
+                dataLabels: {
+                    y: 5,
+                    borderWidth: 0,
+                    useHTML: true
+                }
+            }
+        }
+    };
+
+    $('#dial1').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Nova Status'
+            }
+        },
+
+        credits: {
+            enabled: false
+        }
+    }));
+
+    $('#dial2').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Neutron Status'
+            }
+        },
+
+        credits: {
+            enabled: false
+        }
+    }));
+
+    $('#dial3').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Cinder Status'
+            }
+        },
+
+        credits: {
+            enabled: false
+        }
+    }));
+
+    $('#dial4').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Glance Status'
+            }
+        },
+
+        credits: {
+            enabled: false
+        }
+    }));
+
+    $('#dial5').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Swift Status'
+            }
+        },
+
+        credits: {
+            enabled: false
+        }
+    }));
+});
+
+$('#button').click(function() {
+var range = new Array();
+var pass = new Array();
+var fail = new Array();
+var projects = new Array();
+
+for (var ele=0; ele < data.timedata.length; ele++) {
+    var obj = data.timedata[ele];
+    range[ele]=obj.datetime;
+    var n_fail = 0;
+    var n_pass = 0;
+    for (var loop=0; loop < obj.project_data.length; loop++) {
+        var project = obj.project_data[loop].project;
+        n_fail += obj.project_data[loop].fail;
+        n_pass += obj.project_data[loop].pass;
+        var found = 0;
+        for (loop2=0; loop2 < projects.length; loop2++) {
+            if (projects[loop2].name === project) {
+                found = 1;
+                projects[loop2].fail += obj.project_data[loop].fail;
+                projects[loop2].pass += obj.project_data[loop].pass;
+            }
+        }
+        if (found === 0) {
+            projects.push({name: project, pass: n_pass, fail: n_fail});
+        }
+    }
+    pass[ele] = n_pass;
+    fail[ele] = n_fail;
+}
+
+    var tgraph = $('#timegraph').highcharts();
+    while(tgraph.series.length > 0)
+        tgraph.series[0].remove(true);
+    tgraph.addSeries({name: "Pass", data: pass});
+    tgraph.addSeries({name: "Failed", data: fail});
+    tgraph.xAxis[0].setCategories(range);
+    tgraph.redraw();
+    var dial1 = $('#dial1').highcharts();
+    dial1.setTitle(projects[0].name);
+    var pct = new Array();
+    pct.push(projects[0].pass / (projects[0].pass+projects[0].fail)*100);
+    dial1.addSeries({name: "Pass %", data: pct, dataLabels:{format: "%"}});
+    var dial2 = $('#dial2').highcharts();
+    dial2.setTitle(projects[1].name);
+    var pct = new Array();
+    pct.push(projects[1].pass / (projects[1].pass+projects[1].fail)*100);
+    dial2.addSeries({name: "Pass %", data: pct, dataLabels:{format: "%"}});
+    var dial3 = $('#dial3').highcharts();
+    dial3.setTitle(projects[2].name);
+    var pct = new Array();
+    pct.push(projects[2].pass / (projects[2].pass+projects[2].fail)*100);
+    dial3.addSeries({name: "Pass %", data: pct, dataLabels:{format: "%"}});
+    var dial4 = $('#dial4').highcharts();
+    dial4.setTitle(projects[3].name);
+    var pct = new Array();
+    pct.push(projects[3].pass / (projects[3].pass+projects[3].fail)*100);
+    dial4.addSeries({name: "Pass %", data: pct, dataLabels:{format: "%"}});
+    var dial5 = $('#dial5').highcharts();
+    dial5.setTitle(projects[4].name);
+    var pct = new Array();
+    pct.push(projects[4].pass / (projects[4].pass+projects[4].fail)*100);
+    dial5.addSeries({name: "Pass %", data: pct, dataLabels:{format: "%"}});
+});
+</script>
+</body>
+</html>
