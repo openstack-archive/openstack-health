@@ -70,9 +70,10 @@
     "watchify": "^3.3.1"
   },
   "scripts": {
-    "postinstall": "if [ ! -d .venv ]; then tox -epy27 --notest; fi",
-    "test": "karma start karma.conf.js --single-run",
-    "lint": "eslint --no-color stackviz/static"
+    "pretest": "npm install",
+    "test": "karma start test/karma.conf.js",
+    "preprotractor": "npm run update-webdriver",
+    "protractor": "npm run protractor test/protractor.conf.js"
   },
   "dependencies": {}
 }
