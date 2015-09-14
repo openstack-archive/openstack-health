@@ -1,8 +1,8 @@
 {
   "version": "0.0.0",
   "private": true,
-  "name": "stackviz",
-  "description": "StackViz - Client JavaScript",
+  "name": "openstack-health",
+  "description": "openstack-health - Client JavaScript",
   "repository": "none",
   "license": "Apache 2.0",
   "devDependencies": {

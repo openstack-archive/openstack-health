@@ -1,9 +1,7 @@
-=================
-StackViz: Angular
-=================
-A temporary fork of StackViz while the conversion to Angular is in progress.
-Changes here will be merged back into the main StackViz repository when things
-have stabilized.
+================
+openstack-health
+================
+webclient for visualizing the results of tempest jobs.
 
 Installation
 ============
@@ -43,24 +41,3 @@ distribution. Note that all files are not required:
   Use instead of plain core files to save on disk usage and bandwidth.
 - Source maps (:code:`js/main.js.map`, :code:`js/main.js.map.gz`): only required
   for debugging purposes.
-
-Roadmap
-=======
-- Project split: All server-side components will be removed, and replaced with
-  specialized data transformation tools.
-
-  - Data sources and processing: moving to external project, potentially
-    integrated directly with `Testr <https://wiki.openstack.org/wiki/Testr>`_
-    and `subunit2sql <https://github.com/openstack-infra/subunit2sql>`_.
-
-  - Web interface:
-
-    - Will remain in this namespace (:code:`openstack-qa/stackviz`).
-    - Will decouple data processing from build process, allowing for
-      distribution to nodes as a prebuilt static site.
-    - Data sources will be configured in in a :code:`config.json`.
-    - Will support local and remote sources via REST/JSONP (pending API spec).
-
-- Angular conversion: current codebase will be rewritten to use Angular.
-- Python dependency removal: all Python depedencies and build requirements will
-  be removed from this project.
