@@ -48,7 +48,7 @@ class TestRestAPI(base.TestCase):
         ]}
         self.assertEqual(json.loads(res.data), expected_response)
 
-    @mock.patch('subunit2sql.db.api.get_all_runs',
+    @mock.patch('subunit2sql.db.api.get_all_runs_by_date',
                 return_value=[models.Run(
                     id='fake_id', skips=2, fails=4, passes=2, run_time=21.2,
                     artifacts='fake_url.com',

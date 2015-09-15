@@ -40,7 +40,11 @@ def get_runs_from_build_name(build_name):
 def get_runs():
     global Session
     session = Session()
-    db_runs = api.get_all_runs(session)
+    # TODO(andreaf) If dates are not valid, they will simply be ignored by the
+    # db_api. We may want validation here to return a warning to the user
+    start_date = flask.request.args.get('start_date', None)
+    stop_date = flask.request.args.get('stop_date', None)
+    db_runs = api.get_all_runs_by_date(start_date, stop_date, session)
     runs = [run.to_dict() for run in db_runs]
     return jsonify({'runs': runs})
 
