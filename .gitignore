@@ -3,7 +3,6 @@
 node_modules
 build
 app/js/templates.js
-app/data
 *.py[cod]
 
 # C extensions
