@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Highcharts Example</title>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<style type="text/css">
+${demo.css}
+</style>
+<script src="test_data.json"></script>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/solid-gauge.js"></script>
+</head>
+<body>
+
+<button id="button" class"autocompare">Update</button>
+<div id="timegraph1" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="timegraph2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<table id="jobtable">
+<tr><td>Test Name</td><td>Passed</td><td>Failed</td><td>%Failed</td><td>Run Time</td></tr>
+</table>
+<script type="text/javascript">
+var data = JSON.parse(project_data);
+
+$(function () {
+    $('#timegraph1').highcharts('StockChart',{
+        title: {
+            text: 'gate-tempest-neutron-dsvm Failures',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: 'Counts'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+    });
+    $('#timegraph2').highcharts('StockChart',{
+        title: {
+            text: 'run time',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: 'Counts'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+    });
+});
+
+$('#button').click(function() {
+var range = new Array();
+var pass = new Array();
+var fail = new Array();
+var run_time = new Array();
+var jobs = new Array();
+
+for (var ele=0; ele < data.timedata.length; ele++) {
+    var obj = data.timedata[ele];
+    range[ele]=obj.datetime;
+    var n_fail = 0;
+    var n_pass = 0;
+    var mean_run_time = 0;
+    for (var loop=0; loop < obj.test_data.length; loop++) {
+        var job = obj.test_data[loop].test_name;
+        n_fail += obj.test_data[loop].fail;
+        n_pass += obj.test_data[loop].pass;
+        mean_run_time += obj.test_data[loop].mean_run_time;
+        var found = 0;
+        for (loop2=0; loop2 < jobs.length; loop2++) {
+            if (jobs[loop2].test_name === job) {
+                found = 1;
+                jobs[loop2].fail += obj.test_data[loop].fail;
+                jobs[loop2].pass += obj.test_data[loop].pass;
+                jobs[loop2].run_time += obj.test_data[loop].mean_run_time;
+            }
+        }
+        if (found === 0) {
+            jobs.push({test_name: job, pass: obj.test_data[loop].pass, fail: obj.test_data[loop].fail, run_time: obj.test_data[loop].mean_run_time});
+        }
+    }
+    pass[ele] = n_pass;
+    fail[ele] = n_fail;
+    run_time[ele] = mean_run_time
+}
+
+    function prettify(s1) {
+        if (s1.length <= 50)
+            return s1;
+        for (var i=50; i>0; i--)
+            if (s1[i] === '.')
+                return s1.substring(0,i+1)+"<br>"+prettify(s1.substring(i+1));
+    }
+
+    var tgraph = $('#timegraph1').highcharts();
+    while(tgraph.series.length > 0)
+        tgraph.series[0].remove(true);
+    tgraph.addSeries({name: "Pass", data: pass});
+    tgraph.addSeries({name: "Failed", data: fail});
+    tgraph.xAxis[0].setCategories(range);
+    tgraph.redraw();
+    var tgraph2 = $('#timegraph2').highcharts();
+    while(tgraph2.series.length > 0)
+        tgraph2.series[0].remove(true);
+    tgraph2.addSeries({name: "Run Time", data: run_time});
+    tgraph2.xAxis[0].setCategories(range);
+    tgraph2.redraw();
+    var ttable=$('#jobtable').find('tbody');
+    for (var loop=0; loop<jobs.length; loop++) {
+        pct = ( jobs[loop].fail * 100 ) / (jobs[loop].fail + jobs[loop].pass);
+        test_name = prettify(jobs[loop].test_name);
+        ttable.append($('<tr>')
+            .append($('<td>'+test_name+'</td>'))
+            .append($('<td>'+jobs[loop].pass+'</td>'))
+            .append($('<td>'+jobs[loop].fail+'</td>'))
+            .append($('<td>'+pct+'</td></tr>'))
+            .append($('<td>'+jobs[loop].run_time+'</td>'))
+        );
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+project_data = '{ "timedata": ['+
+'  { "datetime": "02 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 20,'+
+'        "fail": 40,'+
+'        "mean_run_time": 10.5 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 15,'+
+'        "fail": 45,'+
+'        "mean_run_time": 5.3 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 40,'+
+'        "fail": 20,'+
+'        "mean_run_time": 50 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 45,'+
+'        "fail": 15,'+
+'        "mean_run_time": 70 } ]'+
+'  },'+
+'  { "datetime": "03 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 30,'+
+'        "fail": 30,'+
+'        "mean_run_time": 12 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 20,'+
+'        "fail": 40,'+
+'        "mean_run_time": 6 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 45,'+
+'        "fail": 15,'+
+'        "mean_run_time": 35 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 45,'+
+'        "fail": 15,'+
+'        "mean_run_time": 70 } ]'+
+'  },'+
+'  { "datetime": "04 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 35,'+
+'        "fail": 25,'+
+'        "mean_run_time": 15 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 45,'+
+'        "fail": 15,'+
+'        "mean_run_time": 8.2 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 50,'+
+'        "fail": 10,'+
+'        "mean_run_time": 45 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 55,'+
+'        "fail": 5,'+
+'        "mean_run_time": 60 } ]'+
+'  },'+
+'  { "datetime": "05 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 20.5 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 8 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 40 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 45 } ]'+
+'  },'+
+'  { "datetime": "06 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 20.5 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 8 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 40 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 45 } ]'+
+'  },'+
+'  { "datetime": "07 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 20.5 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 8 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 40 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 45 } ]'+
+'  },'+
+'  { "datetime": "08 Jun 2015",'+
+'    "test_data": ['+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_meter_label_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 20.5 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_ext_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 8 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_fake_action",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 40 },'+
+'      { "test_name": "tempest.cli.simple_read_only.network.test_neutron.SimpleReadOnlyNeutronClientTest.test_neutron_subnet_list",'+
+'        "pass": 60,'+
+'        "fail": 0,'+
+'        "mean_run_time": 45 } ]'+
+'  } ] }';
