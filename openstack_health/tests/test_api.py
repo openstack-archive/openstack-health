@@ -157,3 +157,131 @@ class TestRestAPI(base.TestCase):
             }
         }}
         self.assertEqual(json.loads(res.data), expected_response)
+
+    @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
+                return_value={
+                    timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
+                })
+    def test_get_runs_by_date(self, api_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/runs/group_by/project')
+        self.assertEqual(200, res.status_code)
+        expected_response = {u'runs': {
+            unicode(timestamp_a.isoformat()): [{
+                u'pass': 2, u'fail': 3, u'skip': 1
+            }]
+        }}
+        self.assertEqual(expected_response, json.loads(res.data))
+        # Ensure db api called correctly
+        api_mock.assert_called_once_with('project', None, None, api.Session())
+
+    @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
+                return_value={
+                    timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
+                })
+    def test_get_runs_by_date_min_res(self, api_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/runs/group_by/project?datetime_resolution=min')
+        self.assertEqual(200, res.status_code)
+        expected_response = {u'runs': {
+            unicode(timestamp_a.replace(second=0,
+                                        microsecond=0).isoformat()): [{
+                                            u'pass': 2,
+                                            u'fail': 3,
+                                            u'skip': 1}]
+        }}
+        self.assertEqual(expected_response, json.loads(res.data))
+
+    @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
+                return_value={
+                    timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
+                })
+    def test_get_runs_by_date_hour_res(self, api_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/runs/group_by/projects?datetime_resolution=hour')
+        self.assertEqual(200, res.status_code)
+        expected_response = {u'runs': {
+            unicode(timestamp_a.replace(minute=0, second=0,
+                                        microsecond=0).isoformat()): [{
+                                            u'pass': 2,
+                                            u'fail': 3,
+                                            u'skip': 1}]
+        }}
+        self.assertEqual(expected_response, json.loads(res.data))
+
+    @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
+                return_value={
+                    timestamp_a: {'tempest': [{'pass': 2,
+                                               'fail': 3,
+                                               'skip': 1}],
+                                  'neutron': [{'pass': 2,
+                                               'fail': 0,
+                                               'skip': 1}]},
+                    timestamp_b: {'neutron': [{'pass': 0,
+                                               'fail': 1,
+                                               'skip': 0}]}
+                })
+    def test_get_runs_by_date_day_res(self, api_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('runs/group_by/projects?datetime_resolution=day')
+        self.assertEqual(200, res.status_code)
+        date = unicode(timestamp_a.date().isoformat())
+        expected_response = {u'runs': {
+            date: {
+                u'neutron': sorted([{u'pass': 2,
+                                     u'fail': 0,
+                                     u'skip': 1},
+                                    {u'fail': 1,
+                                     u'pass': 0,
+                                     u'skip': 0}]),
+                u'tempest': [{u'fail': 3,
+                              u'pass': 2,
+                              u'skip': 1}]}
+        }}
+        response = json.loads(res.data)
+        self.assertEqual(sorted(expected_response['runs'].keys()),
+                         sorted(response['runs'].keys()))
+        for project in expected_response['runs'][date]:
+            self.assertIn(project, response['runs'][date])
+            self.assertEqual(sorted(expected_response['runs'][date][project]),
+                             sorted(response['runs'][date][project]))
+
+    def test_parse_datetimes_isoformat(self):
+        parsed_out = api._parse_datetimes(timestamp_a.isoformat())
+        self.assertEqual(timestamp_a, parsed_out)
+
+    def test_parse_datetimes_almost_isoformat(self):
+        format_str = timestamp_a.strftime('%Y-%m-%d %H:%M:%S')
+        parsed_out = api._parse_datetimes(format_str)
+        self.assertEqual(timestamp_a, parsed_out)
+
+    def test_parse_datetimes_no_input(self):
+        parsed_out = api._parse_datetimes('')
+        self.assertEqual('', parsed_out)
+        parsed_out = api._parse_datetimes(None)
+        self.assertIsNone(parsed_out)
+
+    @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
+                return_value={
+                    timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
+                })
+    def test_get_runs_by_date_explicit_sec_res(self, api_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/runs/group_by/project?datetime_resolution=sec')
+        self.assertEqual(200, res.status_code)
+        expected_response = {u'runs': {
+            unicode(timestamp_a.isoformat()): [{
+                u'pass': 2, u'fail': 3, u'skip': 1
+            }]
+        }}
+        self.assertEqual(expected_response, json.loads(res.data))
+        # Ensure db api called correctly
+        api_mock.assert_called_once_with('project', None, None, api.Session())
+
+    def test_get_runs_by_date_invalid_resolution(self):
+        api.Session = mock.MagicMock()
+        res = self.app.get(
+            '/runs/group_by/projects?datetime_resolution=century')
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual('Datetime resolution: century, is not a valid choice',
+                         res.data)

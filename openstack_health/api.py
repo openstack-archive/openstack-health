@@ -14,6 +14,7 @@
 
 
 import ConfigParser
+from dateutil import parser as date_parser
 import sys
 
 import flask
@@ -34,6 +35,63 @@ def get_runs_from_build_name(build_name):
     db_runs = api.get_runs_by_key_value('build_name', build_name, session)
     runs = [run.to_dict() for run in db_runs]
     return jsonify({'runs': runs})
+
+
+def _filter_by_date_res(date_res, sec_runs):
+    runs = {}
+    for run in sec_runs:
+        # Filter resolution
+        if date_res == 'min':
+            corr_res = run.replace(second=0, microsecond=0)
+        elif date_res == 'hour':
+            corr_res = run.replace(minute=0, second=0, microsecond=0)
+        elif date_res == 'day':
+            corr_res = run.date()
+        # Vuild runs dict with correct resolution
+        if corr_res in runs:
+            for local_run in sec_runs[run]:
+                if runs[corr_res].get(local_run, None):
+                    runs[corr_res][local_run].extend(
+                        sec_runs[run][local_run])
+                else:
+                    runs[corr_res][
+                        local_run] = sec_runs[run][local_run]
+        else:
+            runs[corr_res] = sec_runs[run]
+    return runs
+
+
+def _parse_datetimes(datetime_str):
+    if datetime_str:
+        return date_parser.parse(datetime_str)
+    else:
+        return datetime_str
+
+
+@app.route('/runs/group_by/<string:key>', methods=['GET'])
+def get_runs_grouped_by_metadata_per_datetime(key):
+    global Session
+    session = Session()
+    start_date = _parse_datetimes(flask.request.args.get('start_date', None))
+    stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
+    date_range = flask.request.args.get('datetime_resolution', None)
+    sec_runs = api.get_all_runs_time_series_by_key(key, start_date,
+                                                   stop_date, session)
+    if not date_range:
+        runs = sec_runs
+    else:
+        runs = {}
+        if date_range not in ['sec', 'min', 'hour', 'day']:
+            return ('Datetime resolution: %s, is not a valid'
+                    ' choice' % date_range), 400
+        elif date_range != 'sec':
+            runs = _filter_by_date_res(date_range, sec_runs)
+        else:
+            runs = sec_runs
+    out_runs = {}
+    for run in runs:
+        out_runs[run.isoformat()] = runs[run]
+    return jsonify({'runs': out_runs})
 
 
 @app.route('/runs', methods=['GET'])

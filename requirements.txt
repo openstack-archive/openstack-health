@@ -7,3 +7,4 @@ subunit2sql>=0.8.0
 sqlalchemy
 flask-jsonpify
 PyMySQL>=0.6.2
+python-dateutil>=2.4.2
