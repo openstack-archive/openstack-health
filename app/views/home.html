@@ -1,35 +1,30 @@
 <header class="bs-header">
     <div class="container">
-        <h1 class="page-header">Datasets</h1>
+        <h1 class="page-header">OpenStack Health</h1>
     </div>
 </header>
 
 <div class="container">
-    <div class="row" ng-if="!home.tempest.length">
+    <div class="row">
         <div class="col-lg-12">
-            <div class="alert alert-danger">
-                No tempest datasets could be loaded!
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Builds</h3>
+                </div>
+                <div class="panel-body">
+                    <chart-stock project-entries="home.chartEntries"></chart-stock>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row" ng-if="!!home.tempest.length">
-        <div class="col-lg-8">
-            <tempest-summary ng-if="home.tempest.length >= 1" dataset="home.tempest[0]"></tempest-summary>
-        </div>
-        <div class="col-lg-4" ng-if="home.tempest.length > 1">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Additional Datasets</h3>
-                </div>
-
-                <div class="list-group">
-                    <a class="list-group-item"
-                       ng-repeat="dataset in home.tempest"
-                       ng-if="$index > 0"
-                       ui-sref="timeline({datasetId: dataset.id})">
-                        {{ dataset.name }}
-                    </a>
-                </div>
+    <div class="row">
+        <div class="col-lg-4" ng-repeat="project in home.projects">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{project.name}}</h3>
+            </div>
+            <div class="panel-body">
+                <chart-gauge project="project"></chart-gauge>
             </div>
         </div>
     </div>
