@@ -1,10 +1,16 @@
 ================
 openstack-health
 ================
-webclient for visualizing the results of tempest jobs.
+webclient for visualizing test results of OpenStack CI jobs.
 
 Installation
 ============
+
+API
+---
+
+Frontend
+--------
 Installation of the frontend requires Node.js and Gulp. On Ubuntu::
 
     sudo apt-get install nodejs npm nodejs-legacy
@@ -16,6 +22,25 @@ Then, install the Node modules by running, from the project directory::
 
 Usage - Development
 ===================
+
+API
+---
+To run the REST API for development you either install the openstack_health
+python package and run::
+
+  $ openstack_health_api config_file
+
+or alternatively just can just run the api.py file manually. For example,
+from the top of the repo you would run::
+
+  $ python2 openstack_health/api.py config_file
+
+This will start up a local webserver listening on the localhost. You can
+then send requests to the specified port on stdout to see the response.
+
+
+Frontend
+--------
 A development server can be run as follows::
 
     gulp dev
@@ -25,6 +50,16 @@ filesystem.
 
 Usage - Production
 ==================
+
+API
+---
+The rest api is a flask application so any of the methods for deploying a
+flask application can be used. The standalone entrypoint used for development
+isn't suitable for production because it's single threaded. For example you
+can use something like uwsgi or mod_wsgi to deploy it for real.
+
+Frontend
+--------
 The production application can be build using::
 
     gulp prod
