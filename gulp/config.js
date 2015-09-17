@@ -60,6 +60,11 @@ module.exports = {
   'data': {
     'src' : ['app/data/**/*'],
     'dest': 'build/data'
+  },
+
+  'vendorJs': {
+    'src' : ['app/vendor-js/**/*'],
+    'dest': 'build/js/'
   }
 
 };
