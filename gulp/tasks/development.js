@@ -10,7 +10,7 @@ gulp.task('dev', ['clean'], function(cb) {
   global.isProd = false;
 
   runSequence(
-    ['styles', 'images', 'fonts', 'data', 'vendor-js', 'views', 'browserify'],
+    ['styles', 'fonts', 'data', 'vendor-js', 'views', 'browserify'],
     'watch', cb);
 
 });

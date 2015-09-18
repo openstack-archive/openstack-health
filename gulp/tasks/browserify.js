@@ -14,7 +14,6 @@ var babelify     = require('babelify');
 var uglify       = require('gulp-uglify');
 var handleErrors = require('../util/handleErrors');
 var browserSync  = require('browser-sync');
-var debowerify   = require('debowerify');
 var ngAnnotate   = require('browserify-ngannotate');
 
 // Based on: http://blog.avisi.nl/2014/04/25/how-to-keep-a-fast-build-with-browserify-and-reactjs/
@@ -37,7 +36,6 @@ function buildScript(file) {
 
   var transforms = [
     babelify,
-    debowerify,
     ngAnnotate,
     'brfs',
     'bulkify'
