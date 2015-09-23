@@ -96,6 +96,13 @@ def _group_by_date_range(date_range, sec_runs):
     return runs
 
 
+@app.route('/runs/metadata/keys', methods=['GET'])
+def get_run_metadata_keys():
+    global Session
+    session = Session()
+    return jsonify(api.get_all_run_metadata_keys(session))
+
+
 def _parse_datetimes(datetime_str):
     if datetime_str:
         return date_parser.parse(datetime_str)

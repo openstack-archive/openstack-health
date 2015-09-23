@@ -55,6 +55,15 @@ class TestRestAPI(base.TestCase):
         self.addCleanup(setup_mock.stop)
         api.Session = mock.MagicMock()
 
+    @mock.patch('subunit2sql.db.api.get_all_run_metadata_keys',
+                return_value=['build_name', 'project', 'build_uuid'])
+    def test_get_run_metadata_keys(self, api_mock):
+        res = self.app.get('/runs/metadata/keys')
+        self.assertEqual(200, res.status_code)
+        api_mock.assert_called_once_with(api.Session())
+        expected_response = [u'build_name', u'project', u'build_uuid']
+        self.assertEqual(expected_response, json.loads(res.data))
+
     @mock.patch('subunit2sql.db.api.get_test_run_dict_by_run_meta_key_value',
                 return_value=[
                     {'test_id': 'fake_test_a',
