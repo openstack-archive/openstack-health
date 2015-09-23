@@ -13,6 +13,7 @@ ${demo.css}
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/highcharts-more.js"></script>
 <script src="http://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="sparkline.js"></script>
 </head>
 <body>
 
@@ -97,31 +98,29 @@ for (var ele=0; ele < data.timedata.length; ele++) {
     for (var loop=0; loop<jobs.length; loop++) {
         pct = ( jobs[loop].fail * 100 ) / (jobs[loop].fail + jobs[loop].pass);
         ttable.append($('<tr>')
-            .append($('<td><div id="fail_sparc_'+loop+'" style="height:100px"></div></td>'))
+            .append($('<td><div id="fail_sparc_'+loop+'" style=""></div></td>'))
             .append($('<td>'+jobs[loop].job_name+'</td>'))
-            .append($('<td><div id="runtime_sparc_'+loop+'" style="height:100px"></div></td>'))
+            .append($('<td><div id="runtime_sparc_'+loop+'" style=""></div></td>'))
             .append($('<td>'+jobs[loop].pass+'</td>'))
             .append($('<td>'+jobs[loop].fail+'</td>'))
             .append($('<td>'+pct+'</td></tr>'))
         );
-        $('#fail_sparc_'+loop).highcharts({
+        $('#fail_sparc_'+loop).highcharts('SparkLine', {
             title: { text: ' ' },
             subtitle: { text: ' '},
             xAxis: { lineWidth: 0, minorGridLineWidth: 0, lineColor: 'transparent', title: { text: ' ' }, labels: { enabled: false }},
             yAxis: { lineWidth: 0, minorGridLineWidth: 0, lineColor: 'transparent', title: { text: ' ' }, labels: { enabled: false }},
             series: [{name: ' ', data: jobs[loop].fail_sparc_data}],
             plotOptions: {line: { marker: { enabled: false } } },
-            height: 100,
             width: 150
         });
-        $('#runtime_sparc_'+loop).highcharts({
+        $('#runtime_sparc_'+loop).highcharts('SparkLine', {
             title: { text: ' ' },
             subtitle: { text: ' '},
             xAxis: { lineWidth: 0, minorGridLineWidth: 0, lineColor: 'transparent', title: { text: ' ' }, labels: { enabled: false }},
             yAxis: { lineWidth: 0, minorGridLineWidth: 0, lineColor: 'transparent', title: { text: ' ' }, labels: { enabled: false }},
             series: [{name: ' ', data: jobs[loop].run_time_sparc_data}],
             plotOptions: {line: { marker: { enabled: false } } },
-            height: 100,
             width: 150
         });
     }
