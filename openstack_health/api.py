@@ -26,6 +26,7 @@ from operator import itemgetter
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
+from subunit2sql import read_subunit
 
 
 app = flask.Flask(__name__)
@@ -173,6 +174,117 @@ def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
         out_runs[run.isoformat()] = runs_by_groupby_key[run]
 
     return out_runs, 200
+
+
+def _moving_avg(curr_avg, count, value):
+    return ((count * curr_avg) + value) / (count + 1)
+
+
+def _update_counters(status, pass_count, fail_count, skip_count):
+    if status == 'success' or status == 'xfail':
+        pass_count = pass_count + 1
+    elif status == 'fail' or status == 'unxsuccess':
+        fail_count = fail_count + 1
+    else:
+        skip_count = skip_count + 1
+    return pass_count, fail_count, skip_count
+
+
+def _group_test_runs_by_date_res(res, tests):
+    test_runs = {}
+    for test_run in tests:
+        # Correct resolution
+        if res == 'sec':
+            corr_res = test_run['start_time'].replace(microsecond=0)
+        elif res == 'min':
+            corr_res = test_run['start_time'].replace(second=0, microsecond=0)
+        elif res == 'hour':
+            corr_res = test_run['start_time'].replace(minute=0, second=0,
+                                                      microsecond=0)
+        elif res == 'day':
+            corr_res = test_run['start_time'].date()
+
+        corr_res = corr_res.isoformat()
+        # Bin test runs based on corrected timestamp
+        if corr_res in test_runs:
+            test_id = test_run['test_id']
+            if test_id in test_runs[corr_res]:
+                # Update moving average if the test was a success
+                if (test_run['status'] == 'success' or
+                    test_run['status'] == 'xfail'):
+                    durr = read_subunit.get_duration(test_run['start_time'],
+                                                     test_run['stop_time'])
+                    run_time = _moving_avg(
+                        test_runs[corr_res][test_id]['run_time'],
+                        test_runs[corr_res][test_id]['pass'],
+                        durr)
+                else:
+                    run_time = None
+                # Update Counters
+                pass_count, fail_count, skip_count = _update_counters(
+                    test_run['status'],
+                    test_runs[corr_res][test_id]['pass'],
+                    test_runs[corr_res][test_id]['fail'],
+                    test_runs[corr_res][test_run['test_id']]['skip'])
+                test_runs[corr_res][test_id]['pass'] = pass_count
+                test_runs[corr_res][test_id]['fail'] = fail_count
+                test_runs[corr_res][test_id]['skip'] = skip_count
+                if run_time:
+                    test_runs[corr_res][test_id]['run_time'] = run_time
+            else:
+                pass_count, fail_count, skip_count = _update_counters(
+                    test_run['status'], 0, 0, 0)
+                if (test_run['status'] == 'success' or
+                    test_run['status'] == 'xfail'):
+                    run_time = read_subunit.get_duration(
+                        test_run['start_time'],
+                        test_run['stop_time'])
+                else:
+                    run_time = 0
+                test_runs[corr_res][test_id] = {
+                    'pass': pass_count,
+                    'fail': fail_count,
+                    'skip': skip_count,
+                    'run_time': run_time
+                }
+        else:
+            pass_count, fail_count, skip_count = _update_counters(
+                test_run['status'], 0, 0, 0)
+            if (test_run['status'] == 'success' or
+                test_run['status'] == 'xfail'):
+                run_time = read_subunit.get_duration(test_run['start_time'],
+                                                     test_run['stop_time'])
+            else:
+                run_time = 0
+            test_runs[corr_res] = {
+                test_run['test_id']: {
+                    'pass': pass_count,
+                    'fail': fail_count,
+                    'skip': skip_count,
+                    'run_time': run_time
+                }
+            }
+    return test_runs
+
+
+@app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
+def get_test_runs_by_build_name(build_name):
+    global Session
+    session = Session()
+    key = 'build_name'
+    value = build_name
+    if not key or not value:
+        return 'A key and value must be specified', 400
+    start_date = _parse_datetimes(flask.request.args.get('start_date', None))
+    stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
+    date_range = flask.request.args.get('datetime_resolution', 'sec')
+    if date_range not in ['sec', 'min', 'hour', 'day']:
+        return ('Datetime resolution: %s, is not a valid'
+                ' choice' % date_range), 400
+    tests = api.get_test_run_dict_by_run_meta_key_value(key, value, start_date,
+                                                        stop_date, session)
+    tests = _group_test_runs_by_date_res(date_range, tests)
+    return jsonify({'tests': tests})
 
 
 @app.route('/runs', methods=['GET'])

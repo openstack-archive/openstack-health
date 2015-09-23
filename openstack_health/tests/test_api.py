@@ -55,6 +55,38 @@ class TestRestAPI(base.TestCase):
         self.addCleanup(setup_mock.stop)
         api.Session = mock.MagicMock()
 
+    @mock.patch('subunit2sql.db.api.get_test_run_dict_by_run_meta_key_value',
+                return_value=[
+                    {'test_id': 'fake_test_a',
+                     'status': 'success',
+                     'start_time': timestamp_a,
+                     'stop_time': timestamp_b},
+                    {'test_id': 'fake_test_b',
+                     'status': 'fail',
+                     'start_time': timestamp_a,
+                     'stop_time': timestamp_b}
+                ])
+    def test_get_test_runs_by_build_name(self, api_mock):
+        res = self.app.get('/build_name/fake_tests/test_runs')
+        self.assertEqual(200, res.status_code)
+        api_mock.assert_called_once_with('build_name', 'fake_tests', None,
+                                         None, api.Session())
+        expected_response = {
+            unicode(timestamp_a.isoformat()): {
+                u'fake_test_a': {
+                    u'pass': 1,
+                    u'fail': 0,
+                    u'skip': 0,
+                    u'run_time': 1},
+                u'fake_test_b': {
+                    u'pass': 0,
+                    u'fail': 1,
+                    u'skip': 0,
+                    u'run_time': 0},
+            }
+        }
+        self.assertEqual({u'tests': expected_response}, json.loads(res.data))
+
     @mock.patch('subunit2sql.db.api.get_all_tests',
                 return_value=[models.Test(
                     id='fake_id', test_id='test.id', run_count=4, success=2,
