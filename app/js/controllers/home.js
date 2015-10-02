@@ -5,57 +5,60 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function HomeCtrl($http) {
+function HomeCtrl(healthService) {
 
   // ViewModel
   var vm = this;
 
-  $http.get("data/home_sample.json").then(function(response) {
-    vm.data = response.data;
-
-    // prepare chart data
+  vm.processData = function(data) {
     var projects = {};
     var passEntries = [];
     var failEntries = [];
 
-    response.data.timedata.forEach(function(timedata) {
+    for (var dateString in data.runs) {
+      var date = dateString;
       var totalPass = 0;
       var totalFail = 0;
 
-      timedata.project_data.forEach(function(project) {
-        var sumProject = projects[project.project];
-        if (typeof sumProject === "undefined") {
-          // create initial data containers for each gauge chart on-the-fly
-          sumProject = {
-            name: project.project,
-            data: [
-              { key: 'Passes', value: 0, color: 'blue' },
-              { key: 'Failures', value: 0, color: 'red' }
-            ]
-          };
-          projects[project.project] = sumProject;
-        }
+      var reqProjects = data.runs[date];
+      for (var projectName in reqProjects) {
+        reqProjects[projectName].forEach(function(project) {
+          var sumProject = projects[projectName];
+          if (typeof sumProject === "undefined") {
+            // create initial data containers for each gauge chart on-the-fly
+            sumProject = {
+              name: projectName,
+              data: [
+                { key: 'Passes', value: 0, color: 'blue' },
+                { key: 'Failures', value: 0, color: 'red' }
+              ]
+            };
+            projects[projectName] = sumProject;
+          }
 
-        sumProject.data[0].value += project.pass;
-        sumProject.data[1].value += project.fail;
-
-        totalPass += project.pass;
-        totalFail += project.fail;
-      });
+          if (project.fail > 0) {
+            totalFail += 1;
+            sumProject.data[1].value += 1;
+          } else {
+            totalPass += 1;
+            sumProject.data[0].value += 1;
+          }
+        });
+      }
 
       // parse dates and create data series' for the main chart
-      var date = new Date(timedata.datetime).getTime();
+      var time = new Date(date).getTime();
 
       passEntries.push({
-        x: date,
+        x: time,
         y: totalPass
       });
 
       failEntries.push({
-        x: date,
+        x: time,
         y: totalFail
       });
-    });
+    }
 
     vm.chartData = [
       { key: 'Passes', values: passEntries, color: "blue" },
@@ -65,8 +68,20 @@ function HomeCtrl($http) {
     vm.projects = Object.keys(projects).map(function(name) {
       return projects[name];
     });
-  });
+  };
 
+  vm.loadData = function() {
+    var start = new Date();
+    start.setDate(start.getDate() - 20);
+
+    healthService.getRunsGroupedByMetadataPerDatetime('project', {
+      start_date: start,
+      datetime_resolution: 'hour',
+    }).then(function(response) {
+      vm.processData(response.data);
+    });
+  };
+
+  vm.loadData();
 }
-
 controllersModule.controller('HomeCtrl', HomeCtrl);
