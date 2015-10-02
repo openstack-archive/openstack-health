@@ -1,0 +1,3 @@
+# Enable eslint-plugin-angular
+plugins:
+  - angular

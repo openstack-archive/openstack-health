@@ -1,0 +1,11 @@
+# Use eslint-config-openstack
+extends: openstack
+
+# Set up globals
+globals:
+  angular: false
+  module: false
+
+env:
+  browser: true
+  jasmine: true

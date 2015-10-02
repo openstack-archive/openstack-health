@@ -1,11 +1,11 @@
 'use strict';
 
-var config  = require('../config');
-var http    = require('http');
+var config = require('../config');
+var http = require('http');
 var express = require('express');
-var gulp    = require('gulp');
-var gutil   = require('gulp-util');
-var morgan  = require('morgan');
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var morgan = require('morgan');
 
 gulp.task('server', function() {
 
@@ -17,13 +17,13 @@ gulp.task('server', function() {
 
   // Serve index.html for all routes to leave routing up to Angular
   server.all('/*', function(req, res) {
-      res.sendFile('index.html', { root: 'build' });
+    res.sendFile('index.html', {root: 'build'});
   });
 
   // Start webserver if not already running
   var s = http.createServer(server);
-  s.on('error', function(err){
-    if(err.code === 'EADDRINUSE'){
+  s.on('error', function(err) {
+    if (err.code === 'EADDRINUSE') {
       gutil.log('Development server is already started at port ' + config.serverPort);
     }
     else {

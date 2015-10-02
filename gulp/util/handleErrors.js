@@ -4,7 +4,7 @@ var notify = require('gulp-notify');
 
 module.exports = function(error) {
 
-  if( !global.isProd ) {
+  if (!global.isProd) {
 
     var args = Array.prototype.slice.call(arguments);
 
@@ -20,8 +20,6 @@ module.exports = function(error) {
   } else {
     // Log the error and stop the process
     // to prevent broken code from building
-    console.log(error);
-    process.exit(1);
+    throw Error(error);
   }
-
 };
