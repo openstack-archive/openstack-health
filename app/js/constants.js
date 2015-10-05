@@ -1,7 +1,7 @@
 'use strict';
 
 var AppSettings = {
-  appTitle: 'Example Application',
+  appTitle: 'OpenStack Health',
   apiUrl: '/api/v1'
 };
 
