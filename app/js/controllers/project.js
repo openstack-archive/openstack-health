@@ -10,7 +10,10 @@ function ProjectCtrl($http, healthService, projectName) {
   // ViewModel
   var vm = this;
 
-  vm.name = projectName;
+  // decodeURI is needed here because project names contains slash as part
+  // of the name. As this come from an URL part and URL can be encoded,
+  // this decode call make the project name exebition properly.
+  vm.name = decodeURIComponent(projectName);
 
   vm.processData = function(data) {
     // prepare chart data
@@ -72,7 +75,7 @@ function ProjectCtrl($http, healthService, projectName) {
     var start = new Date();
     start.setDate(start.getDate() - 20);
 
-    healthService.getRunsFromProject(projectName, {
+    healthService.getRunsFromProject(vm.name, {
       start_date: start,
       datetime_resolution: 'hour',
     }).then(function(response) {
