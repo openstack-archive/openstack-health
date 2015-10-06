@@ -11,6 +11,17 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       controller: 'HomeCtrl as home',
       templateUrl: 'home.html',
       title: 'Home'
+    })
+    .state('project', {
+      url: '/project/:projectName',
+      controller: 'ProjectCtrl as project',
+      templateUrl: 'project.html',
+      title: 'Project',
+      resolve: {
+        "projectName": function($stateParams) {
+            return $stateParams.projectName;
+        }
+      }
     });
 
   $urlRouterProvider.otherwise('/');

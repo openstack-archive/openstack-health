@@ -21,7 +21,9 @@
         <div class="col-lg-4" ng-repeat="project in home.projects">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{project.name}}</h3>
+                <a ui-sref="project({projectName: project.name})">
+                    <h3 class="panel-title">{{project.name}}</h3>
+                </a>
             </div>
             <div class="panel-body">
                 <chart-gauge data="project.data" width="100%" height="150"></chart-gauge>
