@@ -8,13 +8,20 @@ Installation
 
 API
 ---
+Make sure the python dependencies are installed preferrably in a virtualenv
+if doing development work::
+
+    pip install -r requirements.txt
 
 Frontend
 --------
 Installation of the frontend requires Node.js and Gulp. On Ubuntu::
 
     sudo apt-get install nodejs npm nodejs-legacy
-    sudo npm install -g gulp
+    sudo npm -g install npm@2
+    sudo npm -g config set prefix /usr/local
+    sudo npm -g install npm
+    sudo npm -g install gulp
 
 Then, install the Node modules by running, from the project directory::
 
