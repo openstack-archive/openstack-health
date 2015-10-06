@@ -17,6 +17,28 @@ from subunit2sql import read_subunit
 from base_aggregator import BaseAggregator
 
 
+def convert_test_runs_list_to_time_series_dict(test_runs_list):
+    test_runs = {}
+    for test_run in test_runs_list:
+        # Populate dict
+        start_time = test_run.start_time
+        if start_time and test_run.start_time_microsecond:
+            start_time = start_time.replace(
+                microsecond=test_run.start_time_microsecond)
+        if test_run.stop_time:
+            stop_time = test_run.stop_time
+            if test_run.stop_time_microsecond:
+                stop_time = stop_time.replace(
+                    microsecond=test_run.stop_time_microsecond)
+        test_run_dict = {
+            'run_time': read_subunit.get_duration(start_time, stop_time),
+            'status': test_run.status,
+            'run_id': test_run.run_id
+        }
+        test_runs[start_time.isoformat()] = test_run_dict
+    return test_runs
+
+
 class Status(object):
     def __init__(self, status):
         self.status = status
