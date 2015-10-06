@@ -42,15 +42,15 @@ def get_runs_from_build_name(build_name):
     return jsonify({'runs': runs})
 
 
-def _filter_by_date_res(date_res, sec_runs):
+def _group_by_date_range(date_range, sec_runs):
     runs = {}
     for run in sec_runs:
         # Filter resolution
-        if date_res == 'min':
+        if date_range == 'min':
             corr_res = run.replace(second=0, microsecond=0)
-        elif date_res == 'hour':
+        elif date_range == 'hour':
             corr_res = run.replace(minute=0, second=0, microsecond=0)
-        elif date_res == 'day':
+        elif date_range == 'day':
             corr_res = run.date()
         # Build runs dict with correct resolution
         if corr_res in runs:
@@ -90,7 +90,7 @@ def get_runs_grouped_by_metadata_per_datetime(key):
             return ('Datetime resolution: %s, is not a valid'
                     ' choice' % date_range), 400
         elif date_range != 'sec':
-            runs = _filter_by_date_res(date_range, sec_runs)
+            runs = _group_by_date_range(date_range, sec_runs)
         else:
             runs = sec_runs
     out_runs = {}
@@ -136,8 +136,8 @@ def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
     # That does not apply when you choose 'sec' since runs are already grouped
     # by it.
     if date_range != 'sec':
-        runs_by_groupby_key = _filter_by_date_res(date_range,
-                                                  runs_by_groupby_key)
+        runs_by_groupby_key = _group_by_date_range(date_range,
+                                                   runs_by_groupby_key)
 
     out_runs = {}
     for run in runs_by_groupby_key:
