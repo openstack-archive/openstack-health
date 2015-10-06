@@ -6,7 +6,7 @@ var _ = require('underscore');
 /**
  * @ngInject
  */
-function TestsController(healthService) {
+function TestsController(healthService, testService) {
 
   // ViewModel
   var vm = this;
@@ -15,12 +15,8 @@ function TestsController(healthService) {
   vm.processData = function(data) {
     vm.chartData = {};
 
-    var removeIdNoise = function(testId) {
-      return testId.replace('setUpClass (', '').replace('tearDownClass (', '').replace(' )', '');
-    };
-
     var testsByHierarchy = _.groupBy(data.tests, function(test) {
-      var testId = removeIdNoise(test.test_id);
+      var testId = testService.removeIdNoise(test.test_id);
       var keyMatcher = /^(\w*\.\w*\.\w*)\./g;
       var matches = keyMatcher.exec(testId);
 
