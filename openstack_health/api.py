@@ -28,6 +28,16 @@ engine = None
 Session = None
 
 
+@app.before_first_request
+def setup():
+    config = ConfigParser.ConfigParser()
+    config.read(sys.argv[1])
+    global engine
+    engine = create_engine(config.get('default', 'db_uri'))
+    global Session
+    Session = sessionmaker(bind=engine)
+
+
 @app.route('/build_name/<string:build_name>/runs', methods=['GET'])
 def get_runs_from_build_name(build_name):
     global Session
@@ -143,12 +153,6 @@ def get_test_runs():
 
 
 def main():
-    config = ConfigParser.ConfigParser()
-    config.read(sys.argv[1])
-    global engine
-    engine = create_engine(config.get('default', 'db_uri'))
-    global Session
-    Session = sessionmaker(bind=engine)
     app.run(debug=True)
 
 

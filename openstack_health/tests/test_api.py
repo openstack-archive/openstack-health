@@ -30,13 +30,20 @@ class TestRestAPI(base.TestCase):
         super(TestRestAPI, self).setUp()
         api.app.config['TESTING'] = True
         self.app = api.app.test_client()
+        # NOTE(mtreinish): This is mocking the flask function which calls
+        # whatever uses the .before_first_request decorator, simply mocking
+        # out the setup function was insufficient
+        setup_mock = mock.patch(
+            'flask.app.Flask.try_trigger_before_first_request_functions')
+        setup_mock.start()
+        self.addCleanup(setup_mock.stop)
+        api.Session = mock.MagicMock()
 
     @mock.patch('subunit2sql.db.api.get_all_tests',
                 return_value=[models.Test(
                     id='fake_id', test_id='test.id', run_count=4, success=2,
                     failure=2, run_time=21.2)])
     def test_get_tests(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/tests')
         self.assertEqual(200, res.status_code)
         expected_response = {'tests': [
@@ -55,7 +62,6 @@ class TestRestAPI(base.TestCase):
                     artifacts='fake_url.com',
                     run_at=timestamp_a)])
     def test_get_runs(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/runs')
         self.assertEqual(200, res.status_code)
         format_time = timestamp_a.strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -76,7 +82,6 @@ class TestRestAPI(base.TestCase):
                     status='success', start_time=timestamp_a,
                     stop_time=timestamp_b)])
     def test_get_test_runs(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/test_runs')
         self.assertEqual(200, res.status_code)
         format_time_a = timestamp_a.strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -97,7 +102,6 @@ class TestRestAPI(base.TestCase):
                     artifacts='fake_url.com',
                     run_at=timestamp_a)])
     def test_get_runs_from_build_name(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/build_name/test_build_name/runs')
         self.assertEqual(200, res.status_code)
         format_time = timestamp_a.strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -117,7 +121,6 @@ class TestRestAPI(base.TestCase):
                     id='fake_id', test_id='test.id', run_count=4, success=2,
                     failure=2, run_time=21.2)])
     def test_get_tests_from_run(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/run/fake_id/tests')
         self.assertEqual(200, res.status_code)
         expected_response = {'tests': [
@@ -142,7 +145,6 @@ class TestRestAPI(base.TestCase):
                     }
                 })
     def test_get_run_test_runs(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/run/test_run_id/test_runs')
         self.assertEqual(200, res.status_code)
         format_time_a = timestamp_a.strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -163,7 +165,6 @@ class TestRestAPI(base.TestCase):
                     timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
                 })
     def test_get_runs_by_date(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/runs/group_by/project')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
@@ -180,7 +181,6 @@ class TestRestAPI(base.TestCase):
                     timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
                 })
     def test_get_runs_by_date_min_res(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/runs/group_by/project?datetime_resolution=min')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
@@ -197,7 +197,6 @@ class TestRestAPI(base.TestCase):
                     timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
                 })
     def test_get_runs_by_date_hour_res(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/runs/group_by/projects?datetime_resolution=hour')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
@@ -222,7 +221,6 @@ class TestRestAPI(base.TestCase):
                                                'skip': 0}]}
                 })
     def test_get_runs_by_date_day_res(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('runs/group_by/projects?datetime_resolution=day')
         self.assertEqual(200, res.status_code)
         date = unicode(timestamp_a.date().isoformat())
@@ -279,7 +277,6 @@ class TestRestAPI(base.TestCase):
         api_mock.assert_called_once_with('project', None, None, api.Session())
 
     def test_get_runs_by_date_invalid_resolution(self):
-        api.Session = mock.MagicMock()
         res = self.app.get(
             '/runs/group_by/projects?datetime_resolution=century')
         self.assertEqual(res.status_code, 400)

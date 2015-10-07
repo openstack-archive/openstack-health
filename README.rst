@@ -55,8 +55,14 @@ API
 ---
 The rest api is a flask application so any of the methods for deploying a
 flask application can be used. The standalone entrypoint used for development
-isn't suitable for production because it's single threaded. For example you
-can use something like uwsgi or mod_wsgi to deploy it for real.
+isn't suitable for production because it's single threaded. You should use
+a wsgi container, something like uwsgi, gunicorn, or mod_wsgi to deploy it
+for real. For example, running the API with uwsgi standalone you can do
+something like::
+
+  $ uwsgi -s /tmp/uwsgi.sock --module openstack_health.api --callable app --pyargv config_file --http :5000
+
+That will startup a uwsgi server running the rest api on port 5000.
 
 Frontend
 --------
