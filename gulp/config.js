@@ -60,6 +60,11 @@ module.exports = {
   'vendorJs': {
     'src' : ['app/vendor-js/**/*'],
     'dest': 'build/js/'
+  },
+
+  'devResources': {
+    'src': ['etc/config.json'],
+    'dest': 'build/'
   }
 
 };
