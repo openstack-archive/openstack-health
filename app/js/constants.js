@@ -2,7 +2,7 @@
 
 var AppSettings = {
   appTitle: 'OpenStack Health',
-  apiUrl: '/api/v1'
+  apiUrl: 'http://localhost:5000'
 };
 
 module.exports = AppSettings;
