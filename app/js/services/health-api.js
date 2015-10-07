@@ -34,6 +34,14 @@ function HealthService($http, config) {
     });
   };
 
+  service.getTestsFromBuildName = function(buildName, options) {
+    return config.get().then(function(config) {
+      return $http.jsonp(config.apiRoot + '/build_name/' + buildName + '/test_runs', {
+        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+      });
+    });
+  };
+
   service.getRunsGroupedByMetadataPerDatetime = function(key, options) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/group_by/' + key, {
