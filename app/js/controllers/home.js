@@ -14,6 +14,7 @@ function HomeCtrl(healthService) {
     var projects = {};
     var passEntries = [];
     var failEntries = [];
+    var failRateEntries = [];
 
     for (var dateString in data.runs) {
       var date = dateString;
@@ -58,12 +59,22 @@ function HomeCtrl(healthService) {
         x: time,
         y: totalFail
       });
+
+      failRateEntries.push({
+        x: new Date(date).getTime(),
+        y: (totalFail / (totalFail + totalPass)) * 100
+      });
     }
 
     vm.chartData = [
       { key: 'Passes', values: passEntries, color: "blue" },
       { key: 'Failures', values: failEntries, color: "red" }
     ];
+
+    vm.chartDataRate = [
+      { key: '% Failures', values: failRateEntries }
+    ];
+
 
     vm.projects = Object.keys(projects).map(function(name) {
       return projects[name];
