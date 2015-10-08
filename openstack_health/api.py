@@ -29,6 +29,7 @@ from subunit2sql.db import api
 
 
 app = flask.Flask(__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True
 config = None
 engine = None
 Session = None
