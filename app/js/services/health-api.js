@@ -29,6 +29,12 @@ function HealthService($http, AppSettings) {
     });
   };
 
+  service.getRunsFromProject = function(projectName, options) {
+    return $http.jsonp(base + '/projects/' + projectName + '/runs', {
+      params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+    });
+  };
+
   service.getTestsFromRun = function(runId) {
     return $http.jsonp(base + '/run/' + runId + '/tests', {
       params: { callback: 'JSON_CALLBACK' }
