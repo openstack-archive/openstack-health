@@ -23,6 +23,7 @@ function chartGauge() {
 
       chart = nv.models.pieChart()
           .donut(true)
+          .donutRatio(0.4)
           .showLabels(false)
           .showLegend(false)
           .x(function(d) { return d.key; })   // slice label
