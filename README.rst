@@ -15,13 +15,20 @@ if doing development work::
 
 Frontend
 --------
-Installation of the frontend requires Node.js and Gulp. On Ubuntu::
+Installation of the frontend requires Node.js and Gulp.
+
+Ubuntu::
 
     sudo apt-get install nodejs npm nodejs-legacy
     sudo npm -g install npm@2
     sudo npm -g config set prefix /usr/local
     sudo npm -g install npm
     sudo npm -g install gulp
+
+OSX (via HomeBrew, note no sudo)::
+    brew install nodejs
+    npm install -g gulp
+
 
 Then, install the Node modules by running, from the project directory::
 
