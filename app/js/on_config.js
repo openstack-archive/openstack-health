@@ -13,7 +13,7 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       title: 'Home'
     })
     .state('project', {
-      url: '/project/:projectName',
+      url: '/project/*projectName',
       controller: 'ProjectCtrl as project',
       templateUrl: 'project.html',
       title: 'Project',
