@@ -17,7 +17,7 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       controller: 'ProjectCtrl as project',
       templateUrl: 'project.html',
       title: 'Project',
-      resolve: {
+      resolve: /*@ngInject*/ {
         "projectName": function($stateParams) {
             return $stateParams.projectName;
         }
