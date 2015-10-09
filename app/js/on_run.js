@@ -3,13 +3,13 @@
 /**
  * @ngInject
  */
-function OnRun($rootScope, AppSettings) {
+function OnRun ($rootScope, AppSettings) {
 
   // change page title based on state
-  $rootScope.$on('$stateChangeSuccess', function(event, toState) {
+  var disable = $rootScope.$on('$stateChangeSuccess', function(event, toState) {
     $rootScope.pageTitle = '';
 
-    if ( toState.title ) {
+    if (toState.title) {
       $rootScope.pageTitle += toState.title;
       $rootScope.pageTitle += ' \u2014 ';
     }
@@ -17,6 +17,7 @@ function OnRun($rootScope, AppSettings) {
     $rootScope.pageTitle += AppSettings.appTitle;
   });
 
+  $rootScope.$on('$destroy', disable);
 }
 
 module.exports = OnRun;
