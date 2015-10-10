@@ -33,6 +33,10 @@ engine = None
 Session = None
 
 
+def get_app():
+    return app
+
+
 @app.before_first_request
 def setup():
     config = ConfigParser.ConfigParser()
