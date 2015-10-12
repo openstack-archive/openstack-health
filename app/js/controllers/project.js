@@ -20,6 +20,7 @@ function ProjectCtrl($http, healthService, projectName) {
     var jobs = {};
     var passEntries = [];
     var failEntries = [];
+    var failRateEntries = [];
 
     if (!data.timedelta) {
       return;
@@ -61,11 +62,20 @@ function ProjectCtrl($http, healthService, projectName) {
         x: new Date(timedelta.datetime).getTime(),
         y: totalFail
       });
+
+      failRateEntries.push({
+        x: new Date(timedelta.datetime).getTime(),
+        y: (totalFail / (totalFail + totalPass)) * 100
+      });
     });
 
     vm.chartData = [
       { key: 'Passes', values: passEntries, color: 'blue' },
       { key: 'Failures', values: failEntries, color: 'red' }
+    ];
+
+    vm.chartDataRate = [
+      { key: '% Failures', values: failRateEntries }
     ];
 
     vm.jobs = jobs;
