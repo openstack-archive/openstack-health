@@ -29,14 +29,17 @@ from subunit2sql.db import api
 
 
 app = flask.Flask(__name__)
+config = None
 engine = None
 Session = None
 
 
 @app.before_first_request
 def setup():
-    config = ConfigParser.ConfigParser()
-    config.read(sys.argv[1])
+    global config
+    if not config:
+        config = ConfigParser.ConfigParser()
+        config.read('/etc/openstack-health.conf')
     global engine
     engine = create_engine(config.get('default', 'db_uri'))
     global Session
@@ -268,6 +271,9 @@ def get_test_runs():
 
 
 def main():
+    global config
+    config = ConfigParser.ConfigParser()
+    config.read(sys.argv[1])
     app.run(debug=True)
 
 
