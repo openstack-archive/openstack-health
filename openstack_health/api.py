@@ -270,6 +270,31 @@ def get_test_runs():
     return jsonify({'test_runs': test_runs})
 
 
+def _check_db_availability():
+    try:
+        global engine
+        result = engine.execute('SELECT now()').first()
+        if result is None:
+            return False
+        return True
+    except Exception:
+        return False
+
+
+@app.route('/status', methods=['GET'])
+def get_status():
+
+    is_db_available = _check_db_availability()
+
+    status = {'status': {'availability': {'database': is_db_available}}}
+    response = jsonify(status)
+
+    if not is_db_available:
+        response.status_code = 500
+
+    return response
+
+
 def main():
     global config
     config = ConfigParser.ConfigParser()

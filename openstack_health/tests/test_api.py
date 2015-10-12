@@ -594,3 +594,21 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertEqual('Datetime resolution: century, is not a valid choice',
                          res.data)
+
+    @mock.patch('openstack_health.api._check_db_availability',
+                return_value=False)
+    def test_get_status_failure(self, status_check_mock):
+        expected_response = {'status': {'availability': {'database': False}}}
+
+        response = self.app.get('/status')
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(json.loads(response.data), expected_response)
+
+    @mock.patch('openstack_health.api._check_db_availability',
+                return_value=True)
+    def test_get_status_success(self, status_check_mock):
+        expected_response = {'status': {'availability': {'database': True}}}
+
+        response = self.app.get('/status')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data), expected_response)
