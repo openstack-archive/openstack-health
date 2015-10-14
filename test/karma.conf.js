@@ -12,10 +12,11 @@ module.exports = function(config) {
     preprocessors: {
       'app/js/**/*.js': ['browserify', 'babel', 'coverage']
     },
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
     reporters: ['progress', 'coverage'],
 
     autoWatch: true,
+    singleRun: true,
 
     browserify: {
       debug: true,
