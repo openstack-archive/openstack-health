@@ -52,7 +52,7 @@
     "karma-babel-preprocessor": "^4.0.1",
     "karma-browserify": "^4.0.0",
     "karma-cli": "0.0.4",
-    "karma-coverage": "0.3.1",
+    "karma-coverage": "0.2.6",
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "0.2.0",
     "morgan": "^1.6.1",
