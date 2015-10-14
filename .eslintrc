@@ -9,3 +9,6 @@ globals:
 env:
   browser: true
   jasmine: true
+
+rules:
+  module-setter: 0

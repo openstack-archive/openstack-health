@@ -1,3 +1,7 @@
 # Enable eslint-plugin-angular
 plugins:
   - angular
+
+rules:
+  angular/module-setter: 0
+  angular/module-getter: 0

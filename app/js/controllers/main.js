@@ -5,10 +5,10 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function MainCtrl($window, $scope) {
+function MainController($window, $scope) {
   $window.addEventListener('resize', function () {
     $scope.$broadcast('windowResize');
   });
 }
 
-controllersModule.controller('MainCtrl', MainCtrl);
+controllersModule.controller('MainController', MainController);

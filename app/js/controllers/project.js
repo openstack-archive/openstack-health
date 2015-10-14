@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function ProjectCtrl($http, healthService, projectName) {
+function ProjectController($http, healthService, projectName) {
 
   // ViewModel
   var vm = this;
@@ -32,13 +32,13 @@ function ProjectCtrl($http, healthService, projectName) {
 
       timedelta.job_data.forEach(function(job) {
         if (!jobs[job.job_name]) {
-          var job_metrics = {
+          var jobMetrics = {
             name: job.job_name,
             passes: 0,
             failures: 0,
             failures_rate: 0
           };
-          jobs[job.job_name] = job_metrics;
+          jobs[job.job_name] = jobMetrics;
         }
 
         totalPass += job.pass;
@@ -79,7 +79,7 @@ function ProjectCtrl($http, healthService, projectName) {
     ];
 
     vm.jobs = jobs;
-  }
+  };
 
   vm.loadData = function() {
     var start = new Date();
@@ -87,14 +87,13 @@ function ProjectCtrl($http, healthService, projectName) {
 
     healthService.getRunsFromProject(vm.name, {
       start_date: start,
-      datetime_resolution: 'hour',
+      datetime_resolution: 'hour'
     }).then(function(response) {
       vm.processData(response.data);
     });
-  }
+  };
 
   vm.loadData();
 }
 
-
-controllersModule.controller('ProjectCtrl', ProjectCtrl);
+controllersModule.controller('ProjectController', ProjectController);

@@ -4,3 +4,4 @@ node_modules
 coverage
 doc
 app/vendor-js
+gulp

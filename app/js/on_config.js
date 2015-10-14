@@ -8,18 +8,18 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/',
-      controller: 'HomeCtrl as home',
+      controller: 'HomeController as home',
       templateUrl: 'home.html',
       title: 'Home'
     })
     .state('project', {
       url: '/project/*projectName',
-      controller: 'ProjectCtrl as project',
+      controller: 'ProjectController as project',
       templateUrl: 'project.html',
       title: 'Project',
       resolve: {
         "projectName": function($stateParams) {
-            return $stateParams.projectName;
+          return $stateParams.projectName;
         }
       }
     });
