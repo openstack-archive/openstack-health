@@ -36,6 +36,27 @@ function chartGauge() {
 
       svg.datum(data).call(chart);
 
+      var passes = data[0].value;
+      var failures = data[1].value;
+      var total = passes + failures;
+      var percentOfPasses = passes / total * 100;
+      var percentOfFailures = failures / total * 100;
+      var passesText = 'Passes: ' + percentOfPasses.toFixed(2) + '%';
+      var failuresText = 'Failures: ' + percentOfFailures.toFixed(2) + '%';
+
+      svg.append('text')
+          .attr('x', '50%')
+          .attr('y', '65%')
+          .style('font-size','24px')
+          .attr("text-anchor", "middle")
+          .text(passesText);
+      svg.append('text')
+          .attr('x', '50%')
+          .attr('y', '80%')
+          .style('font-size','24px')
+          .attr("text-anchor", "middle")
+          .text(failuresText);
+
       scope.$on('windowResize', function() {
         if (chart !== null) {
           chart.update();
