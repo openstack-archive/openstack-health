@@ -36,8 +36,8 @@ timestamp_h1 = datetime.datetime(1914, 8, 26, 20, 0, 0)
 timestamp_h2 = datetime.datetime(1914, 8, 26, 21, 0, 0)
 timestamp_h3 = datetime.datetime(1914, 8, 26, 22, 0, 0)
 
-timestamp_d1 = datetime.datetime(1914, 8, 26, 20, 0, 1)
-timestamp_d2 = datetime.datetime(1914, 8, 27, 20, 0, 1)
+timestamp_d1 = datetime.datetime(1914, 8, 26, 0, 0, 0)
+timestamp_d2 = datetime.datetime(1914, 8, 27, 0, 0, 0)
 
 
 class TestRestAPI(base.TestCase):
@@ -583,8 +583,8 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
                                          'openstack/trove',
-                                         start_date,
-                                         stop_date,
+                                         timestamp_d1,
+                                         timestamp_d2,
                                          api.Session())
 
     def test_get_runs_by_project_invalid_resolution(self):
