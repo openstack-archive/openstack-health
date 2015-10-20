@@ -2,7 +2,7 @@
 
 var servicesModule = require('./_index.js');
 
-function ConfigService($http, $q) {
+function ConfigService($http, $log, $q) {
   var service = {};
 
   service.get = function() {
@@ -12,7 +12,7 @@ function ConfigService($http, $q) {
         url: 'config.json',
         method: 'GET'
       }).then(function(response) {
-        log(response);
+        $log.log(response);
         resolve(response.data);
       }, function(reason) {
         reject(reason);
