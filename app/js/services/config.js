@@ -12,7 +12,7 @@ function ConfigService($http, $q) {
         url: 'config.json',
         method: 'GET'
       }).then(function(response) {
-        console.log(response);
+        log(response);
         resolve(response.data);
       }, function(reason) {
         reject(reason);
