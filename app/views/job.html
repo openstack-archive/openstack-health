@@ -38,19 +38,27 @@
                 <h3 class="panel-title">Tests</h3>
             </div>
             <div class="panel-body">
-                <table class="table">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                            <input type="text" class="form-control" placeholder="Search for test" ng-model="job.searchTest">
+                        </div>
+                    </div>
+                </form>
+                <table table-sort class="table table-striped" data="job.tests">
                     <thead>
                         <tr>
-                            <th>Test Name</th>
-                            <th>Passed</th>
-                            <th>Failed</th>
-                            <th>% Failed</th>
-                            <th>Mean Runtime</th>
+                            <th sort-field="name">Test Name</a></th>
+                            <th sort-field="passes">Passed</th>
+                            <th sort-field="failures">Failed</th>
+                            <th sort-default sort-field="failuresRate">% Failed</th>
+                            <th sort-field="meanRuntime">Mean Runtime</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="test in job.tests">
-                            <td><a href="#">{{ test.name|limitTo:110 }}</a></td>
+                        <tr table-ref="table" ng-repeat="test in table.dataSorted | filter:job.searchTest">
+                          <td><a ui-sref="test({ testName: test.name })">{{ test.name|limitTo:110 }}</a></td>
                             <td>{{ test.passes|number }}</td>
                             <td>{{ test.failures|number }}</td>
                             <td>{{ test.failuresRate|number:2 }}</td>

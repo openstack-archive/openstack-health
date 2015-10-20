@@ -9,6 +9,7 @@ function JobController(healthService, jobName, startDate) {
   // ViewModel
   var vm = this;
 
+  vm.searchTest = '';
   vm.name = decodeURIComponent(jobName);
 
   vm.processData = function(data) {
