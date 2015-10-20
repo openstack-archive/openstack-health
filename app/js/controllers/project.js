@@ -10,6 +10,10 @@ function ProjectController($http, healthService, projectName) {
   // ViewModel
   var vm = this;
 
+  vm.sortType = 'failuresRate';
+  vm.sortReverse = false;
+  vm.searchJob = '';
+
   // decodeURI is needed here because project names contains slash as part
   // of the name. As this come from an URL part and URL can be encoded,
   // this decode call make the project name exebition properly.
@@ -42,7 +46,7 @@ function ProjectController($http, healthService, projectName) {
             name: job.job_name,
             passes: 0,
             failures: 0,
-            failures_rate: 0
+            failuresRate: 0
           };
           jobs[job.job_name] = jobMetrics;
         }
@@ -87,7 +91,9 @@ function ProjectController($http, healthService, projectName) {
       { key: '% Failures', values: failRateEntries }
     ];
 
-    vm.jobs = jobs;
+    vm.jobs = Object.keys(jobs).map(function(name) {
+      return jobs[name];
+    });
   };
 
   vm.loadData = function() {
