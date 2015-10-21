@@ -43,8 +43,7 @@ def get_app():
 def setup():
     global config
     if not config:
-        config = ConfigParser.ConfigParser({'pool_size': 20,
-                                            'pool_recycle': 3600})
+        config = ConfigParser.ConfigParser()
         config.read('/etc/openstack-health.conf')
     global engine
     db_uri = config.get('default', 'db_uri')
