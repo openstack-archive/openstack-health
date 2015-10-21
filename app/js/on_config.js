@@ -10,7 +10,12 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       url: '/',
       controller: 'HomeController as home',
       templateUrl: 'home.html',
-      title: 'Home'
+      title: 'Home',
+      resolve:  /*@ngInject*/ {
+        "startDate": function($stateParams) {
+          return new Date();
+        }
+      }
     })
     .state('project', {
       url: '/project/*projectName',

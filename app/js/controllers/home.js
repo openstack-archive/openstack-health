@@ -1,17 +1,22 @@
 'use strict';
 
 var controllersModule = require('./_index');
-var _ = require('underscore');
 
 /**
  * @ngInject
  */
-function HomeController(healthService) {
+function HomeController(healthService, startDate) {
 
   // ViewModel
   var vm = this;
 
-  vm.processData = function(data) {
+  vm.processData = processData;
+  vm.loadData = loadData;
+  vm.chartData = [];
+  vm.chartDataRate = [];
+  vm.projects = [];
+
+  function processData(data) {
     var projects = {};
     var passEntries = [];
     var failEntries = [];
@@ -77,31 +82,27 @@ function HomeController(healthService) {
       }
     }
 
-    vm.chartData = [
-      { key: 'Passes', values: passEntries, color: "blue" },
-      { key: 'Failures', values: failEntries, color: "red" }
-    ];
+    vm.chartData.push({ key: 'Passes', values: passEntries, color: "blue" });
+    vm.chartData.push({ key: 'Failures', values: failEntries, color: "red" });
 
-    vm.chartDataRate = [
-      { key: '% Failures', values: failRateEntries }
-    ];
+    vm.chartDataRate.push({ key: '% Failures', values: failRateEntries });
 
-    vm.projects = Object.keys(projects).map(function(name) {
-      return projects[name];
-    });
+    vm.projects = Object.keys(projects)
+      .map(function(name) {
+        return projects[name];
+      })
+      .sort(function(project) {
+        var passes = project.data[0].value;
+        var failures = project.data[1].value;
+        var total = passes + failures;
+        var percentOfFailures = failures / total * 100;
 
-    vm.projects = _.sortBy(projects, function(project) {
-      var passes = project.data[0].value;
-      var failures = project.data[1].value;
-      var total = passes + failures;
-      var percentOfFailures = failures / total * 100;
+        return percentOfFailures * -1;
+      });
+  }
 
-      return percentOfFailures * -1;
-    });
-  };
-
-  vm.loadData = function() {
-    var start = new Date();
+  function loadData() {
+    var start = new Date(startDate);
     start.setDate(start.getDate() - 20);
 
     healthService.getRunsGroupedByMetadataPerDatetime('project', {
@@ -110,7 +111,7 @@ function HomeController(healthService) {
     }).then(function(response) {
       vm.processData(response.data);
     });
-  };
+  }
 
   vm.loadData();
 }
