@@ -10,6 +10,9 @@ function TestsController(healthService) {
 
   // ViewModel
   var vm = this;
+  vm.sortType = 'failureAverage';
+  vm.sortReverse = false;
+  vm.searchTest = '';
 
   vm.processData = function(data) {
     vm.chartData = {};

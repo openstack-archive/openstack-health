@@ -15,18 +15,66 @@
                 <chart-bar data="value" width=100% height="250" show-values="false" show-x-axis="false" force-y="[0,1]" tick-format-x="%"></chart-bar>
                 <accordion-group heading="Details for {{ key }}" is-open="acc1open">
                     <div>
+                        <form>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                                    <input type="text" class="form-control" placeholder="Search for test" ng-model="tests.searchTest">
+                                </div>
+                            </div>
+                        </form>
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="text-left">Test ID</th>
-                                    <th class="text-right">Passed</th>
-                                    <th class="text-right">Failed</th>
-                                    <th class="text-right">Failure %</th>
-                                    <th class="text-right">Avg. Runtime (secs.)</th>
+                                    <th class="text-left">
+                                        <a href="#" ng-click="tests.sortType = 'test_id'; tests.sortReverse = !tests.sortReverse">
+                                            Test ID
+                                        </a>
+                                        <div style="display: inline" ng-show="tests.sortType == 'test_id'">
+                                            <span ng-show="!tests.sortReverse" class="fa fa-caret-down"></span>
+                                            <span ng-show="tests.sortReverse" class="fa fa-caret-up"></span>
+                                        </div>
+                                    </th>
+                                    <th class="text-right" style="min-width:80px">
+                                        <a href="#" ng-click="tests.sortType = 'success'; tests.sortReverse = !tests.sortReverse">
+                                            Passed
+                                        </a>
+                                        <div style="display: inline" ng-show="tests.sortType == 'success'">
+                                            <span ng-show="!tests.sortReverse" class="fa fa-caret-down"></span>
+                                            <span ng-show="tests.sortReverse" class="fa fa-caret-up"></span>
+                                        </div>
+                                    </th>
+                                    <th class="text-right" style="min-width:80px">
+                                        <a href="#" ng-click="tests.sortType = 'failure'; tests.sortReverse = !tests.sortReverse">
+                                            Failed
+                                        </a>
+                                        <div style="display: inline" ng-show="tests.sortType == 'failure'">
+                                            <span ng-show="!tests.sortReverse" class="fa fa-caret-down"></span>
+                                            <span ng-show="tests.sortReverse" class="fa fa-caret-up"></span>
+                                        </div>
+                                    </th>
+                                    <th class="text-right" style="min-width:95px">
+                                        <a href="#" ng-click="tests.sortType = 'failureAverage'; tests.sortReverse = !tests.sortReverse">
+                                            Failure %
+                                        </a>
+                                        <div style="display: inline" ng-show="tests.sortType == 'failureAverage'">
+                                            <span ng-show="!tests.sortReverse" class="fa fa-caret-down"></span>
+                                            <span ng-show="tests.sortReverse" class="fa fa-caret-up"></span>
+                                        </div>
+                                    </th>
+                                    <th class="text-right" style="min-width:80px">
+                                        <a href="#" ng-click="tests.sortType = 'run_time'; tests.sortReverse = !tests.sortReverse">
+                                            Avg. Runtime (secs.)
+                                        </a>
+                                        <div style="display: inline" ng-show="tests.sortType == 'run_time'">
+                                            <span ng-show="!tests.sortReverse" class="fa fa-caret-down"></span>
+                                            <span ng-show="tests.sortReverse" class="fa fa-caret-up"></span>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="test in tests.chartData[key][0]['tests']">
+                                <tr ng-repeat="test in tests.chartData[key][0]['tests'] | orderBy:tests.sortType:tests.sortReverse | filter:tests.searchTest">
                                     <td class="text-left">
                                       <a href="#">{{ test.test_id | limitTo: 110 }}</a>
                                     </td>
