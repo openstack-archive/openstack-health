@@ -33,7 +33,7 @@ function HomeController(healthService) {
       if (project.fail > 0) {
         totalFail += 1;
         sumProject.data[1].value += 1;
-      } else {
+      } else if (project.pass > 0) {
         totalPass += 1;
         sumProject.data[0].value += 1;
       }
@@ -44,6 +44,8 @@ function HomeController(healthService) {
         var date = dateString;
         var totalPass = 0;
         var totalFail = 0;
+        var failRate = 0;
+        var DEFAULT_FAIL_RATE = 0;
 
         var reqProjects = data.runs[date];
         var projectName = '';
@@ -52,6 +54,8 @@ function HomeController(healthService) {
             reqProjects[projectName].forEach(sumProjectMetrics);
           }
         }
+
+        failRate = (totalFail / (totalFail + totalPass)) * 100 || DEFAULT_FAIL_RATE;
 
         // parse dates and create data series' for the main chart
         var time = new Date(date).getTime();
@@ -68,7 +72,7 @@ function HomeController(healthService) {
 
         failRateEntries.push({
           x: new Date(date).getTime(),
-          y: (totalFail / (totalFail + totalPass)) * 100
+          y: failRate
         });
       }
     }

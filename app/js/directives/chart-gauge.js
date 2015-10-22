@@ -39,8 +39,9 @@ function chartGauge() {
       var passes = data[0].value;
       var failures = data[1].value;
       var total = passes + failures;
-      var percentOfPasses = passes / total * 100;
-      var percentOfFailures = failures / total * 100;
+      var DEFAULT_FAIL_RATE = 0;
+      var percentOfPasses = (passes / total * 100) || DEFAULT_FAIL_RATE;
+      var percentOfFailures = (failures / total * 100) || DEFAULT_FAIL_RATE;
       var passesText = 'Passes: ' + percentOfPasses.toFixed(2) + '%';
       var failuresText = 'Failures: ' + percentOfFailures.toFixed(2) + '%';
 

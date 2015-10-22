@@ -644,3 +644,19 @@ class TestRestAPI(base.TestCase):
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.data), expected_response)
+
+    def test_failed_runs_count_should_not_consider_unknown_ones(self):
+        runs = [
+            {'fail': 1, 'pass': 0},
+            {'fail': 0, 'pass': 0}
+        ]
+        failed_runs = api._calc_amount_of_failed_runs(runs)
+        self.assertEqual(failed_runs, 1)
+
+    def test_successful_runs_count_should_not_consider_unknown_ones(self):
+        runs = [
+            {'fail': 0, 'pass': 1},
+            {'fail': 0, 'pass': 0}
+        ]
+        successful_runs = api._calc_amount_of_successful_runs(runs)
+        self.assertEqual(successful_runs, 1)

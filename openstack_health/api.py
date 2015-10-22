@@ -300,22 +300,19 @@ def get_runs():
 
 def _calc_amount_of_successful_runs(runs):
     """
-    Calculates the amount of successful runs.
-    If there were any failures, then the whole run failed.
-    If there were no failures, then the whole run succeeded.
+    If there were no failures while there's any passes, then the run succeeded.
+    If there's no fails and no passes, then the run did not succeeded.
     """
-    was_run_successful = lambda x: 1 if x['fail'] == 0 else 0
+    was_run_successful = lambda x: 1 if x['fail'] == 0 and x['pass'] > 0 else 0
     successful_runs = map(was_run_successful, runs)
     return sum(successful_runs)
 
 
-def _calc_amount_of_failed_runs(runs, amount_of_success_runs):
+def _calc_amount_of_failed_runs(runs):
     """
-    Calculates the amount of failed runs.
-    It simply subtracts the amount of runs by the amount of successful ones.
+    If there were any failure, then the whole run failed.
     """
-    total_runs = len(runs)
-    return total_runs - amount_of_success_runs
+    return sum((1 for r in runs if r['fail'] > 0))
 
 
 def _aggregate_runs(runs_by_time_delta):
@@ -326,8 +323,7 @@ def _aggregate_runs(runs_by_time_delta):
         for job_name in runs_by_job_name:
             runs = runs_by_job_name[job_name]
             amount_of_success = _calc_amount_of_successful_runs(runs)
-            amount_of_failures = _calc_amount_of_failed_runs(runs,
-                                                             amount_of_success)
+            amount_of_failures = _calc_amount_of_failed_runs(runs)
             avg_runtime = sum(map(itemgetter('run_time'), runs)) / len(runs)
             job_data.append({'fail': amount_of_failures,
                              'pass': amount_of_success,
