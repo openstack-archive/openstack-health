@@ -17,6 +17,7 @@ import ConfigParser
 from dateutil import parser as date_parser
 import itertools
 import sys
+import urllib
 
 import flask
 from flask import abort
@@ -61,6 +62,23 @@ def setup():
                            pool_recycle=pool_recycle)
     global Session
     Session = sessionmaker(bind=engine)
+
+
+@app.route('/', methods=['GET'])
+def list_routes():
+    output = []
+    for rule in app.url_map.iter_rules():
+        options = {}
+        for arg in rule.arguments:
+            options[arg] = "[{0}]".format(arg)
+        url = flask.url_for(rule.endpoint, **options)
+        out_dict = {
+            'name': rule.endpoint,
+            'methods': sorted(rule.methods),
+            'url': urllib.unquote(url),
+        }
+        output.append(out_dict)
+    return jsonify({'routes': output})
 
 
 @app.route('/build_name/<string:build_name>/runs', methods=['GET'])

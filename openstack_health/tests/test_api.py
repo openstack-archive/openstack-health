@@ -87,6 +87,18 @@ class TestRestAPI(base.TestCase):
         }
         self.assertEqual({u'tests': expected_response}, json.loads(res.data))
 
+    def test_list_routes(self):
+        res = self.app.get('/')
+        res_dict = json.loads(res.data)
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(['routes'], res_dict.keys())
+        route_dict = {
+            'name': 'list_routes',
+            'methods': ['GET', 'HEAD', 'OPTIONS'],
+            'url': '/',
+        }
+        self.assertIn(route_dict, res_dict['routes'])
+
     @mock.patch('subunit2sql.db.api.get_all_tests',
                 return_value=[models.Test(
                     id='fake_id', test_id='test.id', run_count=4, success=2,
