@@ -1,6 +1,7 @@
 'use strict';
 
 var controllersModule = require('./_index');
+var _ = require('underscore');
 
 /**
  * @ngInject
@@ -83,6 +84,15 @@ function HomeController(healthService) {
 
     vm.projects = Object.keys(projects).map(function(name) {
       return projects[name];
+    });
+
+    vm.projects = _.sortBy(projects, function(project) {
+      var passes = project.data[0].value;
+      var failures = project.data[1].value;
+      var total = passes + failures;
+      var percentOfFailures = failures / total * 100;
+
+      return percentOfFailures * -1;
     });
   };
 
