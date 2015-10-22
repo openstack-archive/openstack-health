@@ -22,6 +22,12 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
           return $stateParams.projectName;
         }
       }
+    })
+    .state('tests', {
+      url: '/tests',
+      controller: 'TestsController as tests',
+      templateUrl: 'tests.html',
+      title: 'Tests'
     });
 
   $urlRouterProvider.otherwise('/');

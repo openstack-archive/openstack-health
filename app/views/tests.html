@@ -1,0 +1,45 @@
+<header class="bs-header">
+    <div class="container">
+        <h1 class="page-header">Tests</h1>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+        <accordion close-others="false">
+            <div class="panel panel-body panel-default" ng-repeat="(key, value) in tests.chartData">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Test failures for {{ key }}</h3>
+                </div>
+                <chart-bar data="value" width=100% height="250" showValues="false" showXAxis="false" forceY="[0,100]"></chart-bar>
+                <accordion-group heading="Details for {{ key }}" is-open="acc1open">
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">Test ID</th>
+                                    <th class="text-right">Passed</th>
+                                    <th class="text-right">Failed</th>
+                                    <th class="text-right">Failure %</th>
+                                    <th class="text-right">Avg. Runtime (secs.)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="test in tests.chartData[key][0]['tests']">
+                                    <td class="text-left">
+                                      <a href="#">{{ test.test_id | limitTo: 110 }}</a>
+                                    </td>
+                                    <td class="text-right">{{ test.success | number }}</td>
+                                    <td class="text-right">{{ test.failure | number:2 }}</td>
+                                    <td class="text-right">{{ test.failureAverage | number: 2 }}</td>
+                                    <td class="text-right">{{ test.run_time | number: 2 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </accordion-group>
+            </div>
+        </accordion>
+        </div>
+    </div>
