@@ -8,7 +8,7 @@ Installation
 
 API
 ---
-Make sure the python dependencies are installed preferrably in a virtualenv
+Make sure the python dependencies are installed preferably in a virtualenv
 if doing development work::
 
     pip install -r requirements.txt
