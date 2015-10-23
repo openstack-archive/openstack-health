@@ -5,11 +5,14 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function JobController($http, jobName, healthService) {
+function JobController(healthService, jobName, startDate) {
   // ViewModel
   var vm = this;
 
   vm.name = jobName;
+  vm.chartData = [];
+  vm.chartDataRate = [];
+  vm.tests = [];
 
   vm.processData = function(data) {
     if (!data.tests) {
@@ -106,7 +109,7 @@ function JobController($http, jobName, healthService) {
   };
 
   vm.loadData = function() {
-    var start = new Date();
+    var start = new Date(startDate);
     start.setDate(start.getDate() - 1);
 
     healthService.getTestsFromBuildName(vm.name, {

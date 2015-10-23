@@ -45,6 +45,9 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       resolve: {
         "jobName": function($stateParams) {
           return $stateParams.jobName;
+        },
+        "startDate": function($stateParams) {
+          return new Date();
         }
       }
     });
