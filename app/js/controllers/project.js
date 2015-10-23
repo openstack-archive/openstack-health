@@ -29,8 +29,14 @@ function ProjectController($http, healthService, projectName) {
     data.timedelta.forEach(function(timedelta) {
       var totalPass = 0;
       var totalFail = 0;
+      var failRate = 0;
+      var DEFAULT_FAIL_RATE = 0;
 
       timedelta.job_data.forEach(function(job) {
+        var successfulJobs = 0;
+        var failedJobs = 0;
+        var jobFailRate = 0;
+
         if (!jobs[job.job_name]) {
           var jobMetrics = {
             name: job.job_name,
@@ -47,11 +53,14 @@ function ProjectController($http, healthService, projectName) {
         jobs[job.job_name].passes += job.pass;
         jobs[job.job_name].failures += job.fail;
 
-        var successfulJobs = jobs[job.job_name].passes;
-        var failedJobs = jobs[job.job_name].failures;
+        successfulJobs = jobs[job.job_name].passes;
+        failedJobs = jobs[job.job_name].failures;
+        jobFailRate = (failedJobs / (failedJobs + successfulJobs)) * 100 || DEFAULT_FAIL_RATE;
 
-        jobs[job.job_name].failures_rate = ((failedJobs * 100) / (failedJobs + successfulJobs));
+        jobs[job.job_name].failures_rate = jobFailRate;
       });
+
+      failRate = (totalFail / (totalFail + totalPass)) * 100 || DEFAULT_FAIL_RATE;
 
       passEntries.push({
         x: new Date(timedelta.datetime).getTime(),
@@ -65,7 +74,7 @@ function ProjectController($http, healthService, projectName) {
 
       failRateEntries.push({
         x: new Date(timedelta.datetime).getTime(),
-        y: (totalFail / (totalFail + totalPass)) * 100
+        y: failRate
       });
     });
 
