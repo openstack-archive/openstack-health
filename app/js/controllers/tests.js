@@ -13,7 +13,6 @@ function TestsController(healthService) {
 
   vm.processData = function(data) {
     vm.chartData = {};
-    vm.testData = [];
 
     var removeIdNoise = function(testId) {
       return testId.replace('setUpClass (', '').replace('tearDownClass (', '').replace(' )', '');
