@@ -32,21 +32,53 @@
                 <h3 class="panel-title">Jobs</h3>
             </div>
             <div class="panel-body">
-                <table class="table">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                            <input type="text" class="form-control" placeholder="Search for job" ng-model="project.searchJob">
+                        </div>
+                    </div>
+                </form>
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Job Name</th>
-                            <th>Passed</th>
-                            <th>Failed</th>
-                            <th>% Failed</th>
+                            <th>
+                                <a href="#" ng-click="project.sortType = 'name' ; project.sortReverse = !project.sortReverse">
+                                  Job Name
+                                </a>
+                                <span ng-show="project.sortType == 'name' && !project.sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="project.sortType == 'name' && project.sortReverse" class="fa fa-caret-up"></span>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="project.sortType = 'passes' ; project.sortReverse = !project.sortReverse">
+                                    Passed
+                                </a>
+                                <span ng-show="project.sortType == 'passes' && !project.sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="project.sortType == 'passes' && project.sortReverse" class="fa fa-caret-up"></span>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="project.sortType = 'failures' ; project.sortReverse = !project.sortReverse">
+                                    Failed
+                                </a>
+                                <span ng-show="project.sortType == 'failures' && !project.sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="project.sortType == 'failures' && project.sortReverse" class="fa fa-caret-up"></span>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="project.sortType = 'failuresRate' ; project.sortReverse = !project.sortReverse">
+                                    % Failed
+                                </a>
+                                <span ng-show="project.sortType == 'failuresRate' && !project.sortReverse" class="fa fa-caret-down"></span>
+                                <span ng-show="project.sortType == 'failuresRate' && project.sortReverse" class="fa fa-caret-up"></span>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="job in project.jobs">
+                        <tr ng-repeat="job in project.jobs | orderBy:project.sortType:project.sortReverse | filter:project.searchJob">
                             <td><a href="#">{{ job.name }}</a></td>
                             <td>{{ job.passes }}</td>
                             <td>{{ job.failures }}</td>
-                            <td>{{ job.failures_rate|number:2 }}</td>
+                            <td>{{ job.failuresRate|number:2 }}</td>
                         </tr>
                     </tbody>
                 </table>
