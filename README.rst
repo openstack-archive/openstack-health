@@ -96,3 +96,20 @@ distribution. Note that all files are not required:
   Use instead of plain core files to save on disk usage and bandwidth.
 - Source maps (:code:`js/main.js.map`, :code:`js/main.js.map.gz`): only required
   for debugging purposes.
+
+Testing
+=======
+
+API
+---
+
+To test python code, run::
+
+    $ tox -e py27
+
+Frontend
+--------
+
+To test javascript code, run::
+
+    $ npm test
