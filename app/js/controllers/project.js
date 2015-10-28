@@ -64,7 +64,7 @@ function ProjectController(healthService, projectName, startDate) {
         jobs[job.job_name].failures_rate = jobFailRate;
       });
 
-      failRate = (totalFail / (totalFail + totalPass)) * 100 || DEFAULT_FAIL_RATE;
+      failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
 
       passEntries.push({
         x: new Date(timedelta.datetime).getTime(),

@@ -29,8 +29,14 @@ function chartLine() {
 
       chart.xAxis.tickFormat(function(d) { return d3.time.format("%x")(new Date(d)); });
 
-      if (attrs.forcey) {
-        chart.forceY(angular.fromJson(attrs.forcey));
+      if (attrs.forceY) {
+        chart.forceY(angular.fromJson(attrs.forceY));
+      }
+      if (attrs.tickFormatX) {
+        chart.yAxis.tickFormat(d3.format(attrs.tickFormatX));
+      }
+      if (attrs.tickFormatY) {
+        chart.yAxis.tickFormat(d3.format(attrs.tickFormatY));
       }
 
       svg.datum(data).call(chart);

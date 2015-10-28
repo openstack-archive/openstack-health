@@ -29,15 +29,22 @@ function chartBar() {
       });
       chart.staggerLabels(true);
 
-      if (attrs.showvalues) {
-        chart.showValues(angular.fromJson(attrs.showvalues));
+      if (attrs.showValues) {
+        chart.showValues(angular.fromJson(attrs.showValues));
       }
-      if (attrs.showxaxis) {
-        chart.showXAxis(angular.fromJson(attrs.showxaxis));
+      if (attrs.showXAxis) {
+        chart.showXAxis(angular.fromJson(attrs.showXAxis));
       }
-      if (attrs.forcey) {
-        chart.forceY(angular.fromJson(attrs.forcey));
+      if (attrs.forceY) {
+        chart.forceY(angular.fromJson(attrs.forceY));
       }
+      if (attrs.tickFormatX) {
+        chart.yAxis.tickFormat(d3.format(attrs.tickFormatX));
+      }
+      if (attrs.tickFormatY) {
+        chart.yAxis.tickFormat(d3.format(attrs.tickFormatY));
+      }
+
       chart.tooltip.gravity('s').chartContainer(el[0]);
       svg.datum(data).call(chart);
     };
