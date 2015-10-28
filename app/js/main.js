@@ -10,6 +10,7 @@ require('./templates');
 require('./controllers/_index');
 require('./services/_index');
 require('./directives/_index');
+require('./filters/_index');
 
 var requires = [
   'ui.router',
@@ -18,7 +19,8 @@ var requires = [
   'templates',
   'app.controllers',
   'app.services',
-  'app.directives'
+  'app.directives',
+  'app.filters'
 ];
 
 // mount on window for testing
