@@ -55,7 +55,7 @@ function HomeController(healthService) {
           }
         }
 
-        failRate = (totalFail / (totalFail + totalPass)) * 100 || DEFAULT_FAIL_RATE;
+        failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
 
         // parse dates and create data series' for the main chart
         var time = new Date(date).getTime();

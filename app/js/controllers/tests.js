@@ -32,7 +32,7 @@ function TestsController(healthService) {
     });
 
     var getTestFailureAvg = function(test) {
-      return 100 * (test.failure / test.run_count );
+      return test.failure / test.run_count;
     };
 
     _.each(testsByHierarchy, function(tests, hierarchy, list) {
