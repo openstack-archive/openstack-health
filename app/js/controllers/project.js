@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function ProjectController($http, healthService, projectName) {
+function ProjectController(healthService, projectName, startDate) {
 
   // ViewModel
   var vm = this;
@@ -97,7 +97,7 @@ function ProjectController($http, healthService, projectName) {
   };
 
   vm.loadData = function() {
-    var start = new Date();
+    var start = new Date(startDate);
     start.setDate(start.getDate() - 20);
 
     healthService.getRunsFromProject(vm.name, {

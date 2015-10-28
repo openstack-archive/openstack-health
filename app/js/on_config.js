@@ -20,6 +20,9 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       resolve: /*@ngInject*/ {
         "projectName": function($stateParams) {
           return $stateParams.projectName;
+        },
+        "startDate": function($stateParams) {
+          return new Date();
         }
       }
     })
