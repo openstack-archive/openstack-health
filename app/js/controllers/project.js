@@ -10,8 +10,6 @@ function ProjectController(healthService, projectName, startDate) {
   // ViewModel
   var vm = this;
 
-  vm.sortType = 'failuresRate';
-  vm.sortReverse = false;
   vm.searchJob = '';
 
   // decodeURI is needed here because project names contains slash as part
