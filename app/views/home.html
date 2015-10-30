@@ -1,16 +1,16 @@
 <header class="bs-header">
     <div class="container">
-        <h1 class="page-header">OpenStack Health</h1>
-        <crumb-menu></crumb-menu>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">OpenStack Health</h1>
+                <crumb-menu></crumb-menu>
+                <loading-indicator></loading-indicator>
+            </div>
+        </div>
     </div>
 </header>
 
 <div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            <loading-indicator></loading-indicator>
-        </div>
-    </div>
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -37,9 +37,18 @@
         <div class="col-lg-12">
             <form>
                 <div class="form-group">
+                    <label for="sel1">Group information by:</label>
+                    <select ng-init="selectedRunMetadataKey = 'project'"
+                            ng-model="selectedRunMetadataKey"
+                            ng-options="runMetadataKey for runMetadataKey in home.runMetadataKeys"
+                            ng-change="home.loadData(selectedRunMetadataKey)"
+                            class="form-control">
+                    </select>
+                </div>
+                <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                        <input type="text" class="form-control" placeholder="Search for project" ng-model="home.searchProject">
+                        <input type="text" class="form-control" placeholder="Search for {{ home.selectedRunMetadataKey }}" ng-model="home.searchProject">
                     </div>
                 </div>
             </form>
@@ -47,7 +56,7 @@
         <div class="col-lg-4" ng-repeat="project in home.projects | filter:home.searchProject">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a ui-sref="groupedRuns({ runMetadataKey: 'project', name: project.name })">
+                    <a ui-sref="groupedRuns({ runMetadataKey: home.selectedRunMetadataKey, name: project.name })">
                         <h3 class="panel-title">{{project.name}}</h3>
                     </a>
                 </div>

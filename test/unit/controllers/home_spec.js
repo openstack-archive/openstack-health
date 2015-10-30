@@ -5,6 +5,15 @@ describe('HomeController', function() {
 
   var $controller, homeController, projectService;
   var mockResponse = { data: {} };
+  var mockMetadataKeysResponse = {
+    data: {
+      runs: {
+        metadata: {
+          keys: ['filename', 'project', 'voting']
+        }
+      }
+    }
+  };
 
   beforeEach(inject(function(_$controller_) {
     $controller = _$controller_;
@@ -13,6 +22,11 @@ describe('HomeController', function() {
     var healthService = {
       getRunsGroupedByMetadataPerDatetime: function(key, options) {
         return { then: function(callback) { callback(mockResponse); } };
+      },
+      getRunMetadataKeys: function() {
+        return {
+          then: function(callback) { callback(mockMetadataKeysResponse); }
+        };
       }
     };
     projectService = {

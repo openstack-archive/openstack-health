@@ -62,8 +62,12 @@ class TestRestAPI(base.TestCase):
         res = self.app.get('/runs/metadata/keys')
         self.assertEqual(200, res.status_code)
         api_mock.assert_called_once_with(api.Session())
-        expected_response = [u'build_name', u'project', u'build_uuid']
-        self.assertEqual(expected_response, json.loads(res.data))
+        expected_response = [
+            u'build_name',
+            u'project',
+            u'build_uuid'
+        ]
+        self.assertItemsEqual(expected_response, json.loads(res.data))
 
     @mock.patch('subunit2sql.db.api.get_test_run_dict_by_run_meta_key_value',
                 return_value=[

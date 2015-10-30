@@ -7,7 +7,7 @@ var mock = require('protractor-http-mock');
 describe('E2E: Routes', function() {
 
   it('should have a working home route', function() {
-    mock(['config', 'home_project']);
+    mock(['config', 'run_metadata_keys', 'home_project']);
 
     browser.get('#/');
 

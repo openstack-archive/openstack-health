@@ -53,11 +53,20 @@ function HomeController(healthService, startDate, projectService) {
     };
   };
 
-  var loadData = function() {
+  function loadRunMetadataKeys() {
+    healthService.getRunMetadataKeys().then(function(response) {
+      vm.runMetadataKeys = response.data;
+    });
+  }
+
+  var loadData = function(runMetadataKey) {
+    var groupBy = runMetadataKey || vm.selectedRunMetadataKey;
+    vm.selectedRunMetadataKey = groupBy;
+
     var start = new Date(startDate);
     start.setDate(start.getDate() - 20);
 
-    healthService.getRunsGroupedByMetadataPerDatetime('project', {
+    healthService.getRunsGroupedByMetadataPerDatetime(groupBy, {
       start_date: start,
       datetime_resolution: 'hour'
     }).then(function(response) {
@@ -68,9 +77,12 @@ function HomeController(healthService, startDate, projectService) {
   // ViewModel
   var vm = this;
   vm.searchProject = '';
+  vm.selectedRunMetadataKey = 'project';
+  vm.loadRunMetadataKeys = loadRunMetadataKeys;
   vm.processData = processData;
   vm.loadData = loadData;
 
   vm.loadData();
+  vm.loadRunMetadataKeys();
 }
 controllersModule.controller('HomeController', HomeController);

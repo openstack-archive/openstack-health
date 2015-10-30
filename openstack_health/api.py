@@ -93,9 +93,22 @@ def get_runs_from_build_name(build_name):
 
 @app.route('/runs/metadata/keys', methods=['GET'])
 def get_run_metadata_keys():
-    global Session
+    global config
+    try:
+        if config:
+            ignored_keys = (config
+                            .get('default', 'ignored_run_metadata_keys')
+                            .splitlines())
+        else:
+            ignored_keys = []
+    except ConfigParser.NoOptionError:
+        ignored_keys = []
+
     session = Session()
-    return jsonify(api.get_all_run_metadata_keys(session))
+    existing_keys = set(api.get_all_run_metadata_keys(session))
+    allowed_keys = existing_keys.difference(ignored_keys)
+
+    return jsonify(list(allowed_keys))
 
 
 def _parse_datetimes(datetime_str):
