@@ -112,7 +112,7 @@ describe('ProjectController', function() {
       key: '% Failures',
       values: [{
         x: 1416355200000,
-        y: 2.3529411764705883
+        y: 0.023529411764705883
       }]
     }];
     expect(projectController.chartDataRate).toEqual(expectedChartDataRate);

@@ -54,7 +54,7 @@ function TestsController(healthService) {
 
       topFailures.forEach(function(test) {
         var failureAverage = getTestFailureAvg(test);
-        if (!isNaN(failureAverage) && parseInt(failureAverage) > 0) {
+        if (!isNaN(failureAverage) && parseFloat(failureAverage) > 0.01) {
           var chartData = {
             label: test.test_id,
             value: failureAverage

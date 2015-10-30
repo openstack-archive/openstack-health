@@ -70,7 +70,7 @@ describe('TestsController', function() {
         key: 'tempest.api.identity',
         values: [{
           label: 'tempest.api.identity.admin.v2.test_users.one',
-          value: 10
+          value: 0.1
         }],
         tests: [{
           failure: 5592,
@@ -79,7 +79,7 @@ describe('TestsController', function() {
           run_time: 0.608151,
           success: 55920,
           test_id: 'tempest.api.identity.admin.v2.test_users.one',
-          failureAverage: 10
+          failureAverage: 0.1
         }]
       }],
       'tempest.api.volume': [{
@@ -105,7 +105,7 @@ describe('TestsController', function() {
           run_time: 1.18864,
           success: 32291,
           test_id: 'tempest.api.network.test_routers.three',
-          failureAverage: 0.00309674222717701
+          failureAverage: 0.0000309674222717701
         }]
       }]
     };
