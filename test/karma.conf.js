@@ -23,11 +23,11 @@ module.exports = function(config) {
       'app/js/**/*.js': ['browserify', 'babel', 'coverage']
     },
 
-    reporters: ['progress'],
+    reporters: ['spec'],
 
     port: 9876,
 
-    colors: true,
+    colors: false,
 
     logLevel: config.LOG_INFO,
 
@@ -42,6 +42,7 @@ module.exports = function(config) {
       'karma-browserify',
       'karma-coverage',
       'karma-jasmine',
+      'karma-spec-reporter',
       'karma-phantomjs-launcher'
     ],
 
