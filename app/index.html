@@ -11,15 +11,55 @@
     </head>
 
     <body class="ng-cloak" ng-controller="MainController">
-        <header class="navbar navbar-default navbar-fixed-top navbar-inner">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" ui-sref="home">OpenStack Health</a>
+        <div id="header" class="container">
+            <div class="row">
+                <div class="col-lg-2">
+                    <h1 id="logo"><a href="http://status.openstack.org/">OpenStack</a></h1>
                 </div>
-
-                <nav ng-include="'menu.html'"></nav>
+                <div class="col-lg-10">
+                    <div id="navigation">
+                        <ul id="Menu1">
+                            <li>
+                                <a id="menu-Status" href="http://status.openstack.org/">
+                                    Status
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu-Zuul" href="http://status.openstack.org/zuul/">
+                                    Zuul
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu-Rechecks" href="http://status.openstack.org/elastic-recheck/">
+                                    Rechecks
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu-Release" href="http://status.openstack.org/release/">
+                                    Release
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu-Reviews" href="http://status.openstack.org/reviews/">
+                                    Reviews
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu-Bugday" href="http://status.openstack.org/bugday/">
+                                    Bugday
+                                </a>
+                            </li>
+                            <li>
+                                <a id="menu-Bugday" href="http://status.openstack.org/openstack-health/"
+                                   class="current">
+                                    OpenStack Health
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </header>
+        </div>
 
         <div role="main" ui-view></div>
 
