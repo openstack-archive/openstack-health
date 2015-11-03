@@ -4,6 +4,23 @@ var angular = require('angular');
 
 var servicesModule = require('./_index.js');
 
+function httpProviderInterceptor($httpProvider) {
+  $httpProvider.interceptors.push(function($q, $rootScope) {
+    return {
+      'request': function(config) {
+        $rootScope.$broadcast('loading-started');
+        return config || $q.when(config);
+      },
+      'response': function(response) {
+        $rootScope.$broadcast('loading-complete');
+        return response || $q.when(response);
+      }
+    };
+  });
+}
+
+servicesModule.config(httpProviderInterceptor);
+
 function HealthService($http, config) {
   var service = {};
 
