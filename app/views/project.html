@@ -56,7 +56,7 @@
                     </thead>
                     <tbody>
                         <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:project.searchJob">
-                            <td><a href="#">{{ job.name }}</a></td>
+                            <td><a ui-sref="job({ jobName: job.name })">{{ job.name }}</a></td>
                             <td>{{ job.passes }}</td>
                             <td>{{ job.failures }}</td>
                             <td>{{ job.failuresRate|number:2 }}</td>

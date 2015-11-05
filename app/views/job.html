@@ -1,0 +1,64 @@
+<header class="bs-header">
+    <div class="container">
+        <h1 class="page-header">{{ job.name }} tests</h1>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <loading-indicator></loading-indicator>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Tests</h3>
+                </div>
+                <div class="panel-body">
+                    <chart-line data="job.chartData" width="100%" height="250"></chart-line>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Tests Failure Rate</h3>
+                </div>
+                <div class="panel-body">
+                    <chart-line data="job.chartDataRate" width="100%" height="250" forceY="[0,100]"></chart-line>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Tests</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Passed</th>
+                            <th>Failed</th>
+                            <th>% Failed</th>
+                            <th>Mean Runtime</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="test in job.tests">
+                            <td><a href="#">{{ test.name|limitTo:110 }}</a></td>
+                            <td>{{ test.passes|number }}</td>
+                            <td>{{ test.failures|number }}</td>
+                            <td>{{ test.failures_rate|number:2 }}</td>
+                            <td>{{ test.mean_runtime|number:2 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

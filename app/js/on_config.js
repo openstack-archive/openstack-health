@@ -36,6 +36,17 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       controller: 'TestsController as tests',
       templateUrl: 'tests.html',
       title: 'Tests'
+    })
+    .state('job', {
+      url: '/job/:jobName',
+      controller: 'JobController as job',
+      templateUrl: 'job.html',
+      title: 'Job',
+      resolve: {
+        "jobName": function($stateParams) {
+          return $stateParams.jobName;
+        }
+      }
     });
 
   $urlRouterProvider.otherwise('/');
