@@ -10,6 +10,14 @@ var nv = require('nvd3');
  */
 function chartBar() {
   var link = function(scope, el, attrs) {
+    scope.$on("loading-started", function() {
+      el.css({"display" : "none"});
+    });
+
+    scope.$on("loading-complete", function() {
+      el.css({"display" : "block"});
+    });
+
     var chart = null;
 
     var svg = d3.select(el[0]).append('svg')
