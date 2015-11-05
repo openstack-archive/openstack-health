@@ -29,6 +29,7 @@ from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
 from subunit2sql import read_subunit
 
+from run_aggregator import RunAggregator
 
 app = flask.Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -90,30 +91,6 @@ def get_runs_from_build_name(build_name):
     return jsonify({'runs': runs})
 
 
-def _group_by_date_range(date_range, sec_runs):
-    runs = {}
-    for run in sec_runs:
-        # Filter resolution
-        if date_range == 'min':
-            corr_res = run.replace(second=0, microsecond=0)
-        elif date_range == 'hour':
-            corr_res = run.replace(minute=0, second=0, microsecond=0)
-        elif date_range == 'day':
-            corr_res = run.date()
-        # Build runs dict with correct resolution
-        if corr_res in runs:
-            for local_run in sec_runs[run]:
-                if runs[corr_res].get(local_run, None):
-                    runs[corr_res][local_run].extend(
-                        sec_runs[run][local_run])
-                else:
-                    runs[corr_res][
-                        local_run] = sec_runs[run][local_run]
-        else:
-            runs[corr_res] = sec_runs[run]
-    return runs
-
-
 @app.route('/runs/metadata/keys', methods=['GET'])
 def get_run_metadata_keys():
     global Session
@@ -144,10 +121,8 @@ def get_runs_grouped_by_metadata_per_datetime(key):
         if date_range not in ['sec', 'min', 'hour', 'day']:
             return ('Datetime resolution: %s, is not a valid'
                     ' choice' % date_range), 400
-        elif date_range != 'sec':
-            runs = _group_by_date_range(date_range, sec_runs)
         else:
-            runs = sec_runs
+            runs = RunAggregator(sec_runs, date_range).aggregate()
     out_runs = {}
     for run in runs:
         out_runs[run.isoformat()] = runs[run]
@@ -190,10 +165,8 @@ def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
     # Group runs by the chosen data_range.
     # That does not apply when you choose 'sec' since runs are already grouped
     # by it.
-    if date_range != 'sec':
-        runs_by_groupby_key = _group_by_date_range(date_range,
-                                                   runs_by_groupby_key)
-
+    runs_by_groupby_key = \
+        RunAggregator(runs_by_groupby_key, date_range).aggregate()
     out_runs = {}
     for run in runs_by_groupby_key:
         out_runs[run.isoformat()] = runs_by_groupby_key[run]
