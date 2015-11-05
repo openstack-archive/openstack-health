@@ -26,6 +26,7 @@ Ubuntu::
     sudo npm -g install gulp
 
 OSX (via HomeBrew, note no sudo)::
+
     brew install nodejs
     npm install -g gulp
 
