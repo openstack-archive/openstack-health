@@ -4,8 +4,14 @@ var angular = require('angular');
 
 var servicesModule = require('./_index.js');
 
+/**
+ * @ngInject
+ */
 function httpProviderInterceptor($httpProvider) {
-  $httpProvider.interceptors.push(function($q, $rootScope) {
+  /**
+   * @ngInject
+   */
+  $httpProvider.interceptors.push(/* @ngInject */ function($q, $rootScope) {
     return {
       'request': function(config) {
         $rootScope.$broadcast('loading-started');
@@ -21,6 +27,9 @@ function httpProviderInterceptor($httpProvider) {
 
 servicesModule.config(httpProviderInterceptor);
 
+/**
+ * @ngInject
+ */
 function HealthService($http, config) {
   var service = {};
 

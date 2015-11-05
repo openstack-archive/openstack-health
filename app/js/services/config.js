@@ -2,6 +2,9 @@
 
 var servicesModule = require('./_index.js');
 
+/**
+ * @ngInject
+ */
 function ConfigService($http, $log, $q) {
   var service = {};
 
