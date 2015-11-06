@@ -82,14 +82,6 @@ function HealthService($http, config) {
     });
   };
 
-  service.getTestRuns = function() {
-    return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/test_runs', {
-        params: { callback: 'JSON_CALLBACK' }
-      });
-    });
-  };
-
   service.getRunMetadataKeys = function() {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/metadata/keys', {

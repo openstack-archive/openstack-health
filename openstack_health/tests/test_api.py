@@ -145,26 +145,6 @@ class TestRestAPI(base.TestCase):
         ]}
         self.assertEqual(json.loads(res.data), expected_response)
 
-    @mock.patch('subunit2sql.db.api.get_all_test_runs',
-                return_value=[models.TestRun(
-                    id='fake_id', test_id='test.id', run_id='fake_run_id',
-                    status='success', start_time=timestamp_a,
-                    stop_time=timestamp_b)])
-    def test_get_test_runs(self, api_mock):
-        res = self.app.get('/test_runs')
-        self.assertEqual(200, res.status_code)
-        format_time_a = timestamp_a.strftime('%a, %d %b %Y %H:%M:%S GMT')
-        format_time_b = timestamp_b.strftime('%a, %d %b %Y %H:%M:%S GMT')
-        expected_response = {'test_runs': [
-            {"id": "fake_id",
-             "run_id": "fake_run_id",
-             "status": "success",
-             "start_time": format_time_a,
-             "stop_time": format_time_b,
-             "test_id": "test.id"}
-        ]}
-        self.assertEqual(json.loads(res.data), expected_response)
-
     @mock.patch('subunit2sql.db.api.get_runs_by_key_value',
                 return_value=[models.Run(
                     id='fake_id', skips=2, fails=4, passes=2, run_time=21.2,

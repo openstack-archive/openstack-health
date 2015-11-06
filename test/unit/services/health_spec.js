@@ -183,26 +183,6 @@ describe('HealthService', function() {
     $httpBackend.flush();
   });
 
-  it('should get all test runs', function() {
-    var expectedResponse = [{ data: 'data' }, {}, {}];
-    var endpoint = API_ROOT + '/test_runs?callback=JSON_CALLBACK';
-    $httpBackend.expectJSONP(endpoint)
-      .respond(200, expectedResponse);
-
-    var onSuccess = function(response) {
-      expect(response.status).toEqual(200);
-      expect(response.data).toEqual(expectedResponse);
-    };
-
-    var onFailure = function(response) {
-      throw new Error('should not execute this!');
-    };
-
-    healthService.getTestRuns()
-      .then(onSuccess, onFailure);
-    $httpBackend.flush();
-  });
-
   it('should get all run metadata keys', function() {
     var expectedResponse = [{ data: 'data' }, {}, {}];
     var endpoint = API_ROOT + '/runs/metadata/keys?callback=JSON_CALLBACK';
