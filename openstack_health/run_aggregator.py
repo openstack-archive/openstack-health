@@ -12,24 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from base_aggregator import BaseAggregator
 
-class RunAggregator(object):
-    def __init__(self, runs, datetime_resolution):
+
+class RunAggregator(BaseAggregator):
+    def __init__(self, runs):
         self.runs = runs
-        self.datetime_resolution = datetime_resolution
-
-    def _update_datetime_to_fit_resolution(self, execution_datetime):
-        if self.datetime_resolution == 'sec':
-            return execution_datetime
-        elif self.datetime_resolution == 'min':
-            return execution_datetime.replace(second=0,
-                                              microsecond=0)
-        elif self.datetime_resolution == 'hour':
-            return execution_datetime.replace(minute=0,
-                                              second=0,
-                                              microsecond=0)
-        elif self.datetime_resolution == 'day':
-            return execution_datetime.date()
 
     def _build_aggregated_runs(self, execution_datetime, updated_datetime,
                                aggregated_runs):
@@ -42,17 +30,18 @@ class RunAggregator(object):
             runs_at_given_datetime = self.runs[execution_datetime]
             runs_by_given_metadata_key = runs_at_given_datetime[metadata_key]
             if aggregated_runs[updated_datetime].get(metadata_key, None):
-                aggregated_runs[updated_datetime][metadata_key]\
-                    .extend(runs_by_given_metadata_key)
+                (aggregated_runs[updated_datetime][metadata_key]
+                 .extend(runs_by_given_metadata_key))
             else:
                 aggregated_runs[updated_datetime][metadata_key] = \
                     runs_by_given_metadata_key
 
-    def aggregate(self):
+    def aggregate(self, datetime_resolution='sec'):
         aggregated_runs = {}
         for execution_datetime in self.runs:
             updated_datetime = \
-                self._update_datetime_to_fit_resolution(execution_datetime)
+                self._update_datetime_to_fit_resolution(execution_datetime,
+                                                        datetime_resolution)
             self._build_aggregated_runs(execution_datetime,
                                         updated_datetime,
                                         aggregated_runs)
