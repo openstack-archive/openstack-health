@@ -81,6 +81,9 @@ function tableSort($compile) {
     controller.doSort();
   };
 
+  /**
+   * @ngInject
+   */
   var controller = function($scope) {
     var vm = this;
     vm.sortFields = {};
