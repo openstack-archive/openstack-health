@@ -42,7 +42,7 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       controller: 'JobController as job',
       templateUrl: 'job.html',
       title: 'Job',
-      resolve: {
+      resolve: /*@ngInject*/ {
         "jobName": function($stateParams) {
           return $stateParams.jobName;
         },
