@@ -12,11 +12,12 @@ function HomeController(healthService, startDate) {
 
   vm.processData = processData;
   vm.loadData = loadData;
-  vm.chartData = [];
-  vm.chartDataRate = [];
-  vm.projects = [];
 
   function processData(data) {
+    vm.chartData = [];
+    vm.chartDataRate = [];
+    vm.projects = [];
+
     var projects = {};
     var passEntries = [];
     var failEntries = [];
