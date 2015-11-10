@@ -43,13 +43,13 @@ API
 To run the REST API for development you can install the openstack_health python
 package in development mode and start the API service with::
 
-  $ python setup.py develop
-  $ openstack_health_api <config_file>
+    python setup.py develop
+    openstack_health_api <config_file>
 
 or alternatively just can just run the api.py file manually. For example,
 from the top of the repo you would run::
 
-  $ python2 openstack_health/api.py <config_file>
+    python2 openstack_health/api.py <config_file>
 
 A sample of ``<config_file>`` can be found in
 ``etc/openstack-health-api.conf``. This will start up a local webserver
@@ -78,7 +78,7 @@ a wsgi container, something like uwsgi, gunicorn, or mod_wsgi to deploy it
 for real. For example, running the API with uwsgi standalone you can do
 something like::
 
-  $ uwsgi -s /tmp/uwsgi.sock --module openstack_health.api --callable app --pyargv config_file --http :5000
+    uwsgi -s /tmp/uwsgi.sock --module openstack_health.api --callable app --pyargv config_file --http :5000
 
 That will startup a uwsgi server running the rest api on port 5000.
 
@@ -109,11 +109,11 @@ API
 
 To test python code, run::
 
-    $ tox -e py27
+    tox -e py27
 
 Frontend
 --------
 
 To test javascript code, run::
 
-    $ npm test
+    npm test
