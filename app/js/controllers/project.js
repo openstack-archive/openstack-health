@@ -59,7 +59,7 @@ function ProjectController(healthService, projectName, startDate) {
         failedJobs = jobs[job.job_name].failures;
         jobFailRate = (failedJobs / (failedJobs + successfulJobs)) * 100 || DEFAULT_FAIL_RATE;
 
-        jobs[job.job_name].failures_rate = jobFailRate;
+        jobs[job.job_name].failuresRate = jobFailRate;
       });
 
       failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
