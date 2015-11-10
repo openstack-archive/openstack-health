@@ -10,11 +10,12 @@ function JobController(healthService, jobName, startDate) {
   var vm = this;
 
   vm.name = jobName;
-  vm.chartData = [];
-  vm.chartDataRate = [];
-  vm.tests = [];
 
   vm.processData = function(data) {
+    vm.chartData = [];
+    vm.chartDataRate = [];
+    vm.tests = [];
+
     if (!data.tests) {
       return;
     }
