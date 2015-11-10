@@ -13,6 +13,23 @@ function HomeController(healthService, startDate) {
   vm.processData = processData;
   vm.loadData = loadData;
 
+  var percentageOfFailures = function(project) {
+    var passes = project.data[0].value;
+    var failures = project.data[1].value;
+    var totalTests = passes + failures;
+    var percentOfFailures = failures / totalTests * 100;
+
+    return percentOfFailures;
+  };
+
+  var byPercentageOfFailuresDesc = function(project1, project2) {
+    var percentage1 = percentageOfFailures(project1);
+    var percentage2 = percentageOfFailures(project2);
+
+    // To get descending order, project2 should come first
+    return percentage2 - percentage1;
+  };
+
   function processData(data) {
     vm.chartData = [];
     vm.chartDataRate = [];
@@ -92,14 +109,7 @@ function HomeController(healthService, startDate) {
       .map(function(name) {
         return projects[name];
       })
-      .sort(function(project) {
-        var passes = project.data[0].value;
-        var failures = project.data[1].value;
-        var total = passes + failures;
-        var percentOfFailures = failures / total * 100;
-
-        return percentOfFailures * -1;
-      });
+      .sort(byPercentageOfFailuresDesc);
   }
 
   function loadData() {
