@@ -18,7 +18,8 @@
                     <h3 class="panel-title">Total Jobs</h3>
                 </div>
                 <div class="panel-body">
-                    <chart-line data="home.chartData" width="100%" height="250"></chart-line>
+                    <chart-line data="home.chartData" width="100%" height="250"
+                                tick-format-x="d"></chart-line>
                 </div>
             </div>
             <div class="panel panel-default">
@@ -26,7 +27,8 @@
                     <h3 class="panel-title">Job Failure Rate</h3>
                 </div>
                 <div class="panel-body">
-                    <chart-line data="home.chartDataRate" width="100%" height="250" force-y="[0,1]" tick-format-x="%"></chart-line>
+                    <chart-line data="home.chartDataRate" width="100%" height="250"
+                                force-y="[0,1]" tick-format-x="%"></chart-line>
                 </div>
             </div>
         </div>

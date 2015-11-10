@@ -97,7 +97,7 @@ describe('JobController', function() {
       key: '% Failures',
       values: [{
         x: 1416358800000,
-        y: 1.8867924528301887
+        y: 0.018867924528301886
       }]
     }];
     expect(jobController.chartDataRate).toEqual(expectedChartDataRate);
