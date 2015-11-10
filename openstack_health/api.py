@@ -13,10 +13,10 @@
 # under the License.
 
 
+import argparse
 import ConfigParser
 from dateutil import parser as date_parser
 import itertools
-import sys
 import urllib
 
 import flask
@@ -415,10 +415,20 @@ def get_status():
     return response
 
 
+def parse_command_line_args():
+    description = 'Starts the API service for openstack-health'
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument('config_file', type=str,
+                        help='the path for the config file to be read.')
+    return parser.parse_args()
+
+
 def main():
     global config
+    args = parse_command_line_args()
     config = ConfigParser.ConfigParser()
-    config.read(sys.argv[1])
+    config.read(args.config_file)
     app.run(debug=True)
 
 
