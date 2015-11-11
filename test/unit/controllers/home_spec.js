@@ -85,22 +85,23 @@ describe('HomeController', function() {
     expect(homeController.chartDataRate).toEqual(expectedChartDataRate);
   });
 
-  it('should process project data correctly', function() {
-    var projectData = function(name, passes, failures) {
-      return {
-        name: name,
-        data: [
-          { key: 'Passes',   value: passes, color: 'blue' },
-          { key: 'Failures', value: failures, color: 'red' }
-        ]
-      };
+  it('should calculate the total number of passes and failures', function() {
+    mockResponse.data = {
+      runs: {
+        '2015-10-01T20:00:00': {
+          'openstack/tempest': [
+            { fail: 0, pass: 1149, skip: 119 },
+            { fail: 0, pass: 40, skip: 1 },
+            { fail: 1, pass: 6, skip: 0 }
+          ]
+        }
+      }
     };
+    homeController.loadData();
 
-    var expectedProjects = [
-      projectData('openstack/keystone', 0, 3),
-      projectData('openstack/tempest', 2, 1),
-      projectData('openstack/heat', 1, 0)
-    ];
-    expect(homeController.projects).toEqual(expectedProjects);
+    var project = homeController.projects[0];
+    expect(project.name).toEqual('openstack/tempest');
+    expect(project.data).toContain({ key: 'Passes',   value: 2, color: 'blue' });
+    expect(project.data).toContain({ key: 'Failures', value: 1, color: 'red' });
   });
 });
