@@ -40,18 +40,21 @@ Usage - Development
 
 API
 ---
-To run the REST API for development you either install the openstack_health
-python package and run::
+To run the REST API for development you can install the openstack_health python
+package in development mode and start the API service with::
 
-  $ openstack_health_api config_file
+  $ python setup.py develop
+  $ openstack_health_api <config_file>
 
 or alternatively just can just run the api.py file manually. For example,
 from the top of the repo you would run::
 
-  $ python2 openstack_health/api.py config_file
+  $ python2 openstack_health/api.py <config_file>
 
-This will start up a local webserver listening on the localhost. You can
-then send requests to the specified port on stdout to see the response.
+A sample of ``<config_file>`` can be found in
+``etc/openstack-health-api.conf``. This will start up a local webserver
+listening on localhost. You can then send requests to the specified port on
+stdout to see the response.
 
 
 Frontend
