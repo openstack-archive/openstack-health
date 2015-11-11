@@ -4,25 +4,30 @@ describe('HomeController', function() {
     module('app.controllers');
   });
 
-  var $httpBackend, $controller, healthService;
-  var API_ROOT = 'http://8.8.4.4:8080';
-  var DEFAULT_START_DATE = new Date();
+  var $controller, homeController;
+  var mockResponse = {};
 
-  beforeEach(inject(function(_$httpBackend_, _$controller_, _healthService_) {
-    $httpBackend = _$httpBackend_;
-    mockConfigService();
-    mockHealthService();
-
+  beforeEach(inject(function(_$controller_) {
     $controller = _$controller_;
+    setUpDefaultHealthServiceResponse();
 
-    healthService = _healthService_;
+    var defaultStartDate = new Date();
+    var healthService = {
+      getRunsGroupedByMetadataPerDatetime: function(key, options) {
+        return {
+          then: function(callback) { callback(mockResponse); }
+        };
+      }
+    };
+
+    homeController = $controller('HomeController', {
+      healthService: healthService,
+      startDate: defaultStartDate
+    });
   }));
 
-  function mockHealthService() {
-    var startTime = new Date(DEFAULT_START_DATE);
-    startTime.setDate(startTime.getDate() - 20);
-
-    var expectedResponse = {
+  function setUpDefaultHealthServiceResponse() {
+    mockResponse.data = {
       runs: {
         '2015-10-01T20:00:00': {
           'openstack/heat': [
@@ -41,28 +46,9 @@ describe('HomeController', function() {
         }
       }
     };
-    var endpoint = API_ROOT +
-      '/runs/group_by/project?callback=JSON_CALLBACK&' +
-      'datetime_resolution=hour&' +
-      'start_date=' +
-      startTime.toISOString();
-    $httpBackend.expectJSONP(endpoint)
-    .respond(200, expectedResponse);
-  }
-
-  function mockConfigService() {
-    var expectedResponse = { apiRoot: API_ROOT };
-    var endpoint = 'config.json';
-    $httpBackend.expectGET(endpoint).respond(200, expectedResponse);
   }
 
   it('should process chart data correctly', function() {
-    var homeController = $controller('HomeController', {
-      healthService: healthService,
-      startDate: DEFAULT_START_DATE
-    });
-    $httpBackend.flush();
-
     var expectedChartData = [{
       key: 'Passes',
       values: [{
@@ -82,12 +68,6 @@ describe('HomeController', function() {
   });
 
   it('should sort projects by descending percentage of failures', function() {
-    var homeController = $controller('HomeController', {
-      healthService: healthService,
-      startDate: DEFAULT_START_DATE
-    });
-    $httpBackend.flush();
-
     var sortedProjects = homeController.projects.map(function(p) { return p.name; });
     expect(sortedProjects[0]).toEqual('openstack/keystone');
     expect(sortedProjects[1]).toEqual('openstack/tempest');
@@ -95,12 +75,6 @@ describe('HomeController', function() {
   });
 
   it('should process chart data rate correctly', function() {
-    var homeController = $controller('HomeController', {
-      healthService: healthService,
-      startDate: DEFAULT_START_DATE
-    });
-    $httpBackend.flush();
-
     var expectedChartDataRate = [{
       key: '% Failures',
       values: [{
@@ -112,12 +86,6 @@ describe('HomeController', function() {
   });
 
   it('should process project data correctly', function() {
-    var homeController = $controller('HomeController', {
-      healthService: healthService,
-      startDate: DEFAULT_START_DATE
-    });
-    $httpBackend.flush();
-
     var projectData = function(name, passes, failures) {
       return {
         name: name,
