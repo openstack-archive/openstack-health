@@ -53,8 +53,8 @@
                             <td><a href="#">{{ test.name|limitTo:110 }}</a></td>
                             <td>{{ test.passes|number }}</td>
                             <td>{{ test.failures|number }}</td>
-                            <td>{{ test.failures_rate|number:2 }}</td>
-                            <td>{{ test.mean_runtime|number:2 }}</td>
+                            <td>{{ test.failuresRate|number:2 }}</td>
+                            <td>{{ test.meanRuntime|number:2 }}</td>
                         </tr>
                     </tbody>
                 </table>
