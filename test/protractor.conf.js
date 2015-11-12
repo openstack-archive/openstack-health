@@ -1,5 +1,7 @@
 'use strict';
 
+var phantomjs = require('phantomjs');
+
 var gulpConfig = require('../gulp/config');
 
 exports.config = {
@@ -8,12 +10,9 @@ exports.config = {
 
   baseUrl: 'http://localhost:' + gulpConfig.serverPort + '/',
 
-  directConnect: true,
-
   capabilities: {
-    browserName: 'chrome',
-    version: '',
-    platform: 'ANY'
+    browserName: 'phantomjs',
+    'phantomjs.binary.path': phantomjs.path
   },
 
   framework: 'jasmine',
@@ -27,6 +26,16 @@ exports.config = {
 
   specs: [
     'e2e/**/*.js'
-  ]
+  ],
+
+  mocks: {
+    dir: 'e2e/mocks'
+  },
+
+  onPrepare: function() {
+    require('protractor-http-mock').config = {
+      rootDirectory: __dirname
+    };
+  }
 
 };
