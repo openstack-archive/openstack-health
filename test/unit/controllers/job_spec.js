@@ -115,20 +115,20 @@ describe('JobController', function() {
       name: 'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details',
       passes: 27,
       failures: 1,
-      failures_rate: 3.5714285714285716,
-      mean_runtime: 1
+      failuresRate: 3.5714285714285716,
+      meanRuntime: 1
     }, {
       name: 'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_reserve',
       passes: 13,
       failures: 0,
-      failures_rate: 0,
-      mean_runtime: 1
+      failuresRate: 0,
+      meanRuntime: 1
     }, {
       name: 'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_unreserve',
       passes: 12,
       failures: 0,
-      failures_rate: 0,
-      mean_runtime: 1
+      failuresRate: 0,
+      meanRuntime: 1
     }];
 
     expect(jobController.tests).toEqual(expectedTests);

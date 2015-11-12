@@ -1,5 +1,5 @@
 "use strict";
-var _ = require('underscore');
+
 var controllersModule = require('./_index');
 
 /**
@@ -9,7 +9,7 @@ function JobController(healthService, jobName, startDate) {
   // ViewModel
   var vm = this;
 
-  vm.name = jobName;
+  vm.name = decodeURIComponent(jobName);
 
   vm.processData = function(data) {
     vm.chartData = [];
@@ -54,8 +54,7 @@ function JobController(healthService, jobName, startDate) {
             name: cleanTestName,
             passes: 0,
             failures: 0,
-            failures_rate: 0,
-            mean_runtime: 0
+            failuresRate: 0
           };
           tests[cleanTestName] = testMetrics;
         }
@@ -71,12 +70,16 @@ function JobController(healthService, jobName, startDate) {
         var totalTests = successfulTests + failedTests;
 
         if (totalTests > 0) {
-          tests[cleanTestName].failures_rate = ((failedTests * 100) / (totalTests));
+          tests[cleanTestName].failuresRate = ((failedTests * 100) / (totalTests));
         } else {
-          tests[cleanTestName].failures_rate = 0;
+          tests[cleanTestName].failuresRate = 0;
         }
 
-        tests[cleanTestName].mean_runtime += testData.run_time;
+        if (!tests[cleanTestName].meanRuntime) {
+          tests[cleanTestName].meanRuntime = 0;
+        }
+
+        tests[cleanTestName].meanRuntime += testData.run_time;
       }
 
       passEntries.push({
@@ -104,8 +107,10 @@ function JobController(healthService, jobName, startDate) {
       { key: '% Failures', values: failRateEntries }
     ];
 
-    vm.tests = _.sortBy(tests, function(test) {
-      return test.failures_rate * -1;
+    vm.tests = Object.keys(tests).map(function(test) {
+      return tests[test];
+    }).sort(function(x, y) {
+      return x.failuresRate < y.failuresRate;
     });
   };
 
