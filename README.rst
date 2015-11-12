@@ -117,3 +117,9 @@ Frontend
 To test javascript code, run::
 
     npm test
+
+Alternatively, you can start the karma server and have it watch for changes in
+your files so that tests are run every time they change, allowing for much
+faster feedback::
+
+    ./node_modules/karma/bin/karma start test/karma.conf.js --no-single-run
