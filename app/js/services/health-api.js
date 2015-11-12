@@ -67,9 +67,9 @@ function HealthService($http, config) {
     });
   };
 
-  service.getRunsFromProject = function(projectName, options) {
+  service.getRunsForRunMetadataKey = function(runMetadataKey, value, options) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/projects/' + projectName + '/runs', {
+      return $http.jsonp(config.apiRoot + '/' + runMetadataKey + '/' + value + '/runs', {
         params: angular.extend(options, { callback: 'JSON_CALLBACK' })
       });
     });

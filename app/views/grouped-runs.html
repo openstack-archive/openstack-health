@@ -1,8 +1,8 @@
 <header class="bs-header">
     <div class="container">
-        <h1 class="page-header">{{ project.name }} jobs</h1>
+        <h1 class="page-header">{{ groupedRuns.name }} jobs</h1>
         <crumb-menu>
-            <li>Project: {{ project.name }}</li>
+            <li>Project: {{ groupedRuns.name }}</li>
         </crumb-menu>
     </div>
 </header>
@@ -20,7 +20,7 @@
                     <h3 class="panel-title">Total Jobs</h3>
                 </div>
                 <div class="panel-body">
-                    <chart-line data="project.chartData" width="100%" height="250"></chart-line>
+                    <chart-line data="groupedRuns.chartData" width="100%" height="250"></chart-line>
                 </div>
             </div>
             <div class="panel panel-default">
@@ -28,7 +28,7 @@
                     <h3 class="panel-title">Job Failure Rate</h3>
                 </div>
                 <div class="panel-body">
-                    <chart-line data="project.chartDataRate" width="100%" height="250" force-y="[0,1]" tick-format-x="%"></chart-line>
+                    <chart-line data="groupedRuns.chartDataRate" width="100%" height="250" force-y="[0,1]" tick-format-x="%"></chart-line>
                 </div>
             </div>
         </div>
@@ -44,11 +44,11 @@
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                            <input type="text" class="form-control" placeholder="Search for job" ng-model="project.searchJob">
+                            <input type="text" class="form-control" placeholder="Search for job" ng-model="groupedRuns.searchJob">
                         </div>
                     </div>
                 </form>
-                <table table-sort class="table table-striped" data="project.jobs">
+                <table table-sort class="table table-striped" data="groupedRuns.jobs">
                     <thead>
                         <tr>
                             <th sort-field="name">Job Name</th>
@@ -58,7 +58,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:project.searchJob">
+                        <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:groupedRuns.searchJob">
                             <td><a ui-sref="job({ jobName: job.name })">{{ job.name }}</a></td>
                             <td>{{ job.passes }}</td>
                             <td>{{ job.failures }}</td>

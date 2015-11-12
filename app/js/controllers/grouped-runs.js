@@ -5,8 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function ProjectController(healthService, projectName, startDate) {
-
+function GroupedRunsController(pageTitleService, healthService, runMetadataKey, name, currentDate) {
   // ViewModel
   var vm = this;
 
@@ -15,7 +14,11 @@ function ProjectController(healthService, projectName, startDate) {
   // decodeURI is needed here because project names contains slash as part
   // of the name. As this come from an URL part and URL can be encoded,
   // this decode call make the project name exebition properly.
-  vm.name = decodeURIComponent(projectName);
+  vm.runMetadataKey = decodeURIComponent(runMetadataKey);
+  vm.name = decodeURIComponent(name);
+
+  // Updates the page title based on the selected runMetadataKey
+  pageTitleService.update(vm.runMetadataKey);
 
   vm.processData = function(data) {
     // prepare chart data
@@ -95,11 +98,13 @@ function ProjectController(healthService, projectName, startDate) {
   };
 
   vm.loadData = function() {
-    var start = new Date(startDate);
-    start.setDate(start.getDate() - 20);
+    var startDate = new Date(currentDate);
+    var stopDate = new Date(currentDate);
+    startDate.setDate(startDate.getDate() - 20);
 
-    healthService.getRunsFromProject(vm.name, {
-      start_date: start,
+    healthService.getRunsForRunMetadataKey(vm.runMetadataKey, vm.name, {
+      start_date: startDate,
+      stop_date: stopDate,
       datetime_resolution: 'hour'
     }).then(function(response) {
       vm.processData(response.data);
@@ -109,4 +114,4 @@ function ProjectController(healthService, projectName, startDate) {
   vm.loadData();
 }
 
-controllersModule.controller('ProjectController', ProjectController);
+controllersModule.controller('GroupedRunsController', GroupedRunsController);

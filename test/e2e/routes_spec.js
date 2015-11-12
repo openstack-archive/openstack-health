@@ -25,8 +25,8 @@ describe('E2E: Routes', function() {
     expect(element(by.css(selector)).isPresent()).toBe(true);
   });
 
-  it('should have a working project route', function() {
-    mock(['config', 'project_taskflow']);
+  it('should have a working group route', function() {
+    mock(['config', 'group']);
 
     browser.get('#/project/openstack%252Ftaskflow');
 
@@ -40,7 +40,7 @@ describe('E2E: Routes', function() {
 
     // data should actually be requested (no request if error)
     expect(mock.requestsMade()).toContain(jasmine.objectContaining({
-      url: 'http://localhost:5000/projects/openstack/taskflow/runs',
+      url: 'http://localhost:5000/project/openstack/taskflow/runs',
       method: 'JSONP'
     }));
 

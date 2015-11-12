@@ -1,7 +1,7 @@
 module.exports = {
   request: {
     method: 'JSONP',
-    path: '/projects/openstack/taskflow/runs'
+    path: '/project/openstack/taskflow/runs'
   },
   response: {
     data: {

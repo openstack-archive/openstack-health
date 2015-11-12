@@ -140,32 +140,6 @@ def _group_runs_by_key(runs_by_time, groupby_key):
     return grouped_runs_by
 
 
-def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
-                                       start_date=None, stop_date=None,
-                                       datetime_resolution=None):
-    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
-        return ('Datetime resolution: %s, is not a valid'
-                ' choice' % datetime_resolution), 400
-
-    global Session
-    session = Session()
-    runs_by_time = api.get_time_series_runs_by_key_value(key,
-                                                         value,
-                                                         start_date,
-                                                         stop_date,
-                                                         session)
-    # Groups runs by metadata
-    runs_by_groupby_key = _group_runs_by_key(runs_by_time, groupby_key)
-
-    # Group runs by the chosen data_range.
-    # That does not apply when you choose 'sec' since runs are already grouped
-    # by it.
-    runs_by_groupby_key = (RunAggregator(runs_by_groupby_key)
-                           .aggregate(datetime_resolution=datetime_resolution))
-
-    return runs_by_groupby_key, 200
-
-
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
 def get_test_runs_by_build_name(build_name):
     global Session
@@ -236,25 +210,37 @@ def _aggregate_runs(runs_by_time_delta):
     return dict(timedelta=aggregated_runs)
 
 
-@app.route('/projects/<path:project>/runs', methods=['GET'])
-def get_runs_by_project(project):
+@app.route('/<path:run_metadata_key>/<path:value>/runs', methods=['GET'])
+def get_runs_by_run_metadata_key(run_metadata_key, value):
+    global Session
+    session = Session()
+
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'day')
 
-    filter_by_project = "project"
-    group_by_build_name = "build_name"
-    runs_by_time, err = _get_runs_for_key_value_grouped_by(filter_by_project,
-                                                           project,
-                                                           group_by_build_name,
-                                                           start_date,
-                                                           stop_date,
-                                                           datetime_resolution)
+    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
+        message = ('Datetime resolution: %s, is not a valid'
+                   ' choice' % datetime_resolution)
+        status_code = 400
+        return abort(make_response(message, status_code))
 
-    if err != 200:
-        return abort(make_response(runs_by_time, err))
+    runs = (api.get_time_series_runs_by_key_value(run_metadata_key,
+                                                  value,
+                                                  start_date,
+                                                  stop_date,
+                                                  session))
+    # Groups runs by metadata
+    group_by = "build_name"
+    runs_by_build_name = _group_runs_by_key(runs, group_by)
 
-    return jsonify(_aggregate_runs(runs_by_time))
+    # Group runs by the chosen data_range.
+    # That does not apply when you choose 'sec' since runs are already grouped
+    # by it.
+    aggregated_runs = \
+        RunAggregator(runs_by_build_name).aggregate(datetime_resolution)
+
+    return jsonify(_aggregate_runs(aggregated_runs))
 
 
 @app.route('/run/<string:run_id>/tests', methods=['GET'])

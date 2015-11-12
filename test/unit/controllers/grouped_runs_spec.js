@@ -1,4 +1,4 @@
-describe('ProjectController', function() {
+describe('GroupedRunsController', function() {
   beforeEach(function() {
     module('app');
     module('app.controllers');
@@ -6,7 +6,7 @@ describe('ProjectController', function() {
 
   var $httpBackend, $controller, healthService;
   var API_ROOT = 'http://8.8.4.4:8080';
-  var DEFAULT_START_DATE = new Date();
+  var DEFAULT_CURRENT_DATE = new Date();
 
   beforeEach(inject(function(_$httpBackend_, _$controller_, _healthService_) {
     $httpBackend = _$httpBackend_;
@@ -17,8 +17,9 @@ describe('ProjectController', function() {
   }));
 
   function mockHealthService() {
-    var startTime = new Date(DEFAULT_START_DATE);
-    startTime.setDate(startTime.getDate() - 20);
+    var startDate = new Date(DEFAULT_CURRENT_DATE);
+    startDate.setDate(startDate.getDate() - 20);
+    var stopDate = new Date(DEFAULT_CURRENT_DATE);
 
     var expectedResponse = {
       timedelta: [
@@ -61,10 +62,10 @@ describe('ProjectController', function() {
     };
 
     var endpoint = API_ROOT +
-      '/projects/openstack/cinder/runs?callback=JSON_CALLBACK&' +
+      '/project/openstack/cinder/runs?callback=JSON_CALLBACK&' +
       'datetime_resolution=hour&' +
-      'start_date=' +
-      startTime.toISOString();
+      'start_date=' + startDate.toISOString() + '&' +
+      'stop_date=' + stopDate.toISOString();
     $httpBackend.expectJSONP(endpoint)
     .respond(200, expectedResponse);
   }
@@ -76,10 +77,11 @@ describe('ProjectController', function() {
   }
 
   it('should process chart data correctly', function() {
-    var projectController = $controller('ProjectController', {
+    var groupedRunsController = $controller('GroupedRunsController', {
       healthService: healthService,
-      projectName: 'openstack/cinder',
-      startDate: DEFAULT_START_DATE
+      runMetadataKey: 'project',
+      name: 'openstack/cinder',
+      currentDate: DEFAULT_CURRENT_DATE
     });
     $httpBackend.flush();
 
@@ -97,14 +99,15 @@ describe('ProjectController', function() {
       }],
       color: 'red'
     }];
-    expect(projectController.chartData).toEqual(expectedChartData);
+    expect(groupedRunsController.chartData).toEqual(expectedChartData);
   });
 
   it('should process chart data rate correctly', function() {
-    var projectController = $controller('ProjectController', {
+    var groupedRunsController = $controller('GroupedRunsController', {
       healthService: healthService,
-      projectName: 'openstack/cinder',
-      startDate: DEFAULT_START_DATE
+      runMetadataKey: 'project',
+      name: 'openstack/cinder',
+      currentDate: DEFAULT_CURRENT_DATE
     });
     $httpBackend.flush();
 
@@ -115,6 +118,6 @@ describe('ProjectController', function() {
         y: 0.023529411764705883
       }]
     }];
-    expect(projectController.chartDataRate).toEqual(expectedChartDataRate);
+    expect(groupedRunsController.chartDataRate).toEqual(expectedChartDataRate);
   });
 });

@@ -4,7 +4,6 @@
  * @ngInject
  */
 function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
-
   $stateProvider
     .state('home', {
       url: '/',
@@ -12,21 +11,24 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       templateUrl: 'home.html',
       title: 'Home',
       resolve:  /*@ngInject*/ {
-        "startDate": function($stateParams) {
+        'startDate': function() {
           return new Date();
         }
       }
     })
-    .state('project', {
-      url: '/project/*projectName',
-      controller: 'ProjectController as project',
-      templateUrl: 'project.html',
-      title: 'Project',
+    .state('groupedRuns', {
+      url: '/*runMetadataKey/*name',
+      controller: 'GroupedRunsController as groupedRuns',
+      templateUrl: 'grouped-runs.html',
+      title: '',
       resolve: /*@ngInject*/ {
-        "projectName": function($stateParams) {
-          return $stateParams.projectName;
+        'runMetadataKey': function($stateParams) {
+          return $stateParams.runMetadataKey;
         },
-        "startDate": function($stateParams) {
+        'name': function($stateParams) {
+          return $stateParams.name;
+        },
+        'currentDate': function() {
           return new Date();
         }
       }
@@ -43,17 +45,16 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       templateUrl: 'job.html',
       title: 'Job',
       resolve: /*@ngInject*/ {
-        "jobName": function($stateParams) {
+        'jobName': function($stateParams) {
           return $stateParams.jobName;
         },
-        "startDate": function($stateParams) {
+        'startDate': function() {
           return new Date();
         }
       }
     });
 
   $urlRouterProvider.otherwise('/');
-
 }
 
 module.exports = OnConfig;

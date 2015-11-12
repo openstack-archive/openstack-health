@@ -356,7 +356,7 @@ class TestRestAPI(base.TestCase):
     def test_get_runs_by_project_resolution_sec(self, api_mock):
         api.Session = mock.MagicMock()
         query = 'datetime_resolution=sec'
-        res = self.app.get('/projects/openstack/trove/runs?{0}'.format(query))
+        res = self.app.get('/project/openstack/trove/runs?{0}'.format(query))
 
         self.assertEqual(200, res.status_code)
 
@@ -410,7 +410,7 @@ class TestRestAPI(base.TestCase):
     def test_get_runs_by_project_resolution_min(self, api_mock):
         api.Session = mock.MagicMock()
         query = 'datetime_resolution=min'
-        res = self.app.get('/projects/openstack/trove/runs?{0}'.format(query))
+        res = self.app.get('/project/openstack/trove/runs?{0}'.format(query))
 
         self.assertEqual(200, res.status_code)
 
@@ -464,7 +464,7 @@ class TestRestAPI(base.TestCase):
     def test_get_runs_by_project_resolution_hour(self, api_mock):
         api.Session = mock.MagicMock()
         query = 'datetime_resolution=hour'
-        res = self.app.get('/projects/openstack/trove/runs?{0}'.format(query))
+        res = self.app.get('/project/openstack/trove/runs?{0}'.format(query))
 
         self.assertEqual(200, res.status_code)
 
@@ -524,7 +524,7 @@ class TestRestAPI(base.TestCase):
     def test_get_runs_by_project_resolution_day(self, api_mock):
         api.Session = mock.MagicMock()
         query = 'datetime_resolution=day'
-        res = self.app.get('/projects/openstack/trove/runs?{0}'.format(query))
+        res = self.app.get('/project/openstack/trove/runs?{0}'.format(query))
 
         self.assertEqual(200, res.status_code)
 
@@ -589,7 +589,7 @@ class TestRestAPI(base.TestCase):
         stop_date = timestamp_d2.date().isoformat()
         query = ('datetime_resolution=day&start_date={0}&stop_date={1}'
                  .format(start_date, stop_date))
-        res = self.app.get('/projects/openstack/trove/runs?{0}'.format(query))
+        res = self.app.get('/project/openstack/trove/runs?{0}'.format(query))
 
         self.assertEqual(200, res.status_code)
 

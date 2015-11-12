@@ -97,10 +97,10 @@ describe('HealthService', function() {
   it('should get runs from project', function() {
     var expectedResponse = [{ data: 'data' }, {}, {}];
     var endpoint = API_ROOT +
-                   '/projects/openstack/cinder/runs?callback=JSON_CALLBACK&end_time=' +
-                   DEFAULT_END_TIME +
-                   '&start_time=' +
-                   DEFAULT_START_TIME;
+                   '/project/openstack/cinder/runs?' +
+                   'callback=JSON_CALLBACK&' +
+                   'start_date=' + DEFAULT_START_TIME + '&' +
+                   'stop_date=' + DEFAULT_END_TIME;
     $httpBackend.expectJSONP(endpoint)
       .respond(200, expectedResponse);
 
@@ -114,11 +114,11 @@ describe('HealthService', function() {
     };
 
     var options = {
-      start_time: DEFAULT_START_TIME,
-      end_time: DEFAULT_END_TIME
+      start_date: DEFAULT_START_TIME,
+      stop_date: DEFAULT_END_TIME
     };
 
-    healthService.getRunsFromProject('openstack/cinder', options)
+    healthService.getRunsForRunMetadataKey('project', 'openstack/cinder', options)
       .then(onSuccess, onFailure);
     $httpBackend.flush();
   });
