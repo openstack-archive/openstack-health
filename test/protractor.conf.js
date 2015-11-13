@@ -10,9 +10,10 @@ exports.config = {
 
   baseUrl: 'http://localhost:' + gulpConfig.serverPort + '/',
 
+  directConnect: true,
+
   capabilities: {
-    browserName: 'phantomjs',
-    'phantomjs.binary.path': phantomjs.path
+    browserName: 'chrome'
   },
 
   framework: 'jasmine',
