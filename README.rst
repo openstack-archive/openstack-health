@@ -118,8 +118,18 @@ To test javascript code, run::
 
     npm test
 
+This will execute both unit and end-to-end tests, and will write coverage
+reports to :code:`./cover`. To indvidually run unit tests and generate coverage
+reports, run::
+
+    npm run unit
+
+Similarly, to run only end-to-end tests, run::
+
+    npm run e2e
+
 Alternatively, you can start the karma server and have it watch for changes in
-your files so that tests are run every time they change, allowing for much
+your files so that unit tests are run every time they change, allowing for much
 faster feedback::
 
     ./node_modules/karma/bin/karma start test/karma.conf.js --no-single-run

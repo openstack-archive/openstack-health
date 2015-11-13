@@ -2,6 +2,7 @@
 .idea
 node_modules
 build
+cover
 app/js/templates.js
 *.py[cod]
 
