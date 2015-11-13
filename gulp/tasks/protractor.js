@@ -18,6 +18,10 @@ gulp.task('protractor', ['webdriver-update', 'webdriver', 'server'], function() 
     .on('error', function(err) {
       // Make sure failed tests cause gulp to exit non-zero
       throw err;
+    })
+    .on('end', function() {
+      // server task will wait for user to quit, so force it to end here
+      process.exit();
     });
 
 });

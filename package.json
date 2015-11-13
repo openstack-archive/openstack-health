@@ -60,6 +60,7 @@
     "phantomjs": "1.9.17",
     "pretty-hrtime": "^1.0.0",
     "protractor": "^2.2.0",
+    "protractor-http-mock": "^0.1.18",
     "run-sequence": "^1.1.2",
     "tiny-lr": "^0.1.6",
     "uglifyify": "^3.0.1",
@@ -70,9 +71,9 @@
   },
   "scripts": {
     "pretest": "npm install",
-    "test": "gulp unit",
-    "preprotractor": "npm run update-webdriver",
-    "protractor": "npm run protractor test/protractor.conf.js",
+    "unit": "gulp unit",
+    "protractor": "gulp e2e",
+    "test": "gulp unit && gulp e2e",
     "lint": "eslint ./"
   },
   "dependencies": {},
