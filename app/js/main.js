@@ -9,6 +9,7 @@ require('angular-fontawesome');
 require('./templates');
 require('./controllers/_index');
 require('./services/_index');
+require('./factories/_index');
 require('./directives/_index');
 require('./filters/_index');
 
@@ -19,6 +20,7 @@ var requires = [
   'templates',
   'app.controllers',
   'app.services',
+  'app.factories',
   'app.directives',
   'app.filters'
 ];
