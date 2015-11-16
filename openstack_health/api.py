@@ -27,9 +27,9 @@ from operator import itemgetter
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
-from subunit2sql import read_subunit
 
 from run_aggregator import RunAggregator
+from test_run_aggregator import TestRunAggregator
 
 app = flask.Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -111,18 +111,18 @@ def get_runs_grouped_by_metadata_per_datetime(key):
     session = Session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
-    date_range = flask.request.args.get('datetime_resolution', None)
+    datetime_resolution = flask.request.args.get('datetime_resolution', None)
     sec_runs = api.get_all_runs_time_series_by_key(key, start_date,
                                                    stop_date, session)
-    if not date_range:
+    if not datetime_resolution:
         runs = sec_runs
     else:
         runs = {}
-        if date_range not in ['sec', 'min', 'hour', 'day']:
+        if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
             return ('Datetime resolution: %s, is not a valid'
-                    ' choice' % date_range), 400
+                    ' choice' % datetime_resolution), 400
         else:
-            runs = RunAggregator(sec_runs, date_range).aggregate()
+            runs = RunAggregator(sec_runs).aggregate(datetime_resolution)
     out_runs = {}
     for run in runs:
         out_runs[run.isoformat()] = runs[run]
@@ -147,10 +147,10 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 
 def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
                                        start_date=None, stop_date=None,
-                                       date_range=None):
-    if date_range not in ['sec', 'min', 'hour', 'day']:
+                                       datetime_resolution=None):
+    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
         return ('Datetime resolution: %s, is not a valid'
-                ' choice' % date_range), 400
+                ' choice' % datetime_resolution), 400
 
     global Session
     session = Session()
@@ -165,104 +165,13 @@ def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
     # Group runs by the chosen data_range.
     # That does not apply when you choose 'sec' since runs are already grouped
     # by it.
-    runs_by_groupby_key = \
-        RunAggregator(runs_by_groupby_key, date_range).aggregate()
+    runs_by_groupby_key = (RunAggregator(runs_by_groupby_key)
+                           .aggregate(datetime_resolution=datetime_resolution))
     out_runs = {}
     for run in runs_by_groupby_key:
         out_runs[run.isoformat()] = runs_by_groupby_key[run]
 
     return out_runs, 200
-
-
-def _moving_avg(curr_avg, count, value):
-    return ((count * curr_avg) + value) / (count + 1)
-
-
-def _update_counters(status, pass_count, fail_count, skip_count):
-    if status == 'success' or status == 'xfail':
-        pass_count = pass_count + 1
-    elif status == 'fail' or status == 'unxsuccess':
-        fail_count = fail_count + 1
-    else:
-        skip_count = skip_count + 1
-    return pass_count, fail_count, skip_count
-
-
-def _group_test_runs_by_date_res(res, tests):
-    test_runs = {}
-    for test_run in tests:
-        # Correct resolution
-        if res == 'sec':
-            corr_res = test_run['start_time'].replace(microsecond=0)
-        elif res == 'min':
-            corr_res = test_run['start_time'].replace(second=0, microsecond=0)
-        elif res == 'hour':
-            corr_res = test_run['start_time'].replace(minute=0, second=0,
-                                                      microsecond=0)
-        elif res == 'day':
-            corr_res = test_run['start_time'].date()
-
-        corr_res = corr_res.isoformat()
-        # Bin test runs based on corrected timestamp
-        if corr_res in test_runs:
-            test_id = test_run['test_id']
-            if test_id in test_runs[corr_res]:
-                # Update moving average if the test was a success
-                if (test_run['status'] == 'success' or
-                    test_run['status'] == 'xfail'):
-                    durr = read_subunit.get_duration(test_run['start_time'],
-                                                     test_run['stop_time'])
-                    run_time = _moving_avg(
-                        test_runs[corr_res][test_id]['run_time'],
-                        test_runs[corr_res][test_id]['pass'],
-                        durr)
-                else:
-                    run_time = None
-                # Update Counters
-                pass_count, fail_count, skip_count = _update_counters(
-                    test_run['status'],
-                    test_runs[corr_res][test_id]['pass'],
-                    test_runs[corr_res][test_id]['fail'],
-                    test_runs[corr_res][test_run['test_id']]['skip'])
-                test_runs[corr_res][test_id]['pass'] = pass_count
-                test_runs[corr_res][test_id]['fail'] = fail_count
-                test_runs[corr_res][test_id]['skip'] = skip_count
-                if run_time:
-                    test_runs[corr_res][test_id]['run_time'] = run_time
-            else:
-                pass_count, fail_count, skip_count = _update_counters(
-                    test_run['status'], 0, 0, 0)
-                if (test_run['status'] == 'success' or
-                    test_run['status'] == 'xfail'):
-                    run_time = read_subunit.get_duration(
-                        test_run['start_time'],
-                        test_run['stop_time'])
-                else:
-                    run_time = 0
-                test_runs[corr_res][test_id] = {
-                    'pass': pass_count,
-                    'fail': fail_count,
-                    'skip': skip_count,
-                    'run_time': run_time
-                }
-        else:
-            pass_count, fail_count, skip_count = _update_counters(
-                test_run['status'], 0, 0, 0)
-            if (test_run['status'] == 'success' or
-                test_run['status'] == 'xfail'):
-                run_time = read_subunit.get_duration(test_run['start_time'],
-                                                     test_run['stop_time'])
-            else:
-                run_time = 0
-            test_runs[corr_res] = {
-                test_run['test_id']: {
-                    'pass': pass_count,
-                    'fail': fail_count,
-                    'skip': skip_count,
-                    'run_time': run_time
-                }
-            }
-    return test_runs
 
 
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
@@ -275,13 +184,14 @@ def get_test_runs_by_build_name(build_name):
         return 'A key and value must be specified', 400
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
-    date_range = flask.request.args.get('datetime_resolution', 'sec')
-    if date_range not in ['sec', 'min', 'hour', 'day']:
+    datetime_resolution = flask.request.args.get('datetime_resolution', 'sec')
+    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
         return ('Datetime resolution: %s, is not a valid'
-                ' choice' % date_range), 400
+                ' choice' % datetime_resolution), 400
     tests = api.get_test_run_dict_by_run_meta_key_value(key, value, start_date,
                                                         stop_date, session)
-    tests = _group_test_runs_by_date_res(date_range, tests)
+    tests = (TestRunAggregator(tests)
+             .aggregate(datetime_resolution=datetime_resolution))
     return jsonify({'tests': tests})
 
 
@@ -338,7 +248,7 @@ def _aggregate_runs(runs_by_time_delta):
 def get_runs_by_project(project):
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
-    date_range = flask.request.args.get('datetime_resolution', 'day')
+    datetime_resolution = flask.request.args.get('datetime_resolution', 'day')
 
     filter_by_project = "project"
     group_by_build_name = "build_name"
@@ -347,7 +257,7 @@ def get_runs_by_project(project):
                                                            group_by_build_name,
                                                            start_date,
                                                            stop_date,
-                                                           date_range)
+                                                           datetime_resolution)
 
     if err != 200:
         return abort(make_response(runs_by_time, err))

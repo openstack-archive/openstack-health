@@ -14,9 +14,8 @@
 
 import datetime
 
-from openstack_health.tests import base
-
 from openstack_health.run_aggregator import RunAggregator
+from openstack_health.tests import base
 
 
 class TestRunAggregator(base.TestCase):
@@ -39,15 +38,15 @@ class TestRunAggregator(base.TestCase):
         }
 
     def test_that_runs_will_be_aggregated_by_seconds_and_project(self):
-        aggregator = RunAggregator(self.runs, 'sec')
-        aggregated_runs = aggregator.aggregate()
+        aggregator = RunAggregator(self.runs)
+        aggregated_runs = aggregator.aggregate(datetime_resolution='sec')
 
         expected_response = self.runs
         self.assertItemsEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_minute_and_project(self):
-        aggregator = RunAggregator(self.runs, 'min')
-        aggregated_runs = aggregator.aggregate()
+        aggregator = RunAggregator(self.runs)
+        aggregated_runs = aggregator.aggregate(datetime_resolution='min')
 
         expected_response = {
             datetime.datetime(2015, 1, 2, 12, 23): {
@@ -63,8 +62,8 @@ class TestRunAggregator(base.TestCase):
         self.assertItemsEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_hour_and_project(self):
-        aggregator = RunAggregator(self.runs, 'hour')
-        aggregated_runs = aggregator.aggregate()
+        aggregator = RunAggregator(self.runs)
+        aggregated_runs = aggregator.aggregate(datetime_resolution='hour')
 
         expected_response = {
             datetime.datetime(2015, 1, 2, 12): {
@@ -80,8 +79,8 @@ class TestRunAggregator(base.TestCase):
         self.assertItemsEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_day_and_project(self):
-        aggregator = RunAggregator(self.runs, 'day')
-        aggregated_runs = aggregator.aggregate()
+        aggregator = RunAggregator(self.runs)
+        aggregated_runs = aggregator.aggregate(datetime_resolution='day')
 
         expected_response = {
             datetime.date(2015, 1, 2): {
