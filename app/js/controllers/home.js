@@ -10,6 +10,8 @@ function HomeController(healthService, startDate) {
   // ViewModel
   var vm = this;
 
+  vm.searchProject = '';
+
   vm.processData = processData;
   vm.loadData = loadData;
 
