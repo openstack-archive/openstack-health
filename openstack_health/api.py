@@ -381,15 +381,6 @@ def get_tests():
     return jsonify({'tests': tests})
 
 
-@app.route('/test_runs', methods=['GET'])
-def get_test_runs():
-    global Session
-    session = Session()
-    db_test_runs = api.get_all_test_runs(session)
-    test_runs = [test_run.to_dict() for test_run in db_test_runs]
-    return jsonify({'test_runs': test_runs})
-
-
 def _check_db_availability():
     try:
         global engine
