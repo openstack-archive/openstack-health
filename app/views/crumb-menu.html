@@ -1,0 +1,17 @@
+<ol class="breadcrumb">
+    <li dropdown>
+        <span ng-switch on="'tests' | isState">
+            <a ng-switch-when="true" dropdown-toggle href>Tests <fa name="caret-down"></fa></a>
+            <a ng-switch-default dropdown-toggle href>Overview <fa name="caret-down"></fa></a>
+        </span>
+
+        <ul role="menu" class="dropdown-menu">
+            <li>
+                <a ui-sref="home"><fa name="line-chart" fw></fa> Overview</a>
+            </li>
+            <li>
+                <a ui-sref="tests"><fa name="bar-chart" fw></fa> Tests</a>
+            </li>
+        </ul>
+    </li>
+</ol>
