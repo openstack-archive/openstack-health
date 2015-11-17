@@ -213,7 +213,7 @@ class TestRestAPI(base.TestCase):
                 return_value={
                     timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
                 })
-    def test_get_runs_by_date(self, api_mock):
+    def test_get_runs_by_date_sec_res(self, api_mock):
         res = self.app.get('/runs/group_by/project')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {

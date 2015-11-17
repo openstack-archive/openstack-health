@@ -18,13 +18,13 @@ class BaseAggregator(object):
                                            execution_datetime,
                                            datetime_resolution):
         if datetime_resolution == 'sec':
-            return execution_datetime
+            return execution_datetime.replace(microsecond=0).isoformat()
         elif datetime_resolution == 'min':
             return execution_datetime.replace(second=0,
-                                              microsecond=0)
+                                              microsecond=0).isoformat()
         elif datetime_resolution == 'hour':
             return execution_datetime.replace(minute=0,
                                               second=0,
-                                              microsecond=0)
+                                              microsecond=0).isoformat()
         elif datetime_resolution == 'day':
-            return execution_datetime.date()
+            return execution_datetime.date().isoformat()

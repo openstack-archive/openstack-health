@@ -41,7 +41,22 @@ class TestRunAggregator(base.TestCase):
         aggregator = RunAggregator(self.runs)
         aggregated_runs = aggregator.aggregate(datetime_resolution='sec')
 
-        expected_response = self.runs
+        expected_response = {
+            datetime.datetime(2015, 1, 2, 12, 23, 45).isoformat(): {
+                'openstack/nova': [
+                    {u'fail': 0, u'skip': 78, u'pass': 22},
+                    {u'fail': 0, u'skip': 89, u'pass': 1345}
+                ]
+            },
+            datetime.datetime(2015, 1, 2, 12, 23, 56).isoformat(): {
+                u'openstack/nova': [
+                    {u'fail': 0, u'skip': 78, u'pass': 221},
+                    {u'fail': 0, u'skip': 89, u'pass': 1345},
+                    {u'fail': 0, u'skip': 78, u'pass': 229}
+                ]
+            }
+        }
+
         self.assertItemsEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_minute_and_project(self):
@@ -49,7 +64,7 @@ class TestRunAggregator(base.TestCase):
         aggregated_runs = aggregator.aggregate(datetime_resolution='min')
 
         expected_response = {
-            datetime.datetime(2015, 1, 2, 12, 23): {
+            datetime.datetime(2015, 1, 2, 12, 23).isoformat(): {
                 'openstack/nova': [
                     {u'fail': 0, u'skip': 78, u'pass': 22},
                     {u'fail': 0, u'skip': 89, u'pass': 1345},
@@ -66,7 +81,7 @@ class TestRunAggregator(base.TestCase):
         aggregated_runs = aggregator.aggregate(datetime_resolution='hour')
 
         expected_response = {
-            datetime.datetime(2015, 1, 2, 12): {
+            datetime.datetime(2015, 1, 2, 12).isoformat(): {
                 'openstack/nova': [
                     {u'fail': 0, u'skip': 78, u'pass': 22},
                     {u'fail': 0, u'skip': 89, u'pass': 1345},
@@ -83,7 +98,7 @@ class TestRunAggregator(base.TestCase):
         aggregated_runs = aggregator.aggregate(datetime_resolution='day')
 
         expected_response = {
-            datetime.date(2015, 1, 2): {
+            datetime.date(2015, 1, 2).isoformat(): {
                 'openstack/nova': [
                     {u'fail': 0, u'skip': 78, u'pass': 22},
                     {u'fail': 0, u'skip': 89, u'pass': 1345},

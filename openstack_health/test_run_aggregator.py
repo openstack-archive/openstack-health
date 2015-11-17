@@ -137,7 +137,6 @@ class TestRunAggregator(BaseAggregator):
             updated_datetime = \
                 self._update_datetime_to_fit_resolution(test_run['start_time'],
                                                         datetime_resolution)
-            updated_datetime = updated_datetime.isoformat()
             self._build_aggregated_test_runs(updated_datetime,
                                              test_run,
                                              aggregated_test_runs)

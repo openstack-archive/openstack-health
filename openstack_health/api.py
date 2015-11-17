@@ -111,22 +111,17 @@ def get_runs_grouped_by_metadata_per_datetime(key):
     session = Session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
-    datetime_resolution = flask.request.args.get('datetime_resolution', None)
+    datetime_resolution = flask.request.args.get('datetime_resolution', 'sec')
     sec_runs = api.get_all_runs_time_series_by_key(key, start_date,
                                                    stop_date, session)
-    if not datetime_resolution:
-        runs = sec_runs
-    else:
-        runs = {}
-        if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
-            return ('Datetime resolution: %s, is not a valid'
-                    ' choice' % datetime_resolution), 400
-        else:
-            runs = RunAggregator(sec_runs).aggregate(datetime_resolution)
-    out_runs = {}
-    for run in runs:
-        out_runs[run.isoformat()] = runs[run]
-    return jsonify({'runs': out_runs})
+
+    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
+        return ('Datetime resolution: %s, is not a valid'
+                ' choice' % datetime_resolution), 400
+
+    runs = RunAggregator(sec_runs).aggregate(datetime_resolution)
+
+    return jsonify({'runs': runs})
 
 
 def _group_runs_by_key(runs_by_time, groupby_key):
@@ -167,11 +162,8 @@ def _get_runs_for_key_value_grouped_by(key, value, groupby_key,
     # by it.
     runs_by_groupby_key = (RunAggregator(runs_by_groupby_key)
                            .aggregate(datetime_resolution=datetime_resolution))
-    out_runs = {}
-    for run in runs_by_groupby_key:
-        out_runs[run.isoformat()] = runs_by_groupby_key[run]
 
-    return out_runs, 200
+    return runs_by_groupby_key, 200
 
 
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
