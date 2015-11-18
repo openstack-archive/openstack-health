@@ -3,18 +3,11 @@
 /**
  * @ngInject
  */
-function OnRun ($rootScope, AppSettings) {
+function OnRun ($rootScope, pageTitleService) {
 
   // change page title based on state
   var disable = $rootScope.$on('$stateChangeSuccess', function(event, toState) {
-    $rootScope.pageTitle = '';
-
-    if (toState.title) {
-      $rootScope.pageTitle += toState.title;
-      $rootScope.pageTitle += ' \u2014 ';
-    }
-
-    $rootScope.pageTitle += AppSettings.appTitle;
+    pageTitleService.update(toState.title);
   });
 
   $rootScope.$on('$destroy', disable);
