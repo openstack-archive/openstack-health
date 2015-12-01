@@ -44,7 +44,7 @@ To run the REST API for development you can install the openstack_health python
 package in development mode and start the API service with::
 
     python setup.py develop
-    openstack_health_api <config_file>
+    openstack-health-api <config_file>
 
 or alternatively just can just run the api.py file manually. For example,
 from the top of the repo you would run::
