@@ -661,3 +661,25 @@ class TestRestAPI(base.TestCase):
         ]
         successful_runs = api._calc_amount_of_successful_runs(runs)
         self.assertEqual(successful_runs, 1)
+
+    @mock.patch('subunit2sql.db.api.get_test_runs_by_test_test_id',
+                return_value=[models.TestRun(
+                    id='fake_id', test_id='test.id', run_id='fake_run_id',
+                    status='success', start_time=timestamp_a,
+                    stop_time=timestamp_b)])
+    def test_get_test_runs_for_test(self, api_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/test_runs/fake.test.id')
+        self.assertEqual(200, res.status_code)
+        exp_result = {'test_runs': {
+            timestamp_a.isoformat(): {
+                'run_time': 1.0,
+                'status': 'success',
+                'run_id': 'fake_run_id',
+            }
+        }}
+        response_data = json.loads(res.data)
+        self.assertEqual(exp_result, response_data)
+        api_mock.assert_called_once_with('fake.test.id', start_date=None,
+                                         stop_date=None,
+                                         session=api.Session())

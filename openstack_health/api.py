@@ -29,7 +29,7 @@ from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
 
 from run_aggregator import RunAggregator
-from test_run_aggregator import TestRunAggregator
+import test_run_aggregator
 
 app = flask.Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -156,8 +156,8 @@ def get_test_runs_by_build_name(build_name):
                 ' choice' % datetime_resolution), 400
     tests = api.get_test_run_dict_by_run_meta_key_value(key, value, start_date,
                                                         stop_date, session)
-    tests = (TestRunAggregator(tests)
-             .aggregate(datetime_resolution=datetime_resolution))
+    tests = test_run_aggregator.TestRunAggregator(tests).aggregate(
+        datetime_resolution=datetime_resolution)
     return jsonify({'tests': tests})
 
 
@@ -301,6 +301,20 @@ def parse_command_line_args():
     parser.add_argument('config_file', type=str,
                         help='the path for the config file to be read.')
     return parser.parse_args()
+
+
+@app.route('/test_runs/<string:test_id>', methods=['GET'])
+def get_test_runs_for_test(test_id):
+    global Session
+    session = Session()
+    start_date = _parse_datetimes(flask.request.args.get('start_date', None))
+    stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
+    db_test_runs = api.get_test_runs_by_test_test_id(test_id, session=session,
+                                                     start_date=start_date,
+                                                     stop_date=stop_date)
+    test_runs = test_run_aggregator.convert_test_runs_list_to_time_series_dict(
+        db_test_runs)
+    return jsonify({'test_runs': test_runs})
 
 
 def main():
