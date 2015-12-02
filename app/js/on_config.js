@@ -17,7 +17,7 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       }
     })
     .state('groupedRuns', {
-      url: '/*runMetadataKey/*name',
+      url: '/g/*runMetadataKey/*name',
       controller: 'GroupedRunsController as groupedRuns',
       templateUrl: 'grouped-runs.html',
       title: '',
