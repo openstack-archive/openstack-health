@@ -117,7 +117,13 @@ function JobController(healthService, jobName, startDate) {
 
   vm.loadData = function() {
     var start = new Date(startDate);
-    start.setDate(start.getDate() - 1);
+    // Note(mtreinish): this is a hack to make periodic job graphs useful
+    // until we have a user selectable date window available
+    var dateWindow = 2;
+    if (vm.name.indexOf('periodic') > -1) {
+      dateWindow = 15;
+    }
+    start.setDate(start.getDate() - dateWindow);
 
     healthService.getTestsFromBuildName(vm.name, {
       start_date: start,

@@ -20,7 +20,7 @@ describe('JobController', function() {
 
   function mockHealthService() {
     var startDate = new Date(DEFAULT_START_DATE);
-    startDate.setDate(startDate.getDate() - 1);
+    startDate.setDate(startDate.getDate() - 2);
 
     var expectedResponse = {
       tests: {
