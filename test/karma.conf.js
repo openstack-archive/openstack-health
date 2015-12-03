@@ -23,7 +23,7 @@ module.exports = function(config) {
       'app/js/**/*.js': ['browserify', 'babel', 'coverage']
     },
 
-    reporters: ['spec'],
+    reporters: ['spec', 'coverage'],
 
     port: 9876,
 
@@ -55,6 +55,14 @@ module.exports = function(config) {
           ignore: ['**/node_modules/**', '**/test/**']
         })
       ]
+    },
+
+    coverageReporter: {
+      type: 'html',
+      dir: 'cover',
+      instrumenterOptions: {
+        istanbul: {noCompact: true}
+      }
     },
 
     proxies: {
