@@ -5,116 +5,55 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function HomeController(healthService, startDate) {
+function HomeController(healthService, startDate, projectService) {
 
-  // ViewModel
-  var vm = this;
-
-  vm.searchProject = '';
-
-  vm.processData = processData;
-  vm.loadData = loadData;
-
-  var percentageOfFailures = function(project) {
-    var passes = project.data[0].value;
-    var failures = project.data[1].value;
-    var totalTests = passes + failures;
-    var percentOfFailures = failures / totalTests * 100;
-
-    return percentOfFailures;
-  };
-
-  var byPercentageOfFailuresDesc = function(project1, project2) {
-    var percentage1 = percentageOfFailures(project1);
-    var percentage2 = percentageOfFailures(project2);
-
+  var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
-    return percentage2 - percentage1;
+    return project2.metrics.failRate - project1.metrics.failRate;
   };
 
-  function processData(data) {
-    vm.chartData = [];
-    vm.chartDataRate = [];
-    vm.projects = [];
+  var processData = function(data) {
+    var projects = projectService.createProjects(data.runs);
+    var dateStats = projectService.getStatsByDate(projects);
+    var entries = getChartEntries(dateStats);
 
-    var projects = {};
-    var passEntries = [];
-    var failEntries = [];
-    var failRateEntries = [];
-    var sumProjectMetrics = function(project) {
-      var sumProject = projects[projectName];
-      if (typeof sumProject === "undefined") {
-        // create initial data containers for each gauge chart on-the-fly
-        sumProject = {
-          name: projectName,
-          data: [
-            { key: 'Passes', value: 0, color: 'blue' },
-            { key: 'Failures', value: 0, color: 'red' }
-          ]
-        };
-        projects[projectName] = sumProject;
-      }
+    vm.chartData = [
+      { key: 'Passes', values: entries.passes, color: "blue" },
+      { key: 'Failures', values: entries.failures, color: "red" }
+    ];
+    vm.chartDataRate = [{ key: '% Failures', values: entries.failRate }];
+    vm.projects = projects
+      .sort(byFailRateDesc)
+      .map(function(project) { return generateGaugeData(project); });
+  };
 
-      if (project.fail > 0) {
-        totalFail += 1;
-        sumProject.data[1].value += 1;
-      } else if (project.pass > 0) {
-        totalPass += 1;
-        sumProject.data[0].value += 1;
-      }
+  var getChartEntries = function(dateStats) {
+    var entries = { passes: [], failures: [], failRate: [] };
+
+    angular.forEach(dateStats, function(stats) {
+      entries.passes.push(generateChartData(stats.date, stats.metrics.passes));
+      entries.failures.push(generateChartData(stats.date, stats.metrics.failures));
+      entries.failRate.push(generateChartData(stats.date, stats.metrics.failRate));
+    });
+
+    return entries;
+  };
+
+  var generateChartData = function(date, value) {
+    return { x: date.getTime(), y: value };
+  };
+
+  var generateGaugeData = function(project) {
+    return {
+      name: project.name,
+      data: [
+        { key: 'Passes', value: project.metrics.passes, color: 'blue' },
+        { key: 'Failures', value: project.metrics.failures, color: 'red' }
+      ]
     };
+  };
 
-    for (var dateString in data.runs) {
-      if (data.runs.hasOwnProperty(dateString)) {
-        var date = dateString;
-        var totalPass = 0;
-        var totalFail = 0;
-        var failRate = 0;
-        var DEFAULT_FAIL_RATE = 0;
-
-        var reqProjects = data.runs[date];
-        var projectName = '';
-        for (projectName in reqProjects) {
-          if (reqProjects.hasOwnProperty(projectName)) {
-            reqProjects[projectName].forEach(sumProjectMetrics);
-          }
-        }
-
-        failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
-
-        // parse dates and create data series' for the main chart
-        var time = new Date(date).getTime();
-
-        passEntries.push({
-          x: time,
-          y: totalPass
-        });
-
-        failEntries.push({
-          x: time,
-          y: totalFail
-        });
-
-        failRateEntries.push({
-          x: new Date(date).getTime(),
-          y: failRate
-        });
-      }
-    }
-
-    vm.chartData.push({ key: 'Passes', values: passEntries, color: "blue" });
-    vm.chartData.push({ key: 'Failures', values: failEntries, color: "red" });
-
-    vm.chartDataRate.push({ key: '% Failures', values: failRateEntries });
-
-    vm.projects = Object.keys(projects)
-      .map(function(name) {
-        return projects[name];
-      })
-      .sort(byPercentageOfFailuresDesc);
-  }
-
-  function loadData() {
+  var loadData = function() {
     var start = new Date(startDate);
     start.setDate(start.getDate() - 20);
 
@@ -124,7 +63,13 @@ function HomeController(healthService, startDate) {
     }).then(function(response) {
       vm.processData(response.data);
     });
-  }
+  };
+
+  // ViewModel
+  var vm = this;
+  vm.searchProject = '';
+  vm.processData = processData;
+  vm.loadData = loadData;
 
   vm.loadData();
 }
