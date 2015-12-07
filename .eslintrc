@@ -12,3 +12,4 @@ env:
 
 rules:
   module-setter: 0
+  one-var: 0
