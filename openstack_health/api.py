@@ -309,12 +309,24 @@ def get_test_runs_for_test(test_id):
     session = Session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
+    datetime_resolution = flask.request.args.get('datetime_resolution', 'min')
+
+    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
+        message = ('Datetime resolution: %s, is not a valid'
+                   ' choice' % datetime_resolution)
+        status_code = 400
+        return abort(make_response(message, status_code))
     db_test_runs = api.get_test_runs_by_test_test_id(test_id, session=session,
                                                      start_date=start_date,
                                                      stop_date=stop_date)
+    if not db_test_runs:
+        # NOTE(mtreinish) if no data is returned from the DB just return an
+        # empty set response, the test_run_aggregator function assumes data
+        # is present.
+        return jsonify({'numeric': {}, 'data': {}})
     test_runs = test_run_aggregator.convert_test_runs_list_to_time_series_dict(
-        db_test_runs)
-    return jsonify({'test_runs': test_runs})
+        db_test_runs, datetime_resolution)
+    return jsonify(test_runs)
 
 
 def main():

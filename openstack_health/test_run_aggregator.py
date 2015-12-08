@@ -12,31 +12,78 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import pandas as pd
 from subunit2sql import read_subunit
 
 from base_aggregator import BaseAggregator
 
 
-def convert_test_runs_list_to_time_series_dict(test_runs_list):
-    test_runs = {}
+def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
+    test_runs = []
     for test_run in test_runs_list:
+        tr = test_run.to_dict()
         # Populate dict
         start_time = test_run.start_time
         if start_time and test_run.start_time_microsecond:
             start_time = start_time.replace(
                 microsecond=test_run.start_time_microsecond)
+            tr['start_time'] = start_time
+        tr.pop('start_time_microsecond')
         if test_run.stop_time:
             stop_time = test_run.stop_time
             if test_run.stop_time_microsecond:
                 stop_time = stop_time.replace(
                     microsecond=test_run.stop_time_microsecond)
-        test_run_dict = {
-            'run_time': read_subunit.get_duration(start_time, stop_time),
-            'status': test_run.status,
-            'run_id': test_run.run_id
-        }
-        test_runs[start_time.isoformat()] = test_run_dict
-    return test_runs
+            tr['stop_time'] = stop_time
+        tr['run_time'] = read_subunit.get_duration(start_time,
+                                                   tr.pop('stop_time'))
+        tr.pop('stop_time_microsecond')
+        tr.pop('id')
+        tr.pop('test_id')
+        test_runs.append(tr)
+
+    df = pd.DataFrame(test_runs).set_index('start_time')
+    df.index = pd.DatetimeIndex(df.index)
+    # Add rolling mean and std dev of run_time to datafram
+    df['avg_run_time'] = pd.rolling_mean(df['run_time'], 20)
+    df['stddev_run_time'] = pd.rolling_std(df['run_time'], 20)
+
+    # Resample numeric data for the run_time graph from successful runs
+    resample_matrix = {
+        'day': 'D',
+        'hour': '1H',
+        'min': '1T',
+        'sec': '1S',
+    }
+    numeric_df = df[df['status'] == 'success'].resample(
+        resample_matrix[resample], how='mean')
+    # Drop duplicate or invalid colums
+    del(numeric_df['run_id'])
+    del(df['run_time'])
+    del(df['avg_run_time'])
+    del(df['stddev_run_time'])
+
+    # Drop missing data from the resample
+    numeric_df = numeric_df.dropna(how='all')
+
+    # Convert the dataframes to a dict
+    numeric_dict = dict(
+        (date.isoformat(),
+            {
+            'run_time': run_time,
+            'avg_run_time': avg,
+            'std_dev_run_time': stddev,
+        }) for date, run_time, avg, stddev in zip(
+            numeric_df.index, numeric_df.run_time, numeric_df.avg_run_time,
+            numeric_df.stddev_run_time))
+    temp_dict = dict(
+        (date.isoformat(),
+            {
+            'run_id': run_id,
+            'status': status,
+            }) for date, run_id, status in zip(df.index, df.run_id, df.status))
+
+    return {'numeric': numeric_dict, 'data': temp_dict}
 
 
 class Status(object):

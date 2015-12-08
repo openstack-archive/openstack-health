@@ -16,6 +16,7 @@ import datetime
 import json
 
 import mock
+import numpy
 from subunit2sql.db import models
 
 from openstack_health import api
@@ -664,22 +665,28 @@ class TestRestAPI(base.TestCase):
 
     @mock.patch('subunit2sql.db.api.get_test_runs_by_test_test_id',
                 return_value=[models.TestRun(
-                    id='fake_id', test_id='test.id', run_id='fake_run_id',
+                    id=2, test_id=1234, run_id=1234,
                     status='success', start_time=timestamp_a,
-                    stop_time=timestamp_b)])
+                    start_time_microsecond=0,
+                    stop_time=timestamp_b,
+                    stop_time_microsecond=0)])
     def test_get_test_runs_for_test(self, api_mock):
         api.Session = mock.MagicMock()
         res = self.app.get('/test_runs/fake.test.id')
         self.assertEqual(200, res.status_code)
-        exp_result = {'test_runs': {
+        exp_result = {'data': {
             timestamp_a.isoformat(): {
-                'run_time': 1.0,
+                'run_id': 1234,
                 'status': 'success',
-                'run_id': 'fake_run_id',
-            }
-        }}
+            }}, 'numeric': {
+            timestamp_a.isoformat(): {
+                'avg_run_time': numpy.NaN,
+                'run_time': 1.0,
+                'std_dev_run_time': numpy.NaN
+            }}
+        }
         response_data = json.loads(res.data)
-        self.assertEqual(exp_result, response_data)
+        numpy.testing.assert_equal(exp_result, response_data)
         api_mock.assert_called_once_with('fake.test.id', start_date=None,
                                          stop_date=None,
                                          session=api.Session())
