@@ -95,7 +95,7 @@ function JobController(healthService, jobName, startDate) {
 
       failRateEntries.push({
         x: new Date(date).getTime(),
-        y: (totalFail / (totalFail + totalPass)) * 100
+        y: totalFail / (totalFail + totalPass)
       });
     }
 
