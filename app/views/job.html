@@ -61,7 +61,7 @@
                     </thead>
                     <tbody>
                         <tr table-ref="table" ng-repeat="test in table.dataSorted | filter:job.searchTest">
-                          <td><a ui-sref="test({ testName: test.name })">{{ test.name|limitTo:110 }}</a></td>
+                          <td><a ui-sref="test({ testId: test.name })">{{ test.name|limitTo:110 }}</a></td>
                             <td>{{ test.passes|number }}</td>
                             <td>{{ test.failures|number }}</td>
                             <td>{{ test.failuresRate|number:2 }}</td>

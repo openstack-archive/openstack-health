@@ -107,6 +107,14 @@ function HealthService($http, config) {
     });
   };
 
+  service.getTestRunList = function(testId, options) {
+    return config.get().then(function(config) {
+      return $http.jsonp(config.apiRoot + '/test_runs/' + testId, {
+        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+      });
+    });
+  };
+
   return service;
 }
 

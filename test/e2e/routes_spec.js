@@ -49,8 +49,22 @@ describe('E2E: Routes', function() {
     expect(element(by.css(selector)).isPresent()).toBe(true);
   });
 
+  it('should have a single test route', function() {
+    mock(['config', 'test_project']);
+
+    browser.get('#/test/tempest.api.volume.test_qos.QosSpecsV2TestJSON.test_get_qos');
+
+    // route should be defined (will redirect to / if not)
+    expect(browser.getLocationAbsUrl()).toMatch('/test/tempest.api.volume.' +
+      'test_qos.QosSpecsV2TestJSON.test_get_qos');
+    // data should actually be requested (no request if error)
+    expect(mock.requestsMade()).toContain(jasmine.objectContaining({
+      url: 'http://localhost:5000/test_runs/tempest.api.volume.test_qos.' +
+        'QosSpecsV2TestJSON.test_get_qos',
+      method: 'JSONP'
+    }));
+  });
   afterEach(function() {
     mock.teardown();
   });
-
 });

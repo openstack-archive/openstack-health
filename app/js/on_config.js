@@ -52,6 +52,20 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
           return new Date();
         }
       }
+    })
+    .state('test', {
+      url: '/test/:testId',
+      controller: 'TestController as testCtrl',
+      templateUrl: 'test.html',
+      title: 'Test',
+      resolve: /*@ngInject*/ {
+        'testId': function($stateParams) {
+          return $stateParams.testId;
+        },
+        'startDate': function() {
+          return new Date();
+        }
+      }
     });
 
   $urlRouterProvider.otherwise('/');
