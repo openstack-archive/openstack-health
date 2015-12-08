@@ -27,7 +27,7 @@ function tableSort($compile) {
       controller.sortReversed = !controller.sortReversed;
     } else {
       controller.sortColumn = colIndex;
-      controller.sortReversed = false;
+      controller.sortReversed = true;
     }
 
     var th = angular.element(table.find('th')[colIndex]);
@@ -88,7 +88,7 @@ function tableSort($compile) {
     var vm = this;
     vm.sortFields = {};
     vm.sortColumn = null;
-    vm.sortReversed = false;
+    vm.sortReversed = true;
 
     vm.data = null;
     vm.dataSorted = [];
