@@ -77,10 +77,13 @@ function JobController(healthService, jobName, startDate) {
         }
 
         if (!tests[cleanTestName].meanRuntime) {
-          tests[cleanTestName].meanRuntime = 0;
+          tests[cleanTestName].meanRuntime = testData.run_time;
         }
-
-        tests[cleanTestName].meanRuntime += testData.run_time;
+        else if (testData.pass > 0) {
+          var prevSum = tests[cleanTestName].meanRuntime * (successfulTests - testData.pass);
+          var meanRuntime = (testData.run_time + prevSum) / successfulTests;
+          tests[cleanTestName].meanRuntime = meanRuntime;
+        }
       }
 
       passEntries.push({
