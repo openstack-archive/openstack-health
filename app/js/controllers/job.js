@@ -25,6 +25,7 @@ function JobController(healthService, jobName, startDate) {
     var tests = {};
     var passEntries = [];
     var failEntries = [];
+    var skipEntries = [];
     var failRateEntries = [];
     var removeTestNameNoise = function(testName) {
       return testName.replace('setUpClass (', '').replace('tearDownClass (', '').replace(')', '');
@@ -40,6 +41,7 @@ function JobController(healthService, jobName, startDate) {
       var totalPass = 0;
       var totalFail = 0;
       var failRate = 0;
+      var totalSkip = 0;
 
       var testName = '';
       for (testName in testsInDate) {
@@ -55,6 +57,7 @@ function JobController(healthService, jobName, startDate) {
             name: cleanTestName,
             passes: 0,
             failures: 0,
+            skips: 0,
             failuresRate: 0
           };
           tests[cleanTestName] = testMetrics;
@@ -62,9 +65,11 @@ function JobController(healthService, jobName, startDate) {
 
         totalPass += testData.pass;
         totalFail += testData.fail;
+        totalSkip += testData.skip;
 
         tests[cleanTestName].passes += testData.pass;
         tests[cleanTestName].failures += testData.fail;
+        tests[cleanTestName].skips += testData.skip;
 
         var successfulTests = tests[cleanTestName].passes;
         var failedTests = tests[cleanTestName].failures;
@@ -100,11 +105,17 @@ function JobController(healthService, jobName, startDate) {
         x: new Date(date).getTime(),
         y: totalFail / (totalFail + totalPass)
       });
+
+      skipEntries.push({
+        x: new Date(date).getTime(),
+        y: totalSkip
+      });
     }
 
     vm.chartData = [
       { key: 'Passes', values: passEntries, color: 'blue' },
-      { key: 'Failures', values: failEntries, color: 'red' }
+      { key: 'Failures', values: failEntries, color: 'red' },
+      { key: 'Skips', values: skipEntries, color: 'violet' }
     ];
 
     vm.chartDataRate = [

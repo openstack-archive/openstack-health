@@ -28,16 +28,19 @@ describe('JobController', function() {
           "tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details": {
             fail: 1,
             pass: 27,
+            skip: 0,
             run_time: 1
           },
           "tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_reserve": {
             fail: 0,
             pass: 13,
+            skip: 0,
             run_time: 1
           },
           "tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_unreserve": {
             fail: 0,
             pass: 12,
+            skip: 1,
             run_time: 1
           }
         }
@@ -81,6 +84,13 @@ describe('JobController', function() {
         y: 1
       }],
       color: 'red'
+    }, {
+      key: 'Skips',
+      values: [{
+        x: 1416358800000,
+        y: 1
+      }],
+      color: 'violet'
     }];
     expect(jobController.chartData).toEqual(expectedChartData);
   });
@@ -115,17 +125,20 @@ describe('JobController', function() {
       name: 'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details',
       passes: 27,
       failures: 1,
+      skips: 0,
       failuresRate: 3.5714285714285716,
       meanRuntime: 1
     }, {
       name: 'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_reserve',
       passes: 13,
       failures: 0,
+      skips: 0,
       failuresRate: 0,
       meanRuntime: 1
     }, {
       name: 'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_unreserve',
       passes: 12,
+      skips: 1,
       failures: 0,
       failuresRate: 0,
       meanRuntime: 1
