@@ -99,11 +99,11 @@ function TestController(healthService, testService, startDate, testId) {
 
         runTimeEntries.push({
           x: date,
-          y: parseFloat(test.run_time.toFixed(2))
+          y: parseFloat(test.run_time)
         });
         avgRunTimeEntries.push({
           x: date,
-          y: parseFloat(test.avg_run_time.toFixed(2))
+          y: parseFloat(test.avg_run_time)
         });
       }
     }
