@@ -35,7 +35,8 @@ function chartStackArea() {
         .useInteractiveGuideline(true)
         .rightAlignYAxis(true)
         .showControls(true)
-        .clipEdge(true);
+        .clipEdge(true)
+        .style('expand');
 
       chart.xAxis.tickFormat(function(d) { return d3.time.format("%x")(new Date(d)); });
 
