@@ -12,6 +12,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+resample_matrix = {
+    'day': 'D',
+    'hour': '1H',
+    'min': '1T',
+    'sec': '1S',
+}
+
 
 class BaseAggregator(object):
     def _update_datetime_to_fit_resolution(self,

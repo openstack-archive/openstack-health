@@ -15,7 +15,7 @@
 import pandas as pd
 from subunit2sql import read_subunit
 
-from base_aggregator import BaseAggregator
+import base_aggregator as base
 
 
 def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
@@ -49,22 +49,16 @@ def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
     df['stddev_run_time'] = pd.rolling_std(df['run_time'], 20)
 
     # Resample numeric data for the run_time graph from successful runs
-    resample_matrix = {
-        'day': 'D',
-        'hour': '1H',
-        'min': '1T',
-        'sec': '1S',
-    }
     numeric_df = df[df['status'] == 'success'].resample(
-        resample_matrix[resample], how='mean')
+        base.resample_matrix[resample], how='mean')
     # Drop duplicate or invalid colums
     del(numeric_df['run_id'])
     del(df['run_time'])
-    del(df['avg_run_time'])
-    del(df['stddev_run_time'])
-
-    # Drop missing data from the resample
-    numeric_df = numeric_df.dropna(how='all')
+    # Interpolate missing data
+    numeric_df['run_time'] = numeric_df.interpolate(method='time', limit=20)
+    # Add rolling mean and std dev of run_time to datafram
+    numeric_df['avg_run_time'] = pd.rolling_mean(numeric_df['run_time'], 20)
+    numeric_df['stddev_run_time'] = pd.rolling_std(numeric_df['run_time'], 20)
 
     # Convert the dataframes to a dict
     numeric_dict = dict(
@@ -131,7 +125,7 @@ class Counter(object):
         return (self.passes, self.failures, self.skips)
 
 
-class TestRunAggregator(BaseAggregator):
+class TestRunAggregator(base.BaseAggregator):
     def __init__(self, test_runs):
         self.test_runs = test_runs
 
