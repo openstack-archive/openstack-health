@@ -40,7 +40,7 @@ describe('E2E: Routes', function() {
 
     // data should actually be requested (no request if error)
     expect(mock.requestsMade()).toContain(jasmine.objectContaining({
-      url: 'http://localhost:5000/project/openstack/taskflow/runs',
+      url: 'http://localhost:5000/runs/key/project/openstack/taskflow',
       method: 'JSONP'
     }));
 

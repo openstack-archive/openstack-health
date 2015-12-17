@@ -210,7 +210,7 @@ def _aggregate_runs(runs_by_time_delta):
     return dict(timedelta=aggregated_runs)
 
 
-@app.route('/<path:run_metadata_key>/<path:value>/runs', methods=['GET'])
+@app.route('/runs/key/<path:run_metadata_key>/<path:value>', methods=['GET'])
 def get_runs_by_run_metadata_key(run_metadata_key, value):
     global Session
     session = Session()

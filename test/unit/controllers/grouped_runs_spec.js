@@ -62,7 +62,7 @@ describe('GroupedRunsController', function() {
     };
 
     var endpoint = API_ROOT +
-      '/project/openstack/cinder/runs?callback=JSON_CALLBACK&' +
+      '/runs/key/project/openstack/cinder?callback=JSON_CALLBACK&' +
       'datetime_resolution=hour&' +
       'start_date=' + startDate.toISOString() + '&' +
       'stop_date=' + stopDate.toISOString();

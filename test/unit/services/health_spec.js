@@ -97,7 +97,7 @@ describe('HealthService', function() {
   it('should get runs from project', function() {
     var expectedResponse = [{ data: 'data' }, {}, {}];
     var endpoint = API_ROOT +
-                   '/project/openstack/cinder/runs?' +
+                   '/runs/key/project/openstack/cinder?' +
                    'callback=JSON_CALLBACK&' +
                    'start_date=' + DEFAULT_START_TIME + '&' +
                    'stop_date=' + DEFAULT_END_TIME;
