@@ -31,7 +31,8 @@ describe('HomeController', function() {
     };
     projectService = {
       createProjects: function() { return []; },
-      getStatsByDate: function() { return []; }
+      getStatsByDate: function() { return []; },
+      findBlanks: function() { return []; }
     };
 
     homeController = $controller('HomeController', {

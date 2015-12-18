@@ -26,6 +26,16 @@ var projectService = function(projectFactory, metricsService) {
     return { date: date, metrics: metricsService.getNewMetrics() };
   };
 
+  service.findBlanks = function(runsJson) {
+    var blanks = [];
+    angular.forEach(runsJson, function(projectsJson, dateString) {
+      if (typeof projectsJson == 'undefined' || projectsJson.length == 0) {
+        blanks.push(dateString);
+      }
+    });
+    return blanks;
+  };
+
   service.createProjects = function(runsJson) {
     var projects = [];
     var index = {};

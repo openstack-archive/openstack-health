@@ -12,10 +12,15 @@ function HomeController(healthService, startDate, projectService) {
     return project2.metrics.failRate - project1.metrics.failRate;
   };
 
+  var byDate = function(entryA, entryB) {
+    return entryA.x - entryB.x;
+  };
+
   var processData = function(data) {
     var projects = projectService.createProjects(data.runs);
+    var blanks = projectService.findBlanks(data.runs);
     var dateStats = projectService.getStatsByDate(projects);
-    var entries = getChartEntries(dateStats);
+    var entries = getChartEntries(dateStats, blanks);
 
     vm.chartData = [
       { key: 'Passes', values: entries.passes, color: "blue" },
@@ -27,15 +32,22 @@ function HomeController(healthService, startDate, projectService) {
       .map(function(project) { return generateGaugeData(project); });
   };
 
-  var getChartEntries = function(dateStats) {
+  var getChartEntries = function(dateStats, blanks) {
     var entries = { passes: [], failures: [], failRate: [] };
-
+    angular.forEach(blanks, function(date) {
+      var tempDate = new Date(date);
+      entries.passes.push(generateChartData(tempDate, 0));
+      entries.failures.push(generateChartData(tempDate, 0));
+      entries.failRate.push(generateChartData(tempDate, 0));
+    });
     angular.forEach(dateStats, function(stats) {
       entries.passes.push(generateChartData(stats.date, stats.metrics.passes));
       entries.failures.push(generateChartData(stats.date, stats.metrics.failures));
       entries.failRate.push(generateChartData(stats.date, stats.metrics.failRate));
     });
-
+    entries.passes = entries.passes.sort(byDate);
+    entries.failures = entries.failures.sort(byDate);
+    entries.failRate = entries.failRate.sort(byDate);
     return entries;
   };
 
