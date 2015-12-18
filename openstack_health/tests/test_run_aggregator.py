@@ -48,6 +48,16 @@ class TestRunAggregator(base.TestCase):
                     {u'fail': 0, u'skip': 89, u'pass': 1345}
                 ]
             },
+            datetime.datetime(2015, 1, 2, 12, 23, 46).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 47).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 48).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 49).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 50).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 51).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 52).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 53).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 54).isoformat(): [],
+            datetime.datetime(2015, 1, 2, 12, 23, 55).isoformat(): [],
             datetime.datetime(2015, 1, 2, 12, 23, 56).isoformat(): {
                 u'openstack/nova': [
                     {u'fail': 0, u'skip': 78, u'pass': 221},

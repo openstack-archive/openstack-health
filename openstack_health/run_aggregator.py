@@ -12,6 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import datetime
+from dateutil import parser
+
 from base_aggregator import BaseAggregator
 
 
@@ -45,4 +48,25 @@ class RunAggregator(BaseAggregator):
             self._build_aggregated_runs(execution_datetime,
                                         updated_datetime,
                                         aggregated_runs)
+        # Pad the data to have a uniform sampling
+        time_date_list = [parser.parse(x) for x in aggregated_runs.keys()]
+        start_date = min(time_date_list)
+        end_date = max(time_date_list)
+        delta = end_date - start_date
+        delta_secs = int(delta.total_seconds())
+        if datetime_resolution == 'sec':
+            timedelta = datetime.timedelta(seconds=1)
+            time_count = delta_secs
+        elif datetime_resolution == 'min':
+            timedelta = datetime.timedelta(minutes=1)
+            time_count = (delta_secs / 60)
+        elif datetime_resolution == 'hour':
+            timedelta = datetime.timedelta(hours=1)
+            time_count = ((delta_secs / 60) / 60)
+        elif datetime_resolution == 'day':
+            timedelta = datetime.timedelta(days=1)
+            time_count = delta.days
+        for date in (start_date + timedelta * n for n in range(time_count)):
+            if date not in time_date_list:
+                aggregated_runs[date.isoformat()] = []
         return aggregated_runs
