@@ -116,7 +116,7 @@ function TestController(healthService, testService, startDate, testId) {
   vm.loadData = function() {
     var beginDate = new Date(startDate);
     var stopDate = new Date(startDate);
-    beginDate.setDate(startDate.getDate() - 30);
+    beginDate.setDate(startDate.getDate() - 15);
     healthService.getTestRunList(vm.testName, {
       start_date: beginDate,
       stop_date: stopDate
