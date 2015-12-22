@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function JobController(healthService, jobName, startDate) {
+function JobController($scope, healthService, viewService, jobName, startDate) {
   // ViewModel
   var vm = this;
 
@@ -141,13 +141,17 @@ function JobController(healthService, jobName, startDate) {
 
     healthService.getTestsFromBuildName(vm.name, {
       start_date: start,
-      datetime_resolution: 'hour'
+      datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
     });
   };
 
   vm.loadData();
+
+  $scope.$on('view:resolution', function(event, resolution) {
+    vm.loadData();
+  });
 }
 
 controllersModule.controller('JobController', JobController);

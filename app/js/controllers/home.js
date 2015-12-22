@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function HomeController(healthService, startDate, projectService) {
+function HomeController($scope, healthService, startDate, projectService, viewService) {
 
   var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
@@ -53,36 +53,33 @@ function HomeController(healthService, startDate, projectService) {
     };
   };
 
-  function loadRunMetadataKeys() {
-    healthService.getRunMetadataKeys().then(function(response) {
-      vm.runMetadataKeys = response.data;
-    });
-  }
-
   var loadData = function(runMetadataKey) {
-    var groupBy = runMetadataKey || vm.selectedRunMetadataKey;
-    vm.selectedRunMetadataKey = groupBy;
-
     var start = new Date(startDate);
     start.setDate(start.getDate() - 20);
 
-    healthService.getRunsGroupedByMetadataPerDatetime(groupBy, {
+    healthService.getRunsGroupedByMetadataPerDatetime(vm.groupKey, {
       start_date: start,
-      datetime_resolution: 'hour'
+      datetime_resolution: viewService.resolution().key
     }).then(function(response) {
-      vm.processData(response.data);
+      processData(response.data);
     });
   };
 
   // ViewModel
   var vm = this;
-  vm.searchProject = '';
-  vm.selectedRunMetadataKey = 'project';
-  vm.loadRunMetadataKeys = loadRunMetadataKeys;
-  vm.processData = processData;
   vm.loadData = loadData;
+  vm.groupKey = viewService.groupKey();
+  vm.searchProject = '';
 
-  vm.loadData();
-  vm.loadRunMetadataKeys();
+  loadData();
+
+  $scope.$on('view:groupKey', function(event, groupKey) {
+    vm.groupKey = groupKey;
+    loadData(groupKey);
+  });
+
+  $scope.$on('view:resolution', function(event, resolution) {
+    loadData();
+  });
 }
 controllersModule.controller('HomeController', HomeController);

@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function TestController(healthService, testService, startDate, testId) {
+function TestController($scope, healthService, testService, viewService, startDate, testId) {
 
   // ViewModel
   var vm = this;
@@ -119,12 +119,17 @@ function TestController(healthService, testService, startDate, testId) {
     beginDate.setDate(startDate.getDate() - 15);
     healthService.getTestRunList(vm.testName, {
       start_date: beginDate,
-      stop_date: stopDate
+      stop_date: stopDate,
+      datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
     });
   };
 
   vm.loadData();
+
+  $scope.$on('view:resolution', function(event, resolution) {
+    vm.loadData();
+  });
 }
 controllersModule.controller('TestController', TestController);

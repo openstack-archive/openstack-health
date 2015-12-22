@@ -4,17 +4,17 @@ describe('JobController', function() {
     module('app.controllers');
   });
 
-  var $httpBackend, $controller, healthService;
+  var $scope, $httpBackend, $controller, healthService;
   var API_ROOT = 'http://8.8.4.4:8080';
   var DEFAULT_START_DATE = new Date();
 
-  beforeEach(inject(function(_$httpBackend_, _$controller_, _healthService_) {
+  beforeEach(inject(function($rootScope, _$httpBackend_, _$controller_, _healthService_) {
     $httpBackend = _$httpBackend_;
     mockConfigService();
     mockHealthService();
 
+    $scope = $rootScope.$new();
     $controller = _$controller_;
-
     healthService = _healthService_;
   }));
 
@@ -64,6 +64,7 @@ describe('JobController', function() {
 
   it('should process chart data correctly', function() {
     var jobController = $controller('JobController', {
+      $scope: $scope,
       healthService: healthService,
       jobName: 'gate-tempest-dsvm-neutron-full',
       startDate: DEFAULT_START_DATE
@@ -97,6 +98,7 @@ describe('JobController', function() {
 
   it('should process chart data rate correctly', function() {
     var jobController = $controller('JobController', {
+      $scope: $scope,
       healthService: healthService,
       jobName: 'gate-tempest-dsvm-neutron-full',
       startDate: DEFAULT_START_DATE
@@ -115,6 +117,7 @@ describe('JobController', function() {
 
   it('should process tests correctly', function() {
     var jobController = $controller('JobController', {
+      $scope: $scope,
       healthService: healthService,
       jobName: 'gate-tempest-dsvm-neutron-full',
       startDate: DEFAULT_START_DATE
