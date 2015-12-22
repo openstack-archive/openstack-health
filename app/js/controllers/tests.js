@@ -17,7 +17,7 @@ function TestsController(healthService, testService) {
 
     var testsByHierarchy = _.groupBy(data.tests, function(test) {
       var testId = testService.removeIdNoise(test.test_id);
-      var keyMatcher = /^(\w*\.\w*\.\w*)\./g;
+      var keyMatcher = /^(\w*)\./g;
       var matches = keyMatcher.exec(testId);
 
       if (matches) {
