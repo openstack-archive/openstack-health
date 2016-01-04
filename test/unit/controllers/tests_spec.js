@@ -66,8 +66,8 @@ describe('TestsController', function() {
     $httpBackend.flush();
 
     var expectedChartData = {
-      'tempest.api.identity': [{
-        key: 'tempest.api.identity',
+      'tempest': [{
+        key: 'tempest',
         values: [{
           label: 'tempest.api.identity.admin.v2.test_users.one',
           value: 0.1
@@ -80,25 +80,7 @@ describe('TestsController', function() {
           success: 55920,
           test_id: 'tempest.api.identity.admin.v2.test_users.one',
           failureAverage: 0.1
-        }]
-      }],
-      'tempest.api.volume': [{
-        key: 'tempest.api.volume',
-        values: [],
-        tests: [{
-          failure: 0,
-          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
-          run_count: 4939,
-          run_time: 5.97596,
-          success: 4939,
-          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two',
-          failureAverage: 0
-        }]
-      }],
-      'tempest.api.network': [{
-        key: 'tempest.api.network',
-        values: [],
-        tests: [{
+        }, {
           failure: 1,
           id: '002a15e0-f6d1-472a-bd66-bb13ac4d77aa',
           run_count: 32292,
@@ -106,6 +88,14 @@ describe('TestsController', function() {
           success: 32291,
           test_id: 'tempest.api.network.test_routers.three',
           failureAverage: 0.0000309674222717701
+        }, {
+          failure: 0,
+          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
+          run_count: 4939,
+          run_time: 5.97596,
+          success: 4939,
+          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two',
+          failureAverage: 0
         }]
       }]
     };
