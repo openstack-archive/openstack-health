@@ -130,17 +130,15 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
   };
 
   vm.loadData = function() {
-    var start = new Date(startDate);
     // Note(mtreinish): this is a hack to make periodic job graphs useful
     // until we have a user selectable date window available
     var dateWindow = 2;
     if (vm.name.indexOf('periodic') > -1) {
       dateWindow = 15;
     }
-    start.setDate(start.getDate() - dateWindow);
 
     healthService.getTestsFromBuildName(vm.name, {
-      start_date: start,
+      start_date: viewService.windowStart(startDate, dateWindow),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);

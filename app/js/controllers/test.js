@@ -114,11 +114,10 @@ function TestController($scope, healthService, testService, viewService, startDa
   };
 
   vm.loadData = function() {
-    var beginDate = new Date(startDate);
     var stopDate = new Date(startDate);
-    beginDate.setDate(startDate.getDate() - 15);
+
     healthService.getTestRunList(vm.testName, {
-      start_date: beginDate,
+      start_date: viewService.windowStart(stopDate, 30),
       stop_date: stopDate,
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {

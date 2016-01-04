@@ -54,11 +54,8 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
   };
 
   var loadData = function(runMetadataKey) {
-    var start = new Date(startDate);
-    start.setDate(start.getDate() - 20);
-
     healthService.getRunsGroupedByMetadataPerDatetime(vm.groupKey, {
-      start_date: start,
+      start_date: viewService.windowStart(startDate, 20),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       processData(response.data);
