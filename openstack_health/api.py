@@ -258,6 +258,39 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
     return jsonify(_aggregate_runs(aggregated_runs))
 
 
+@app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent',
+           methods=['GET'])
+def get_recent_runs(run_metadata_key, value):
+    session = get_session()
+
+    num_runs = flask.request.args.get('num_runs', 10)
+    results = api.get_recent_runs_by_key_value_metadata(
+        run_metadata_key, value, num_runs, session)
+    runs = []
+    for result in results:
+        if result.passes > 0 and result.fails == 0:
+            status = 'success'
+        elif result.fails > 0:
+            status = 'fail'
+        else:
+            continue
+
+        run = {
+            'id': result.uuid,
+            'status': status,
+            'start_date': result.run_at.isoformat(),
+            'link': result.artifacts,
+        }
+
+        run_meta = api.get_run_metadata(result.uuid, session)
+        for meta in run_meta:
+            if meta.key == 'build_name':
+                run['build_name'] = meta.value
+                break
+        runs.append(run)
+    return jsonify(runs)
+
+
 @app.route('/run/<string:run_id>/tests', methods=['GET'])
 def get_tests_from_run(run_id):
     session = get_session()
