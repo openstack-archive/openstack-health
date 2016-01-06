@@ -40,6 +40,33 @@
         <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
+                <h3 class="panel-title">Recent Runs</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Link</th>
+                            <th>Status</th>
+                            <th>Run At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="run in job.recentRuns">
+                            <td><a href="{{ run.link }}">{{ run.link }}</a></td>
+                            <td>{{ run.status }}</td>
+                            <td>{{ run.start_date }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
                 <h3 class="panel-title">Tests</h3>
             </div>
             <div class="panel-body">

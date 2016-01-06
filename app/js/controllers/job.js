@@ -127,6 +127,8 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
     }).sort(function(x, y) {
       return x.failuresRate < y.failuresRate;
     });
+    vm.recentRuns = [];
+
   };
 
   vm.loadData = function() {
@@ -142,6 +144,11 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
+    });
+    healthService.getRecentGroupedRuns('build_name', vm.name).then(function(response) {
+      response.data.forEach(function(run) {
+        vm.recentRuns.push(run);
+      });
     });
   };
 
