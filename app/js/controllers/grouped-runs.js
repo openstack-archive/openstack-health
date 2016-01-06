@@ -102,6 +102,7 @@ function GroupedRunsController(
     vm.jobs = Object.keys(jobs).map(function(name) {
       return jobs[name];
     });
+    vm.recentRuns = [];
   };
 
   vm.loadData = function() {
@@ -111,6 +112,11 @@ function GroupedRunsController(
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
+    });
+    healthService.getRecentGroupedRuns(vm.runMetadataKey, vm.name).then(function(response) {
+      response.data.forEach(function(run) {
+        vm.recentRuns.push(run);
+      });
     });
   };
 

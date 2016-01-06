@@ -115,6 +115,14 @@ function HealthService($http, config) {
     });
   };
 
+  service.getRecentGroupedRuns = function(runMetadataKey, value, options) {
+    return config.get().then(function(config) {
+      return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value + '/recent', {
+        params: { callback: 'JSON_CALLBACK' }
+      });
+    });
+  };
+
   return service;
 }
 
