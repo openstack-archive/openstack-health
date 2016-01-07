@@ -1,22 +1,36 @@
 'use strict';
 
 var directivesModule = require('./_index.js');
+
 /**
  * @ngInject
  */
 function loadingIndicator() {
   return {
     restrict : 'EA',
-    template: "<div class='alert alert-info' role='alert'>" +
-"<i class='fa fa-spinner fa-pulse fa-1x'></i> <strong>Loading...</strong>" +
-'</div>',
-    link : function(scope, element) {
-      scope.$on('loading-started', function() {
-        element.css({'display' : ''});
+    templateUrl: 'loading-indicator.html',
+    scope: true,
+
+    /**
+     * @ngInject
+     */
+    controller: function($scope) {
+      $scope.status = null;
+
+      $scope.$on('loading-started', function() {
+        $scope.status = 'loading';
       });
 
-      scope.$on('loading-complete', function() {
-        element.css({'display' : 'none'});
+      $scope.$on('loading-complete', function() {
+        // errors should be "sticky", so only reset once a request has actually
+        // started + finished successfully
+        if ($scope.status !== 'error') {
+          $scope.status = null;
+        }
+      });
+
+      $scope.$on('loading-error', function() {
+        $scope.status = 'error';
       });
     }
   };

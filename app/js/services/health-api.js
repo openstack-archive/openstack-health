@@ -20,6 +20,12 @@ function httpProviderInterceptor($httpProvider) {
       'response': function(response) {
         $rootScope.$broadcast('loading-complete');
         return response || $q.when(response);
+      },
+      'responseError': function(rejection) {
+        // we only ever get useless '404' errors with JSONP, so don't bother
+        // including a message
+        $rootScope.$broadcast('loading-error');
+        return $q.reject(rejection);
       }
     };
   });
