@@ -1,0 +1,94 @@
+.nav-breadcrumb > li:not(:last-child):after {
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-left: 10px solid #f8f8f8;
+  position: absolute;
+  top: 50%;
+  margin-top: -17px;
+  left: 100%;
+  z-index: 3;
+}
+
+.nav-breadcrumb > li:not(:last-child):before {
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 17px solid transparent;
+  border-bottom: 17px solid transparent;
+  border-left: 10px solid rgb(173, 173, 173);
+  position: absolute;
+  top: 50%;
+  margin-top: -17px;
+  margin-left: 1px;
+  left: 100%;
+  z-index: 3;
+}
+
+.navbar-breadcrumb {
+  min-height: 10px;
+}
+.navbar-breadcrumb ul:not(.nav-breadcrumb) > li > a {
+  padding: 6px 10px;
+}
+.nav-breadcrumb > li {
+  padding:6px 12px 6px 24px;
+}
+.nav-breadcrumb > li > a {
+  padding: 0px;
+}
+.nav-breadcrumb li:not(:last-child):hover {
+  background-color: #ebebeb;
+}
+
+.nav-breadcrumb > li:first-child {
+  padding:6px 6px 6px 10px;
+}
+.btn-breadcrumb > li:last-child {
+  padding:6px 18px 6px 24px;
+}
+
+.nav-breadcrumb > li:not(:last-child):after {
+  border-left: 10px solid #f8f8f8;
+}
+.nav-breadcrumb > li:not(:last-child):before {
+  border-left: 10px solid #ccc;
+}
+.nav-breadcrumb > li:hover:not(:last-child):after {
+  border-left: 10px solid #ebebeb;
+}
+.nav-breadcrumb > li:hover:not(:last-child):before {
+  border-left: 10px solid #adadad;
+}
+
+.navbar-form-xs {
+  padding: 0px 20px;
+  margin: 5px 8px;
+}
+
+.input-xs {
+  height: 22px;
+  padding: 0px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.navbar-breadcrumb .container-fluid li[dropdown]:not(:last-child):before {
+  background: #ebebeb;
+  width: 1px;
+  content: "";
+  display:block;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  right: 0;
+}
+
+.navbar-breadcrumb ul.dropdown-menu a {
+  cursor: pointer;
+}

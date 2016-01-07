@@ -4,11 +4,12 @@ describe('GroupedRunsController', function() {
     module('app.controllers');
   });
 
-  var $httpBackend, $controller, healthService;
+  var $scope, $httpBackend, $controller, healthService;
   var API_ROOT = 'http://8.8.4.4:8080';
   var DEFAULT_CURRENT_DATE = new Date();
 
-  beforeEach(inject(function(_$httpBackend_, _$controller_, _healthService_) {
+  beforeEach(inject(function($rootScope, _$httpBackend_, _$controller_, _healthService_) {
+    $scope = $rootScope.$new();
     $httpBackend = _$httpBackend_;
     mockConfigService();
     mockHealthService();
@@ -78,6 +79,7 @@ describe('GroupedRunsController', function() {
 
   it('should process chart data correctly', function() {
     var groupedRunsController = $controller('GroupedRunsController', {
+      $scope: $scope,
       healthService: healthService,
       runMetadataKey: 'project',
       name: 'openstack/cinder',
@@ -104,6 +106,7 @@ describe('GroupedRunsController', function() {
 
   it('should process chart data rate correctly', function() {
     var groupedRunsController = $controller('GroupedRunsController', {
+      $scope: $scope,
       healthService: healthService,
       runMetadataKey: 'project',
       name: 'openstack/cinder',

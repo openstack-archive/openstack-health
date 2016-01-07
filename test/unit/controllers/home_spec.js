@@ -3,7 +3,7 @@ describe('HomeController', function() {
     module('app');
   });
 
-  var $controller, homeController, projectService;
+  var $scope, $controller, homeController, projectService;
   var mockResponse = { data: {} };
   var mockMetadataKeysResponse = {
     data: {
@@ -15,7 +15,8 @@ describe('HomeController', function() {
     }
   };
 
-  beforeEach(inject(function(_$controller_) {
+  beforeEach(inject(function($rootScope, _$controller_) {
+    $scope = $rootScope.$new();
     $controller = _$controller_;
 
     var defaultStartDate = new Date();
@@ -36,6 +37,7 @@ describe('HomeController', function() {
     };
 
     homeController = $controller('HomeController', {
+      $scope: $scope,
       healthService: healthService,
       startDate: defaultStartDate,
       projectService: projectService

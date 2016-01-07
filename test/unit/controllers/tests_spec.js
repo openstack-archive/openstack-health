@@ -4,16 +4,17 @@ describe('TestsController', function() {
     module('app.controllers');
   });
 
-  var $httpBackend, $controller, healthService;
+  var $scope, $httpBackend, $controller, healthService;
   var API_ROOT = 'http://8.8.4.4:8080';
   var DEFAULT_START_DATE = new Date();
 
-  beforeEach(inject(function(_$httpBackend_, _$controller_, _healthService_) {
+  beforeEach(inject(function($rootScope, _$httpBackend_, _$controller_, _healthService_) {
     $httpBackend = _$httpBackend_;
 
     mockConfigService();
     mockHealthService();
 
+    $scope = $rootScope.$new();
     $controller = _$controller_;
     healthService = _healthService_;
   }));
@@ -61,7 +62,8 @@ describe('TestsController', function() {
 
   it('should process chart data correctly', function() {
     var testsController = $controller('TestsController', {
-      healthService: healthService
+      healthService: healthService,
+      $scope: $scope
     });
     $httpBackend.flush();
 

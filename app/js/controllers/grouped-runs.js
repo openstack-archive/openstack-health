@@ -5,7 +5,10 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function GroupedRunsController(pageTitleService, healthService, runMetadataKey, name, currentDate) {
+function GroupedRunsController(
+    $scope, pageTitleService, healthService, viewService,
+    runMetadataKey, name, currentDate) {
+
   // ViewModel
   var vm = this;
 
@@ -16,6 +19,10 @@ function GroupedRunsController(pageTitleService, healthService, runMetadataKey, 
   // this decode call make the project name exebition properly.
   vm.runMetadataKey = decodeURIComponent(runMetadataKey);
   vm.name = decodeURIComponent(name);
+
+  // update the global grouping key - if we arrived here directly, it will not
+  // be set already
+  viewService.groupKey(runMetadataKey);
 
   // Updates the page title based on the selected runMetadataKey
   pageTitleService.update(vm.runMetadataKey);
@@ -105,13 +112,17 @@ function GroupedRunsController(pageTitleService, healthService, runMetadataKey, 
     healthService.getRunsForRunMetadataKey(vm.runMetadataKey, vm.name, {
       start_date: startDate,
       stop_date: stopDate,
-      datetime_resolution: 'hour'
+      datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
     });
   };
 
   vm.loadData();
+
+  $scope.$on('view:resolution', function(event, resolution) {
+    vm.loadData();
+  });
 }
 
 controllersModule.controller('GroupedRunsController', GroupedRunsController);
