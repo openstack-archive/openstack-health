@@ -65,6 +65,13 @@ def setup():
     Session = sessionmaker(bind=engine)
 
 
+def get_session():
+    global Session
+    if not Session:
+        setup()
+    return Session()
+
+
 @app.route('/', methods=['GET'])
 def list_routes():
     output = []
@@ -84,8 +91,7 @@ def list_routes():
 
 @app.route('/build_name/<string:build_name>/runs', methods=['GET'])
 def get_runs_from_build_name(build_name):
-    global Session
-    session = Session()
+    session = get_session()
     db_runs = api.get_runs_by_key_value('build_name', build_name, session)
     runs = [run.to_dict() for run in db_runs]
     return jsonify({'runs': runs})
@@ -120,8 +126,7 @@ def _parse_datetimes(datetime_str):
 
 @app.route('/runs/group_by/<string:key>', methods=['GET'])
 def get_runs_grouped_by_metadata_per_datetime(key):
-    global Session
-    session = Session()
+    session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'sec')
@@ -155,8 +160,7 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
 def get_test_runs_by_build_name(build_name):
-    global Session
-    session = Session()
+    session = get_session()
     key = 'build_name'
     value = build_name
     if not key or not value:
@@ -176,8 +180,7 @@ def get_test_runs_by_build_name(build_name):
 
 @app.route('/runs', methods=['GET'])
 def get_runs():
-    global Session
-    session = Session()
+    session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     db_runs = api.get_all_runs_by_date(start_date, stop_date, session)
@@ -225,8 +228,7 @@ def _aggregate_runs(runs_by_time_delta):
 
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>', methods=['GET'])
 def get_runs_by_run_metadata_key(run_metadata_key, value):
-    global Session
-    session = Session()
+    session = get_session()
 
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
@@ -258,8 +260,7 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
 
 @app.route('/run/<string:run_id>/tests', methods=['GET'])
 def get_tests_from_run(run_id):
-    global Session
-    session = Session()
+    session = get_session()
     db_tests = api.get_tests_from_run_id(run_id, session)
     tests = [test.to_dict() for test in db_tests]
     return jsonify({'tests': tests})
@@ -267,16 +268,14 @@ def get_tests_from_run(run_id):
 
 @app.route('/run/<string:run_id>/test_runs', methods=['GET'])
 def get_run_test_runs(run_id):
-    global Session
-    session = Session()
+    session = get_session()
     db_test_runs = api.get_tests_run_dicts_from_run_id(run_id, session)
     return jsonify(db_test_runs)
 
 
 @app.route('/tests', methods=['GET'])
 def get_tests():
-    global Session
-    session = Session()
+    session = get_session()
     db_tests = api.get_all_tests(session)
     tests = [test.to_dict() for test in db_tests]
     return jsonify({'tests': tests})
@@ -318,8 +317,7 @@ def parse_command_line_args():
 
 @app.route('/test_runs/<string:test_id>', methods=['GET'])
 def get_test_runs_for_test(test_id):
-    global Session
-    session = Session()
+    session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'min')
