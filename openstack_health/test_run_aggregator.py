@@ -18,6 +18,31 @@ from subunit2sql import read_subunit
 import base_aggregator as base
 
 
+def format_output_dicts(df, numeric_df):
+    # Convert the dataframes to a dict
+    numeric_dict = {}
+    if numeric_df is not None:
+        numeric_dict = dict(
+            (date.isoformat(),
+                {
+                'run_time': run_time,
+                'avg_run_time': avg,
+                'std_dev_run_time': stddev,
+            }) for date, run_time, avg, stddev in zip(
+                numeric_df.index, numeric_df.run_time, numeric_df.avg_run_time,
+                numeric_df.stddev_run_time))
+    temp_dict = {}
+    if df is not None:
+        temp_dict = dict(
+            (date.isoformat(),
+                {
+                'run_id': run_id,
+                'status': status,
+                }) for date, run_id, status in zip(df.index, df.run_id,
+                                                   df.status))
+    return numeric_dict, temp_dict
+
+
 def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
     test_runs = []
     for test_run in test_runs_list:
@@ -44,39 +69,24 @@ def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
 
     df = pd.DataFrame(test_runs).set_index('start_time')
     df.index = pd.DatetimeIndex(df.index)
-    # Add rolling mean and std dev of run_time to datafram
-    df['avg_run_time'] = pd.rolling_mean(df['run_time'], 20)
-    df['stddev_run_time'] = pd.rolling_std(df['run_time'], 20)
 
     # Resample numeric data for the run_time graph from successful runs
+    success_df = df.loc[df['status'] == 'success']
+    if len(success_df) == 0:
+        numeric_dict, temp_dict = format_output_dicts(df, None)
+        return {'numeric': numeric_dict, 'data': temp_dict}
     numeric_df = df[df['status'] == 'success'].resample(
         base.resample_matrix[resample], how='mean')
     # Drop duplicate or invalid colums
     del(numeric_df['run_id'])
     del(df['run_time'])
     # Interpolate missing data
-    numeric_df['run_time'] = numeric_df.interpolate(method='time', limit=20)
+    numeric_df = numeric_df.interpolate(method='time', limit=20)
     # Add rolling mean and std dev of run_time to datafram
     numeric_df['avg_run_time'] = pd.rolling_mean(numeric_df['run_time'], 20)
     numeric_df['stddev_run_time'] = pd.rolling_std(numeric_df['run_time'], 20)
 
-    # Convert the dataframes to a dict
-    numeric_dict = dict(
-        (date.isoformat(),
-            {
-            'run_time': run_time,
-            'avg_run_time': avg,
-            'std_dev_run_time': stddev,
-        }) for date, run_time, avg, stddev in zip(
-            numeric_df.index, numeric_df.run_time, numeric_df.avg_run_time,
-            numeric_df.stddev_run_time))
-    temp_dict = dict(
-        (date.isoformat(),
-            {
-            'run_id': run_id,
-            'status': status,
-            }) for date, run_id, status in zip(df.index, df.run_id, df.status))
-
+    numeric_dict, temp_dict = format_output_dicts(df, numeric_df)
     return {'numeric': numeric_dict, 'data': temp_dict}
 
 
