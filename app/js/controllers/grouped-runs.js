@@ -105,13 +105,9 @@ function GroupedRunsController(
   };
 
   vm.loadData = function() {
-    var startDate = new Date(currentDate);
-    var stopDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() - 20);
-
     healthService.getRunsForRunMetadataKey(vm.runMetadataKey, vm.name, {
-      start_date: startDate,
-      stop_date: stopDate,
+      start_date: viewService.windowStart(currentDate, 20),
+      stop_date: currentDate,
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);

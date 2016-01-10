@@ -7,10 +7,10 @@ var servicesModule = require('./_index.js');
  */
 var viewService = function($rootScope) {
   var resolutionOptions = [
-    { name: 'Second', key: 'sec'},
-    { name: 'Minute', key: 'min' },
-    { name: 'Hour', key: 'hour' },
-    { name: 'Day', key: 'day' }
+    { name: 'Second', key: 'sec', window: 0.01 },
+    { name: 'Minute', key: 'min', window: 0.5 },
+    { name: 'Hour', key: 'hour', window: 1 },
+    { name: 'Day', key: 'day', window: 10 }
   ];
   var resolution = resolutionOptions[2];
   var groupKey = 'project';
@@ -24,6 +24,15 @@ var viewService = function($rootScope) {
 
       return resolution;
     },
+
+    windowStart: function(endDate, days) {
+      var ret = new Date(endDate);
+      var diff = Math.ceil(resolution.window * days);
+      ret.setDate(ret.getDate() - diff);
+
+      return ret;
+    },
+
     resolutionOptions: function() {
       return resolutionOptions;
     },
