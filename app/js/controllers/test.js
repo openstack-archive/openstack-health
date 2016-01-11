@@ -96,15 +96,20 @@ function TestController($scope, healthService, testService, viewService, startDa
 
         // parse dates and create data series
         var date = new Date(date).getTime();
-
-        runTimeEntries.push({
-          x: date,
-          y: parseFloat(test.run_time)
-        });
-        avgRunTimeEntries.push({
-          x: date,
-          y: parseFloat(test.avg_run_time)
-        });
+        if (!isNaN(test.run_time)) {
+          runTimeEntries.push({
+            x: date,
+            y: parseFloat(test.run_time),
+            size: 1,
+            shape: 'circle'
+          });
+        }
+        if (!isNaN(test.avg_run_time)) {
+          avgRunTimeEntries.push({
+            x: date,
+            y: parseFloat(test.avg_run_time)
+          });
+        }
       }
     }
     vm.timeData = [

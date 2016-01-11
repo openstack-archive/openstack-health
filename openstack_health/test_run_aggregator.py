@@ -85,6 +85,7 @@ def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
     # Add rolling mean and std dev of run_time to datafram
     numeric_df['avg_run_time'] = pd.rolling_mean(numeric_df['run_time'], 20)
     numeric_df['stddev_run_time'] = pd.rolling_std(numeric_df['run_time'], 20)
+    numeric_df = numeric_df.dropna(how='all')
 
     numeric_dict, temp_dict = format_output_dicts(df, numeric_df)
     return {'numeric': numeric_dict, 'data': temp_dict}
