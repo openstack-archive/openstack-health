@@ -19,6 +19,7 @@ function GroupedRunsController(
   // this decode call make the project name exebition properly.
   vm.runMetadataKey = decodeURIComponent(runMetadataKey);
   vm.name = decodeURIComponent(name);
+  vm.recentRuns = [];
 
   // update the global grouping key - if we arrived here directly, it will not
   // be set already
@@ -102,7 +103,6 @@ function GroupedRunsController(
     vm.jobs = Object.keys(jobs).map(function(name) {
       return jobs[name];
     });
-    vm.recentRuns = [];
   };
 
   vm.loadData = function() {
@@ -114,9 +114,7 @@ function GroupedRunsController(
       vm.processData(response.data);
     });
     healthService.getRecentGroupedRuns(vm.runMetadataKey, vm.name).then(function(response) {
-      response.data.forEach(function(run) {
-        vm.recentRuns.push(run);
-      });
+      vm.recentRuns = response.data;
     });
   };
 

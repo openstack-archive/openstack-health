@@ -11,6 +11,7 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
 
   vm.searchTest = '';
   vm.name = decodeURIComponent(jobName);
+  vm.recentRuns = [];
 
   vm.processData = function(data) {
     vm.chartData = [];
@@ -127,8 +128,6 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
     }).sort(function(x, y) {
       return x.failuresRate < y.failuresRate;
     });
-    vm.recentRuns = [];
-
   };
 
   vm.loadData = function() {
@@ -146,9 +145,7 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
       vm.processData(response.data);
     });
     healthService.getRecentGroupedRuns('build_name', vm.name).then(function(response) {
-      response.data.forEach(function(run) {
-        vm.recentRuns.push(run);
-      });
+      vm.recentRuns = response.data;
     });
   };
 
