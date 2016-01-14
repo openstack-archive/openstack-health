@@ -7,12 +7,12 @@ var controllersModule = require('./_index');
  */
 function GroupedRunsController(
     $scope, pageTitleService, healthService, viewService,
-    runMetadataKey, name, currentDate, $location) {
+    runMetadataKey, name, $location) {
 
   // ViewModel
   var vm = this;
 
-  vm.searchJob = '';
+  vm.searchJob = $location.search().searchJob || '';
 
   // decodeURI is needed here because project names contains slash as part
   // of the name. As this come from an URL part and URL can be encoded,
@@ -20,6 +20,8 @@ function GroupedRunsController(
   vm.runMetadataKey = decodeURIComponent(runMetadataKey);
   vm.name = decodeURIComponent(name);
   vm.recentRuns = [];
+  vm.loaded = false;
+  vm.hold = 0;
 
   // update the global grouping key - if we arrived here directly, it will not
   // be set already
@@ -27,6 +29,35 @@ function GroupedRunsController(
 
   // Updates the page title based on the selected runMetadataKey
   pageTitleService.update(vm.runMetadataKey);
+
+  var configurePeriods = function() {
+    vm.hold += 1;
+
+    var res = viewService.resolution();
+    var min = null;
+    var max = null;
+    var preference = null;
+
+    if (res.key === 'sec') {
+      max = { hours: 6 };
+      preference = { hours: 1 };
+    } else if (res.key === 'min') {
+      max = { days: 1 };
+      preference = { hours: 12 };
+    } else if (res.key === 'hour') {
+      min = { hours: 12 };
+      max = { months: 3 };
+      preference = { weeks: 2 };
+    } else if (res.key === 'day') {
+      min = { hours: 48 };
+      preference = { months: 3 };
+    }
+
+    viewService.periods(min, max, true);
+    viewService.preferredDuration(preference);
+
+    vm.hold -= 1;
+  };
 
   vm.processData = function(data) {
     // prepare chart data
@@ -106,24 +137,35 @@ function GroupedRunsController(
   };
 
   vm.loadData = function() {
+    if (vm.hold > 0) {
+      return;
+    }
+
     healthService.getRunsForRunMetadataKey(vm.runMetadataKey, vm.name, {
-      start_date: viewService.windowStart(currentDate, 20),
-      stop_date: currentDate,
+      start_date: viewService.periodStart(),
+      stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
+      vm.loaded = true;
     });
     healthService.getRecentGroupedRuns(vm.runMetadataKey, vm.name).then(function(response) {
       vm.recentRuns = response.data;
     });
   };
 
-  vm.searchJob = $location.search().searchJob || '';
-
+  configurePeriods();
   vm.loadData();
 
   $scope.$on('view:resolution', function(event, resolution) {
+    configurePeriods();
     vm.loadData();
+  });
+
+  $scope.$on('view:period', function(event, corrected) {
+    if (vm.loaded && !corrected) {
+      vm.loadData();
+    }
   });
 
   vm.onSearchChange = function() {

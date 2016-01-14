@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function HomeController($scope, healthService, startDate, projectService, viewService, $location) {
+function HomeController($scope, healthService, projectService, viewService, $location) {
 
   var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
@@ -14,6 +14,35 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
 
   var byDate = function(entryA, entryB) {
     return entryA.x - entryB.x;
+  };
+
+  var configurePeriods = function() {
+    vm.hold += 1;
+
+    var res = viewService.resolution();
+    var min = null;
+    var max = null;
+    var preference = null;
+
+    if (res.key === 'sec') {
+      max = { hours: 6 };
+      preference = { hours: 1 };
+    } else if (res.key === 'min') {
+      max = { days: 1 };
+      preference = { hours: 12 };
+    } else if (res.key === 'hour') {
+      min = { hours: 12 };
+      max = { months: 3 };
+      preference = { months: 1 };
+    } else if (res.key === 'day') {
+      min = { hours: 48 };
+      preference = { months: 3 };
+    }
+
+    viewService.periods(min, max, true);
+    viewService.preferredDuration(preference);
+
+    vm.hold -= 1;
   };
 
   var processData = function(data) {
@@ -65,12 +94,20 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
     };
   };
 
-  var loadData = function(runMetadataKey) {
+  var loadData = function() {
+    // don't update if configurePeriods() is in progress - it may throw an extra
+    // period update
+    if (vm.hold > 0) {
+      return;
+    }
+
     healthService.getRunsGroupedByMetadataPerDatetime(vm.groupKey, {
-      start_date: viewService.windowStart(startDate, 20),
+      start_date: viewService.periodStart(),
+      stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       processData(response.data);
+      vm.loaded = true;
     });
   };
 
@@ -80,16 +117,27 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
   vm.groupKey = viewService.groupKey();
 
   vm.searchProject = $location.search().searchProject || '';
+  vm.loaded = false;
+  vm.hold = 0;
 
+  configurePeriods();
   loadData();
 
   $scope.$on('view:groupKey', function(event, groupKey) {
     vm.groupKey = groupKey;
-    loadData(groupKey);
+    configurePeriods();
+    loadData();
   });
 
   $scope.$on('view:resolution', function(event, resolution) {
+    configurePeriods();
     loadData();
+  });
+
+  $scope.$on('view:period', function(event, corrected) {
+    if (vm.loaded && !corrected) {
+      loadData();
+    }
   });
 
   vm.onSearchChange = function() {

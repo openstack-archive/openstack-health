@@ -5,13 +5,44 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function JobController($scope, healthService, viewService, jobName, startDate, $location) {
+function JobController($scope, healthService, viewService, jobName, $location) {
   // ViewModel
   var vm = this;
 
   vm.searchTest = '';
   vm.name = decodeURIComponent(jobName);
   vm.recentRuns = [];
+  vm.loaded = false;
+  vm.hold = 0;
+
+  var configurePeriods = function() {
+    vm.hold += 1;
+
+    var res = viewService.resolution();
+    var min = null;
+    var max = null;
+    var preference = null;
+
+    if (res.key === 'sec') {
+      max = { hours: 6 };
+      preference = { hours: 1 };
+    } else if (res.key === 'min') {
+      max = { days: 1 };
+      preference = { hours: 12 };
+    } else if (res.key === 'hour') {
+      min = { hours: 12 };
+      max = { months: 1 };
+      preference = { weeks: 1 };
+    } else if (res.key === 'day') {
+      min = { hours: 48 };
+      preference = { months: 3 };
+    }
+
+    viewService.periods(min, max, true);
+    viewService.preferredDuration(preference);
+
+    vm.hold -= 1;
+  };
 
   vm.processData = function(data) {
     vm.chartData = [];
@@ -131,18 +162,17 @@ function JobController($scope, healthService, viewService, jobName, startDate, $
   };
 
   vm.loadData = function() {
-    // Note(mtreinish): this is a hack to make periodic job graphs useful
-    // until we have a user selectable date window available
-    var dateWindow = 2;
-    if (vm.name.indexOf('periodic') > -1) {
-      dateWindow = 15;
+    if (vm.hold > 0) {
+      return;
     }
 
     healthService.getTestsFromBuildName(vm.name, {
-      start_date: viewService.windowStart(startDate, dateWindow),
+      start_date: viewService.periodStart(),
+      stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
+      vm.loaded = true;
     });
     healthService.getRecentGroupedRuns('build_name', vm.name).then(function(response) {
       vm.recentRuns = response.data;
@@ -151,10 +181,18 @@ function JobController($scope, healthService, viewService, jobName, startDate, $
 
   vm.searchTest = $location.search().searchTest || '';
 
+  configurePeriods();
   vm.loadData();
 
   $scope.$on('view:resolution', function(event, resolution) {
+    configurePeriods();
     vm.loadData();
+  });
+
+  $scope.$on('view:period', function(event, corrected) {
+    if (vm.loaded && !corrected) {
+      vm.loadData();
+    }
   });
 
   vm.onSearchChange = function() {

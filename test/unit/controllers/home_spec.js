@@ -19,7 +19,6 @@ describe('HomeController', function() {
     $scope = $rootScope.$new();
     $controller = _$controller_;
 
-    var defaultStartDate = new Date();
     var healthService = {
       getRunsGroupedByMetadataPerDatetime: function(key, options) {
         return { then: function(callback) { callback(mockResponse); } };
@@ -39,7 +38,6 @@ describe('HomeController', function() {
     homeController = $controller('HomeController', {
       $scope: $scope,
       healthService: healthService,
-      startDate: defaultStartDate,
       projectService: projectService
     });
   }));

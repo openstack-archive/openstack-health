@@ -23,6 +23,16 @@
     </ul>
     <div class="container-fluid">
         <ul class="nav navbar-nav navbar-right">
+            <li dropdown ng-if="showPeriod == 'true'">
+                <a popover-template="'crumb-period-popover.html'"
+                   popover-placement="bottom"
+                   popover-animation="false"
+                   href>
+                    <fa name="calendar"></fa>
+                    &nbsp;Period: {{duration.humanize()}}&nbsp;
+                    <fa name="caret-down"></fa>
+                </a>
+            </li>
             <li dropdown ng-if="showGroupKey == 'true'">
                 <a dropdown-toggle href title="Group By Key">
                     <fa name="key"></fa>

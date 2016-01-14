@@ -4,9 +4,12 @@ describe('GroupedRunsController', function() {
     module('app.controllers');
   });
 
-  var $scope, $httpBackend, $controller, healthService;
+  var $scope, $httpBackend, $controller, healthService, viewService;
   var API_ROOT = 'http://8.8.4.4:8080';
-  var DEFAULT_CURRENT_DATE = new Date();
+  var DEFAULT_END_DATE = new Date();
+  var DEFAULT_START_DATE = new Date(
+      (+DEFAULT_END_DATE) -
+      (1000 * 60 * 60 * 24 * 7));
 
   beforeEach(inject(function($rootScope, _$httpBackend_, _$controller_, _healthService_) {
     $scope = $rootScope.$new();
@@ -15,13 +18,18 @@ describe('GroupedRunsController', function() {
     mockHealthService();
     $controller = _$controller_;
     healthService = _healthService_;
+
+    viewService = {
+      resolution: function() { return { name: 'Hour', key: 'hour' }; },
+      groupKey: function() { return 'project'; },
+      periods: function() {},
+      preferredDuration: function() {},
+      periodStart: function() { return DEFAULT_START_DATE; },
+      periodEnd: function() { return DEFAULT_END_DATE; }
+    };
   }));
 
   function mockHealthService() {
-    var startDate = new Date(DEFAULT_CURRENT_DATE);
-    startDate.setDate(startDate.getDate() - 20);
-    var stopDate = new Date(DEFAULT_CURRENT_DATE);
-
     var expectedResponse = {
       timedelta: [
         {
@@ -63,12 +71,12 @@ describe('GroupedRunsController', function() {
     };
 
     var endpoint = API_ROOT +
-      '/runs/key/project/openstack/cinder?callback=JSON_CALLBACK&' +
-      'datetime_resolution=hour&' +
-      'start_date=' + startDate.toISOString() + '&' +
-      'stop_date=' + stopDate.toISOString();
-    $httpBackend.expectJSONP(endpoint)
-    .respond(200, expectedResponse);
+        '/runs/key/project/openstack/cinder?callback=JSON_CALLBACK&' +
+        'datetime_resolution=hour&' +
+        'start_date=' + DEFAULT_START_DATE.toISOString() + '&' +
+        'stop_date=' + DEFAULT_END_DATE.toISOString();
+
+    $httpBackend.expectJSONP(endpoint).respond(200, expectedResponse);
 
     var recentResponse = [
       {
@@ -119,7 +127,7 @@ describe('GroupedRunsController', function() {
       healthService: healthService,
       runMetadataKey: 'project',
       name: 'openstack/cinder',
-      currentDate: DEFAULT_CURRENT_DATE
+      viewService: viewService
     });
     $httpBackend.flush();
 
@@ -146,7 +154,7 @@ describe('GroupedRunsController', function() {
       healthService: healthService,
       runMetadataKey: 'project',
       name: 'openstack/cinder',
-      currentDate: DEFAULT_CURRENT_DATE
+      viewService: viewService
     });
     $httpBackend.flush();
 
