@@ -14,6 +14,20 @@ describe('HomeController', function() {
       }
     }
   };
+  var mockRecentFailed = [
+    {
+      'link': 'http://logs.openstack.org/97/280597/1/gate/gate-tempest-dsvm-ironic-pxe_ipa/61f4153',
+      'start_time': '2016-02-17T11:38:43.185384',
+      'stop_time': '2016-02-17T11:50:04.465870',
+      'test_id': 'ironic.test_baremetal_basic_ops.BaremetalBasicOps.test_baremetal_server_ops'
+    },
+    {
+      'link': 'http://logs.openstack.org/49/277949/2/gate/gate-tempest-dsvm-ironic-pxe_ipa/8ac452c',
+      'start_time': '2016-02-17T10:29:32.448360',
+      'stop_time': '2016-02-17T10:44:33.880733',
+      'test_id': 'ironic.test_baremetal_basic_ops.BaremetalBasicOps.test_baremetal_server_ops'
+    }
+  ];
 
   beforeEach(inject(function($rootScope, _$controller_) {
     $scope = $rootScope.$new();
@@ -26,6 +40,11 @@ describe('HomeController', function() {
       getRunMetadataKeys: function() {
         return {
           then: function(callback) { callback(mockMetadataKeysResponse); }
+        };
+      },
+      getRecentFailedTests: function() {
+        return {
+          then: function(callback) { callback(mockRecentFailed); }
         };
       }
     };

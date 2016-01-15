@@ -109,16 +109,19 @@ function HomeController($scope, healthService, projectService, viewService, $loc
       processData(response.data);
       vm.loaded = true;
     });
+    healthService.getRecentFailedTests().then(function(response) {
+      vm.recentTests = response.data;
+    });
   };
 
   // ViewModel
   var vm = this;
   vm.loadData = loadData;
   vm.groupKey = viewService.groupKey();
-
   vm.searchProject = $location.search().searchProject || '';
   vm.loaded = false;
   vm.hold = 0;
+  vm.recentTests = [];
 
   configurePeriods();
   loadData();

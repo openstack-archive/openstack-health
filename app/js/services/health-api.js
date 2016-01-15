@@ -129,6 +129,13 @@ function HealthService($http, config) {
       });
     });
   };
+  service.getRecentFailedTests = function(options) {
+    return config.get().then(function(config) {
+      return $http.jsonp(config.apiRoot + '/tests/recent/fail', {
+        params: { callback: 'JSON_CALLBACK' }
+      });
+    });
+  };
 
   return service;
 }
