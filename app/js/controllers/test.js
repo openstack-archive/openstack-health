@@ -38,7 +38,7 @@ function TestController($scope, healthService, testService, viewService, startDa
               skips: 0
             };
           }
-          else if (test.status == 'fail' || test.status == 'unxsucess') {
+          else if (test.status == 'fail' || test.status == 'unxsuccess') {
             var count = {
               passes: 0,
               fails: 1,
@@ -58,7 +58,7 @@ function TestController($scope, healthService, testService, viewService, startDa
           if (test.status == 'success' || test.status == 'xfail') {
             dates[date].passes += 1;
           }
-          else if (test.status == 'fail' || test.status == 'unxsucess') {
+          else if (test.status == 'fail' || test.status == 'unxsuccess') {
             dates[date].fails += 1;
           }
           else if (test.status == 'skip') {
