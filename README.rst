@@ -119,7 +119,7 @@ To test javascript code, run::
     npm test
 
 This will execute both unit and end-to-end tests, and will write coverage
-reports to :code:`./cover`. To indvidually run unit tests and generate coverage
+reports to :code:`./cover`. To individually run unit tests and generate coverage
 reports, run::
 
     npm run unit

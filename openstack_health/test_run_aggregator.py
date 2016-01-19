@@ -77,12 +77,12 @@ def convert_test_runs_list_to_time_series_dict(test_runs_list, resample):
         return {'numeric': numeric_dict, 'data': temp_dict}
     numeric_df = df[df['status'] == 'success'].resample(
         base.resample_matrix[resample], how='mean')
-    # Drop duplicate or invalid colums
+    # Drop duplicate or invalid columns
     del(numeric_df['run_id'])
     del(df['run_time'])
     # Interpolate missing data
     numeric_df = numeric_df.interpolate(method='time', limit=20)
-    # Add rolling mean and std dev of run_time to datafram
+    # Add rolling mean and std dev of run_time to dataframe
     numeric_df['avg_run_time'] = pd.rolling_mean(numeric_df['run_time'], 20)
     numeric_df['stddev_run_time'] = pd.rolling_std(numeric_df['run_time'], 20)
     numeric_df = numeric_df.dropna(how='all')
