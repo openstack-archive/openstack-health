@@ -22,8 +22,8 @@ describe('MetricService', function() {
     var objects = [
       { metrics: { passes: 0, failures: 0 }, expectedFailRate: 0 },
       { metrics: { passes: 0, failures: 1 }, expectedFailRate: 1 },
-      { metrics: { passes: 2, failures: 1 }, expectedFailRate: 0.33 },
-      { metrics: { passes: 1, failures: 2 }, expectedFailRate: 0.67 },
+      { metrics: { passes: 2, failures: 1 }, expectedFailRate: 0.3333 },
+      { metrics: { passes: 1, failures: 2 }, expectedFailRate: 0.6667 },
       { metrics: { passes: 1, failures: 3 }, expectedFailRate: 0.75 }
     ];
 

@@ -15,7 +15,7 @@ var metricsService = function() {
 
   service.getFailRate = function(metrics) {
     var failRate = metrics.failures / (metrics.passes + metrics.failures) || 0;
-    return Math.round(failRate * 100) / 100;
+    return Math.round(failRate * 10000) / 10000;
   };
 
   service.addMetrics = function(metrics1, metrics2) {
