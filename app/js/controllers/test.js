@@ -68,6 +68,7 @@ function TestController($scope, healthService, testService, viewService, startDa
       }
     }
     for (date in dates) {
+      date = parseInt(date);
       if (dates.hasOwnProperty(date)) {
         passEntries.push({
           x: date,
