@@ -110,7 +110,7 @@ def get_run_metadata_keys():
     except ConfigParser.NoOptionError:
         ignored_keys = []
 
-    session = Session()
+    session = get_session()
     existing_keys = set(api.get_all_run_metadata_keys(session))
     allowed_keys = existing_keys.difference(ignored_keys)
 
