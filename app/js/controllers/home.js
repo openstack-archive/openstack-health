@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function HomeController($scope, healthService, startDate, projectService, viewService) {
+function HomeController($scope, healthService, startDate, projectService, viewService, $location) {
 
   var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
@@ -78,7 +78,8 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
   var vm = this;
   vm.loadData = loadData;
   vm.groupKey = viewService.groupKey();
-  vm.searchProject = '';
+
+  vm.searchProject = $location.search().searchProject || '';
 
   loadData();
 
@@ -90,5 +91,9 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
   $scope.$on('view:resolution', function(event, resolution) {
     loadData();
   });
+
+  vm.onSearchChange = function() {
+    $location.search("searchProject", $scope.home.searchProject);
+  };
 }
 controllersModule.controller('HomeController', HomeController);

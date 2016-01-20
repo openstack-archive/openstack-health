@@ -7,7 +7,7 @@ var controllersModule = require('./_index');
  */
 function GroupedRunsController(
     $scope, pageTitleService, healthService, viewService,
-    runMetadataKey, name, currentDate) {
+    runMetadataKey, name, currentDate, $location) {
 
   // ViewModel
   var vm = this;
@@ -118,11 +118,17 @@ function GroupedRunsController(
     });
   };
 
+  vm.searchJob = $location.search().searchJob || '';
+
   vm.loadData();
 
   $scope.$on('view:resolution', function(event, resolution) {
     vm.loadData();
   });
+
+  vm.onSearchChange = function() {
+    $location.search("searchJob", $scope.groupedRuns.searchJob);
+  };
 }
 
 controllersModule.controller('GroupedRunsController', GroupedRunsController);

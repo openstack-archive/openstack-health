@@ -15,7 +15,7 @@ function crumbMenu() {
   /**
    * @ngInject
    */
-  var controller = function($scope, healthService, viewService) {
+  var controller = function($scope, healthService, viewService, $location) {
     $scope.resolutionOptions = viewService.resolutionOptions();
     $scope.selectedResolution = viewService.resolution();
     $scope.selectedGroupKey = viewService.groupKey();
@@ -30,10 +30,12 @@ function crumbMenu() {
     };
 
     $scope.$on('view:resolution', function(event, resolution) {
+      $location.search("resolutionKey", resolution.key);
       $scope.selectedResolution = resolution;
     });
 
     $scope.$on('view:groupKey', function(event, groupKey) {
+      $location.search("groupKey", groupKey);
       $scope.selectedGroupKey = groupKey;
     });
 

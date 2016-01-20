@@ -6,7 +6,7 @@ var _ = require('underscore');
 /**
  * @ngInject
  */
-function TestsController(healthService, testService) {
+function TestsController($scope, healthService, testService, $location) {
 
   // ViewModel
   var vm = this;
@@ -70,6 +70,12 @@ function TestsController(healthService, testService) {
     });
   };
 
+  vm.searchTest = $location.search().searchTest || '';
+
   vm.loadData();
+
+  vm.onSearchChange = function() {
+    $location.search("searchTest", $scope.tests.searchTest);
+  };
 }
 controllersModule.controller('TestsController', TestsController);
