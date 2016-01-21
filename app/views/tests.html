@@ -21,7 +21,11 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                    <input type="text" class="form-control" placeholder="Search for test" ng-model="tests.searchTest" ng-change="tests.onSearchChange()">
+                                    <input type="text" class="form-control"
+                                           placeholder="Search for test"
+                                           ng-model="tests.searchTest"
+                                           ng-model-options="{debounce: 250}"
+                                           ng-change="tests.onSearchChange()">
                                 </div>
                             </div>
                         </form>
