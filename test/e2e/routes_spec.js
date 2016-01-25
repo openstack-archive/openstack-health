@@ -21,21 +21,21 @@ describe('E2E: Routes', function() {
     }));
 
     // should have a link to the next page
-    var selector = 'a[href="#/g/project/openstack%252Ftaskflow"]';
+    var selector = 'a[href="#/g/project/openstack~2Ftaskflow"]';
     expect(element(by.css(selector)).isPresent()).toBe(true);
   });
 
   it('should have a working group route', function() {
     mock(['config', 'group']);
 
-    browser.get('#/g/project/openstack%252Ftaskflow');
+    browser.get('#/g/project/openstack~2Ftaskflow');
 
     // route should be defined (will redirect to / if not)
     browser.getLocationAbsUrl().then(function(url) {
       // note: phantomjs converts the octal escape to '/' for getLocationAbsUrl
       // for browsers that don't do this (chrome, firefox, etc), escape it
       // manually to make sure the expectation works correctly
-      expect(url.replace('%252F', '/')).toMatch('/g/project/openstack/taskflow');
+      expect(url.replace('~2F', '/')).toMatch('/g/project/openstack/taskflow');
     });
 
     // data should actually be requested (no request if error)
