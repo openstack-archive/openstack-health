@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function JobController($scope, healthService, viewService, jobName, startDate) {
+function JobController($scope, healthService, viewService, jobName, startDate, $location) {
   // ViewModel
   var vm = this;
 
@@ -149,11 +149,17 @@ function JobController($scope, healthService, viewService, jobName, startDate) {
     });
   };
 
+  vm.searchTest = $location.search().searchTest || '';
+
   vm.loadData();
 
   $scope.$on('view:resolution', function(event, resolution) {
     vm.loadData();
   });
+
+  vm.onSearchChange = function() {
+    $location.search("searchTest", $scope.job.searchTest);
+  };
 }
 
 controllersModule.controller('JobController', JobController);
