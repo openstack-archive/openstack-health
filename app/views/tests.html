@@ -52,7 +52,7 @@
                                     </td>
                                     <td class="text-right">{{ test.success | number }}</td>
                                     <td class="text-right">{{ test.failure | number }}</td>
-                                    <td class="text-right">{{ test.failureAverage | number: 2 }}</td>
+                                    <td class="text-right">{{ test.failureAverage * 100 | number: 2 }}%</td>
                                     <td class="text-right">{{ test.run_time | number: 2 }}</td>
                                 </tr>
                             </tbody>
