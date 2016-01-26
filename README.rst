@@ -126,7 +126,7 @@ reports, run::
 
 Similarly, to run only end-to-end tests, run::
 
-    npm run e2e
+    npm run protractor
 
 Alternatively, you can start the karma server and have it watch for changes in
 your files so that unit tests are run every time they change, allowing for much
