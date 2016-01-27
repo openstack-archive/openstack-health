@@ -71,7 +71,7 @@ function tableSort($compile) {
       if (typeof def !== 'undefined') {
         presort(el, indexInParent(th), controller);
 
-        if (def === "reverse" || def === "reversed") {
+        if (def === 'reverse' || def === 'reversed') {
           // sort again to flip
           presort(el, indexInParent(th), controller);
         }

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var controllersModule = require('./_index');
 
@@ -127,7 +127,7 @@ function GroupedRunsController(
   });
 
   vm.onSearchChange = function() {
-    $location.search("searchJob", $scope.groupedRuns.searchJob);
+    $location.search('searchJob', $scope.groupedRuns.searchJob);
   };
 }
 

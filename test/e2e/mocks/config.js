@@ -5,7 +5,7 @@ module.exports = {
   },
   response: {
     data: {
-      "apiRoot": "http://localhost:5000"
+      'apiRoot': 'http://localhost:5000'
     }
   }
 };

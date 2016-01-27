@@ -10,12 +10,12 @@ var nv = require('nvd3');
  */
 function chartStackArea() {
   var link = function(scope, el, attrs) {
-    scope.$on("loading-started", function() {
-      el.css({"display" : "none"});
+    scope.$on('loading-started', function() {
+      el.css({'display' : 'none'});
     });
 
-    scope.$on("loading-complete", function() {
-      el.css({"display" : "block"});
+    scope.$on('loading-complete', function() {
+      el.css({'display' : 'block'});
     });
 
     var chart = null;
@@ -25,7 +25,7 @@ function chartStackArea() {
     .attr('height', attrs.height);
 
     var update = function(data) {
-      if (typeof data === "undefined") {
+      if (typeof data === 'undefined') {
         return;
       }
       chart = nv.models.stackedAreaChart()
@@ -38,7 +38,7 @@ function chartStackArea() {
         .clipEdge(true)
         .style('expand');
 
-      chart.xAxis.tickFormat(function(d) { return d3.time.format("%x")(new Date(d)); });
+      chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
 
       chart.yAxis.tickFormat(d3.format(',.2f'));
       svg.datum(data).call(chart);
