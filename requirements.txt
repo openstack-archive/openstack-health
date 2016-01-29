@@ -1,12 +1,12 @@
 # The order of packages is significant, because pip processes them in the order
 # of appearance. Changing the order has an impact on the overall integration
 # process, which may cause wedges in the gate later.
-pbr<2.0,>=1.6
-flask
-subunit2sql>=1.2.0
-sqlalchemy
-flask-jsonpify
-PyMySQL>=0.6.2
-python-dateutil>=2.4.2
-pandas>=0.17.1
-numpy>=1.7.0
+pbr>=1.6 # Apache-2.0
+Flask<1.0,>=0.10 # BSD
+subunit2sql>=1.2.0 # Apache-2.0
+SQLAlchemy<1.1.0,>=1.0.10 # MIT
+flask-jsonpify # MIT
+PyMySQL>=0.6.2 # MIT License
+python-dateutil>=2.4.2 # BSD
+pandas>=0.17.1 # BSD
+numpy>=1.7.0 # BSD
