@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var controllersModule = require('./_index');
 
@@ -158,7 +158,7 @@ function JobController($scope, healthService, viewService, jobName, startDate, $
   });
 
   vm.onSearchChange = function() {
-    $location.search("searchTest", $scope.job.searchTest);
+    $location.search('searchTest', $scope.job.searchTest);
   };
 }
 

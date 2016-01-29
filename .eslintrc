@@ -13,3 +13,4 @@ env:
 rules:
   module-setter: 0
   one-var: 0
+  quotes: [2, 'single', 'avoid-escape']

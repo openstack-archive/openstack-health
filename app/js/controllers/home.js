@@ -23,8 +23,8 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
     var entries = getChartEntries(dateStats, blanks);
 
     vm.chartData = [
-      { key: 'Passes', values: entries.passes, color: "blue" },
-      { key: 'Failures', values: entries.failures, color: "red" }
+      { key: 'Passes', values: entries.passes, color: 'blue' },
+      { key: 'Failures', values: entries.failures, color: 'red' }
     ];
     vm.chartDataRate = [{ key: '% Failures', values: entries.failRate }];
     vm.projects = projects
@@ -93,7 +93,7 @@ function HomeController($scope, healthService, startDate, projectService, viewSe
   });
 
   vm.onSearchChange = function() {
-    $location.search("searchProject", $scope.home.searchProject);
+    $location.search('searchProject', $scope.home.searchProject);
   };
 }
 controllersModule.controller('HomeController', HomeController);

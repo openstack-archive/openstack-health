@@ -85,9 +85,9 @@ function TestController($scope, healthService, testService, viewService, startDa
       }
     }
     vm.statusData = [
-      { key: 'Passes', values: passEntries, color: "blue" },
-      { key: 'Failures', values: failEntries, color: "red" },
-      { key: 'Skips', values: skipEntries, color: "violet" }
+      { key: 'Passes', values: passEntries, color: 'blue' },
+      { key: 'Failures', values: failEntries, color: 'red' },
+      { key: 'Skips', values: skipEntries, color: 'violet' }
     ];
 
     for (dateTimeString in data.numeric) {
@@ -114,8 +114,8 @@ function TestController($scope, healthService, testService, viewService, startDa
       }
     }
     vm.timeData = [
-      {key: 'Run Time (sec.)', values: runTimeEntries, color: "blue"},
-      {key: 'Avg. Run Time (sec.)', values: avgRunTimeEntries, color: "black"}
+      {key: 'Run Time (sec.)', values: runTimeEntries, color: 'blue'},
+      {key: 'Avg. Run Time (sec.)', values: avgRunTimeEntries, color: 'black'}
     ];
   };
 

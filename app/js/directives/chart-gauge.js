@@ -10,12 +10,12 @@ var nv = require('nvd3');
  */
 function chartGauge() {
   var link = function(scope, el, attrs) {
-    scope.$on("loading-started", function() {
-      el.css({"display" : "none"});
+    scope.$on('loading-started', function() {
+      el.css({'display' : 'none'});
     });
 
-    scope.$on("loading-complete", function() {
-      el.css({"display" : "block"});
+    scope.$on('loading-complete', function() {
+      el.css({'display' : 'block'});
     });
 
     var chart = null;
@@ -25,7 +25,7 @@ function chartGauge() {
         .attr('height', attrs.height);
 
     var update = function(data) {
-      if (typeof data === "undefined") {
+      if (typeof data === 'undefined') {
         return;
       }
 
@@ -57,13 +57,13 @@ function chartGauge() {
           .attr('x', '50%')
           .attr('y', '65%')
           .style('font-size','24px')
-          .attr("text-anchor", "middle")
+          .attr('text-anchor', 'middle')
           .text(passesText);
       svg.append('text')
           .attr('x', '50%')
           .attr('y', '80%')
           .style('font-size','24px')
-          .attr("text-anchor", "middle")
+          .attr('text-anchor', 'middle')
           .text(failuresText);
 
       scope.$on('windowResize', function() {

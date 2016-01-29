@@ -24,20 +24,20 @@ describe('JobController', function() {
 
     var expectedResponse = {
       tests: {
-        "2014-11-19T01:00:00": {
-          "tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details": {
+        '2014-11-19T01:00:00': {
+          'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details': {
             fail: 1,
             pass: 27,
             skip: 0,
             run_time: 1
           },
-          "tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_reserve": {
+          'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_reserve': {
             fail: 0,
             pass: 13,
             skip: 0,
             run_time: 1
           },
-          "tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_unreserve": {
+          'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_set_unreserve': {
             fail: 0,
             pass: 12,
             skip: 1,
@@ -57,32 +57,32 @@ describe('JobController', function() {
 
     var recentResponse = [
       {
-        "build_name": "gate-tempest-dsvm-ceilometer-mysql-neutron-full",
-        "id": "27ea6c72-4148-4a69-84ae-4b69ad88715b",
-        "link": "http://logs.openstack.org/31/234831/15/ceilo-mysql-neutron-full/7cb2c63",
-        "start_date": "2016-01-12T23:05:00",
-        "status": "success"
+        'build_name': 'gate-tempest-dsvm-ceilometer-mysql-neutron-full',
+        'id': '27ea6c72-4148-4a69-84ae-4b69ad88715b',
+        'link': 'http://logs.openstack.org/31/234831/15/ceilo-mysql-neutron-full/7cb2c63',
+        'start_date': '2016-01-12T23:05:00',
+        'status': 'success'
       },
       {
-        "build_name": "gate-tempest-dsvm-neutron-full",
-        "id": "97e11ee7-d1f9-40a8-b598-377f4013248d",
-        "link": "http://logs.openstack.org/77/188877/55/neutron-full/eb3c685",
-        "start_date": "2016-01-12T18:53:45",
-        "status": "success"
+        'build_name': 'gate-tempest-dsvm-neutron-full',
+        'id': '97e11ee7-d1f9-40a8-b598-377f4013248d',
+        'link': 'http://logs.openstack.org/77/188877/55/neutron-full/eb3c685',
+        'start_date': '2016-01-12T18:53:45',
+        'status': 'success'
       },
       {
-        "build_name": "gate-tempest-dsvm-large-ops",
-        "id": "f25490d5-39e4-4f74-8151-30d6b2522b9b",
-        "link": "http://logs.openstack.org/49/264349/4/large-ops/488cd67",
-        "start_date": "2016-01-12T18:35:36",
-        "status": "success"
+        'build_name': 'gate-tempest-dsvm-large-ops',
+        'id': 'f25490d5-39e4-4f74-8151-30d6b2522b9b',
+        'link': 'http://logs.openstack.org/49/264349/4/large-ops/488cd67',
+        'start_date': '2016-01-12T18:35:36',
+        'status': 'success'
       },
       {
-        "build_name": "gate-tempest-dsvm-neutron-full",
-        "id": "a94f8306-e737-461a-8e10-5f90113cbd02",
-        "link": "http://logs.openstack.org/82/262082/6/neutron-full/f8ea4fd",
-        "start_date": "2016-01-12T16:37:23",
-        "status": "success"
+        'build_name': 'gate-tempest-dsvm-neutron-full',
+        'id': 'a94f8306-e737-461a-8e10-5f90113cbd02',
+        'link': 'http://logs.openstack.org/82/262082/6/neutron-full/f8ea4fd',
+        'start_date': '2016-01-12T16:37:23',
+        'status': 'success'
       }
     ];
 

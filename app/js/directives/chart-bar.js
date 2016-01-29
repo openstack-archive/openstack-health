@@ -10,12 +10,12 @@ var nv = require('nvd3');
  */
 function chartBar() {
   var link = function(scope, el, attrs) {
-    scope.$on("loading-started", function() {
-      el.css({"display" : "none"});
+    scope.$on('loading-started', function() {
+      el.css({'display' : 'none'});
     });
 
-    scope.$on("loading-complete", function() {
-      el.css({"display" : "block"});
+    scope.$on('loading-complete', function() {
+      el.css({'display' : 'block'});
     });
 
     var chart = null;
@@ -25,7 +25,7 @@ function chartBar() {
     .attr('height', attrs.height);
 
     var update = function(data) {
-      if (typeof data === "undefined") {
+      if (typeof data === 'undefined') {
         return;
       }
       var chart = nv.models.discreteBarChart();

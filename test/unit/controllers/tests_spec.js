@@ -24,27 +24,27 @@ describe('TestsController', function() {
       tests: [
         {
           failure: 5592,
-          id: "00187173-ab23-4181-9a15-e291a0d8e2d1",
+          id: '00187173-ab23-4181-9a15-e291a0d8e2d1',
           run_count: 55920,
           run_time: 0.608151,
           success: 55920,
-          test_id: "tempest.api.identity.admin.v2.test_users.one"
+          test_id: 'tempest.api.identity.admin.v2.test_users.one'
         },
         {
           failure: 0,
-          id: "001c6860-c966-4c0b-9928-ecccd162bed0",
+          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
           run_count: 4939,
           run_time: 5.97596,
           success: 4939,
-          test_id: "tempest.api.volume.admin.test_snapshots_actions.two"
+          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two'
         },
         {
           failure: 1,
-          id: "002a15e0-f6d1-472a-bd66-bb13ac4d77aa",
+          id: '002a15e0-f6d1-472a-bd66-bb13ac4d77aa',
           run_count: 32292,
           run_time: 1.18864,
           success: 32291,
-          test_id: "tempest.api.network.test_routers.three"
+          test_id: 'tempest.api.network.test_routers.three'
         }
       ]
     };
