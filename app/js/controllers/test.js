@@ -5,12 +5,43 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function TestController($scope, healthService, testService, viewService, startDate, testId) {
+function TestController($scope, healthService, testService, viewService, testId) {
 
   // ViewModel
   var vm = this;
   vm.testName = testId;
   vm.testShortName = testService.getShortName(testId);
+  vm.loaded = false;
+  vm.hold = 0;
+
+  var configurePeriods = function() {
+    vm.hold += 1;
+
+    var res = viewService.resolution();
+    var min = null;
+    var max = null;
+    var preference = null;
+
+    if (res.key === 'sec') {
+      max = { hours: 6 };
+      preference = { hours: 1 };
+    } else if (res.key === 'min') {
+      max = { days: 1 };
+      preference = { hours: 12 };
+    } else if (res.key === 'hour') {
+      min = { hours: 12 };
+      max = { months: 3 };
+      preference = { months: 1 };
+    } else if (res.key === 'day') {
+      min = { hours: 48 };
+      preference = { months: 3 };
+    }
+
+    viewService.periods(min, max, true);
+    viewService.preferredDuration(preference);
+
+    vm.hold -= 1;
+  };
 
   vm.processData = function(data) {
     var dates = {};
@@ -120,21 +151,32 @@ function TestController($scope, healthService, testService, viewService, startDa
   };
 
   vm.loadData = function() {
-    var stopDate = new Date(startDate);
+    if (vm.hold > 0) {
+      return;
+    }
 
     healthService.getTestRunList(vm.testName, {
-      start_date: viewService.windowStart(stopDate, 30),
-      stop_date: stopDate,
+      start_date: viewService.periodStart(),
+      stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
       vm.processData(response.data);
+      vm.loaded = true;
     });
   };
 
+  configurePeriods();
   vm.loadData();
 
   $scope.$on('view:resolution', function(event, resolution) {
+    configurePeriods();
     vm.loadData();
+  });
+
+  $scope.$on('view:period', function(event, corrected) {
+    if (vm.loaded && !corrected) {
+      vm.loadData();
+    }
   });
 }
 controllersModule.controller('TestController', TestController);

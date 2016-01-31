@@ -9,12 +9,7 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       url: '/',
       controller: 'HomeController as home',
       templateUrl: 'home.html',
-      title: 'Home',
-      resolve:  /*@ngInject*/ {
-        'startDate': function() {
-          return new Date();
-        }
-      }
+      title: 'Home'
     })
     .state('groupedRuns', {
       url: '/g/*runMetadataKey/*name',
@@ -27,9 +22,6 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
         },
         'name': function($stateParams) {
           return $stateParams.name;
-        },
-        'currentDate': function() {
-          return new Date();
         }
       }
     })
@@ -47,9 +39,6 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       resolve: /*@ngInject*/ {
         'jobName': function($stateParams) {
           return $stateParams.jobName;
-        },
-        'startDate': function() {
-          return new Date();
         }
       }
     })
@@ -61,9 +50,6 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       resolve: /*@ngInject*/ {
         'testId': function($stateParams) {
           return $stateParams.testId;
-        },
-        'startDate': function() {
-          return new Date();
         }
       }
     });

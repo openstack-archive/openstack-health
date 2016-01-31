@@ -4,9 +4,12 @@ describe('JobController', function() {
     module('app.controllers');
   });
 
-  var $scope, $httpBackend, $controller, healthService;
+  var $scope, $httpBackend, $controller, healthService, viewService;
   var API_ROOT = 'http://8.8.4.4:8080';
-  var DEFAULT_START_DATE = new Date();
+  var DEFAULT_END_DATE = new Date();
+  var DEFAULT_START_DATE = new Date(
+      (+DEFAULT_END_DATE) -
+      (1000 * 60 * 60 * 24 * 7));
 
   beforeEach(inject(function($rootScope, _$httpBackend_, _$controller_, _healthService_) {
     $httpBackend = _$httpBackend_;
@@ -16,12 +19,17 @@ describe('JobController', function() {
     $scope = $rootScope.$new();
     $controller = _$controller_;
     healthService = _healthService_;
+
+    viewService = {
+      resolution: function() { return { name: 'Hour', key: 'hour' }; },
+      periods: function() {},
+      preferredDuration: function() {},
+      periodStart: function() { return DEFAULT_START_DATE; },
+      periodEnd: function() { return DEFAULT_END_DATE; }
+    };
   }));
 
   function mockHealthService() {
-    var startDate = new Date(DEFAULT_START_DATE);
-    startDate.setDate(startDate.getDate() - 2);
-
     var expectedResponse = {
       tests: {
         '2014-11-19T01:00:00': {
@@ -47,13 +55,13 @@ describe('JobController', function() {
       }
     };
     var endpoint = API_ROOT +
-      '/build_name/gate-tempest-dsvm-neutron-full/test_runs?' +
-      'callback=JSON_CALLBACK&' +
-      'datetime_resolution=hour&' +
-      'start_date=' +
-      startDate.toISOString();
-    $httpBackend.expectJSONP(endpoint)
-    .respond(200, expectedResponse);
+        '/build_name/gate-tempest-dsvm-neutron-full/test_runs?' +
+        'callback=JSON_CALLBACK&' +
+        'datetime_resolution=hour&' +
+        'start_date=' + DEFAULT_START_DATE.toISOString() + '&' +
+        'stop_date=' + DEFAULT_END_DATE.toISOString();
+
+    $httpBackend.expectJSONP(endpoint).respond(200, expectedResponse);
 
     var recentResponse = [
       {
@@ -103,7 +111,8 @@ describe('JobController', function() {
       $scope: $scope,
       healthService: healthService,
       jobName: 'gate-tempest-dsvm-neutron-full',
-      startDate: DEFAULT_START_DATE
+      startDate: DEFAULT_START_DATE,
+      viewService: viewService
     });
     $httpBackend.flush();
 
@@ -137,7 +146,7 @@ describe('JobController', function() {
       $scope: $scope,
       healthService: healthService,
       jobName: 'gate-tempest-dsvm-neutron-full',
-      startDate: DEFAULT_START_DATE
+      viewService: viewService
     });
     $httpBackend.flush();
 
@@ -156,7 +165,7 @@ describe('JobController', function() {
       $scope: $scope,
       healthService: healthService,
       jobName: 'gate-tempest-dsvm-neutron-full',
-      startDate: DEFAULT_START_DATE
+      viewService: viewService
     });
     $httpBackend.flush();
 
