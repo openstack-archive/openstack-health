@@ -102,6 +102,7 @@ function HealthService($http, config) {
   service.getRunMetadataKeys = function() {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/metadata/keys', {
+        cache: true,
         params: { callback: 'JSON_CALLBACK' }
       });
     });
