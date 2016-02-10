@@ -15,7 +15,7 @@
 import pandas as pd
 from subunit2sql import read_subunit
 
-import base_aggregator as base
+import openstack_health.base_aggregator as base
 
 
 def format_output_dicts(df, numeric_df):
@@ -36,7 +36,7 @@ def format_output_dicts(df, numeric_df):
         temp_dict = dict(
             (date.isoformat(),
                 {
-                'run_id': run_id,
+                'run_id': int(run_id),
                 'status': status,
                 }) for date, run_id, status in zip(df.index, df.run_id,
                                                    df.status))

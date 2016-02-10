@@ -10,3 +10,4 @@ PyMySQL>=0.6.2 # MIT License
 python-dateutil>=2.4.2 # BSD
 pandas>=0.17.1 # BSD
 numpy>=1.7.0 # BSD
+six>=1.9.0 # MIT

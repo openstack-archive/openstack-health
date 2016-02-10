@@ -15,7 +15,7 @@
 import datetime
 from dateutil import parser
 
-from base_aggregator import BaseAggregator
+from openstack_health.base_aggregator import BaseAggregator
 
 
 class RunAggregator(BaseAggregator):
@@ -68,6 +68,7 @@ class RunAggregator(BaseAggregator):
         elif datetime_resolution == 'day':
             timedelta = datetime.timedelta(days=1)
             time_count = delta.days
+        time_count = int(time_count)
         for date in (start_date + timedelta * n for n in range(time_count)):
             if date not in time_date_list:
                 aggregated_runs[date.isoformat()] = []
