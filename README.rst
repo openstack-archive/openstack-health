@@ -3,6 +3,10 @@ openstack-health
 ================
 webclient for visualizing test results of OpenStack CI jobs.
 
+ * Source: http://git.openstack.org/cgit/openstack/openstack-health
+ * Bugs: http://bugs.launchpad.net/openstack-health
+ * Blueprints: https://blueprints.launchpad.net/openstack-health
+
 Installation
 ============
 
