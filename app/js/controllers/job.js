@@ -5,7 +5,7 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function JobController($scope, healthService, viewService, jobName, $location) {
+function JobController($scope, healthService, viewService, testService, jobName, $location) {
   // ViewModel
   var vm = this;
 
@@ -59,9 +59,6 @@ function JobController($scope, healthService, viewService, jobName, $location) {
     var failEntries = [];
     var skipEntries = [];
     var failRateEntries = [];
-    var removeTestNameNoise = function(testName) {
-      return testName.replace('setUpClass (', '').replace('tearDownClass (', '').replace(')', '');
-    };
 
     var date = '';
     for (date in data.tests) {
@@ -82,7 +79,7 @@ function JobController($scope, healthService, viewService, jobName, $location) {
         }
 
         var testData = testsInDate[testName];
-        var cleanTestName = removeTestNameNoise(testName);
+        var cleanTestName = testService.removeIdNoise(testName);
 
         if (!tests[cleanTestName]) {
           var testMetrics = {
