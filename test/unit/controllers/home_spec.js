@@ -75,15 +75,20 @@ describe('HomeController', function() {
 
   it('should generate project data', function() {
     projectService.createProjects = function() {
-      return [{ name: 'p1', metrics: { passes: 1, failures: 2 }}];
+      return [{ name: 'p1',
+                metrics: { passes: 1, failures: 2, failRate: 0.4 }}];
     };
     homeController.loadData();
 
     var project = homeController.projects[0];
     expect(project.name).toEqual('p1');
     expect(project.data.length).toEqual(2);
-    expect(project.data).toContain({ key: 'Passes', value: 1, color: 'blue'});
-    expect(project.data).toContain({ key: 'Failures', value: 2, color: 'red'});
+    expect(project.data).toContain({ key: 'Passes Rate',
+                                     values: [{label: '', value: 0.6}],
+                                     color: 'blue'});
+    expect(project.data).toContain({ key: 'Failures Rate',
+                                     values: [{label: '', value: 0.4}],
+                                     color: 'red'});
   });
 
   it('should sort projects by descending percentage of failures', function() {

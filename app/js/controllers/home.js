@@ -58,7 +58,7 @@ function HomeController($scope, healthService, projectService, viewService, $loc
     vm.chartDataRate = [{ key: '% Failures', values: entries.failRate }];
     vm.projects = projects
       .sort(byFailRateDesc)
-      .map(function(project) { return generateGaugeData(project); });
+      .map(function(project) { return generateHorizontalBarData(project); });
   };
 
   var getChartEntries = function(dateStats, blanks) {
@@ -84,12 +84,20 @@ function HomeController($scope, healthService, projectService, viewService, $loc
     return { x: date.getTime(), y: value };
   };
 
-  var generateGaugeData = function(project) {
+  var generateHorizontalBarData = function(project) {
     return {
       name: project.name,
+      passRate: 1 - project.metrics.failRate,
+      failRate: project.metrics.failRate,
+      passes: project.metrics.passes,
+      failures: project.metrics.failures,
       data: [
-        { key: 'Passes', value: project.metrics.passes, color: 'blue' },
-        { key: 'Failures', value: project.metrics.failures, color: 'red' }
+              { key: 'Passes Rate',
+                values: [{label:'',
+                  value: 1 - project.metrics.failRate}], color: 'blue' },
+              { key: 'Failures Rate',
+                values: [{label:'',
+                  value: project.metrics.failRate}], color: 'red' }
       ]
     };
   };
