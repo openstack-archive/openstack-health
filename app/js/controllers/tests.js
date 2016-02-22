@@ -27,40 +27,15 @@ function TestsController($scope, healthService, testService, $location) {
       return 'Others';
     });
 
-    var getTestFailureAvg = function(test) {
-      return test.failure / test.run_count;
-    };
-
-    _.each(testsByHierarchy, function(tests, hierarchy, list) {
-      if (!vm.chartData[hierarchy]) {
-        vm.chartData[hierarchy] = [{
-          key: hierarchy,
+    var sortedKeys = _.sortBy(_.keys(testsByHierarchy));
+    _.each(sortedKeys, function(key) {
+      if (!vm.chartData[key]) {
+        vm.chartData[key] = [{
+          key: key,
           values: [],
           tests: []
         }];
       }
-
-      var orderedTests = _.sortBy(tests, function(test) {
-        return getTestFailureAvg(test) * -1;
-      });
-
-      var topFailures = _.first(orderedTests, 10);
-
-      topFailures.forEach(function(test) {
-        var failureAverage = getTestFailureAvg(test);
-        if (!isNaN(failureAverage) && parseFloat(failureAverage) > 0.01) {
-          var chartData = {
-            label: test.test_id,
-            value: failureAverage
-          };
-          vm.chartData[hierarchy][0].values.push(chartData);
-        }
-      });
-
-      orderedTests.forEach(function(test) {
-        test.failureAverage = getTestFailureAvg(test);
-        vm.chartData[hierarchy][0].tests.push(test);
-      });
     });
   };
 
