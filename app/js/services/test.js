@@ -8,7 +8,7 @@ function TestService() {
   var service = {};
 
   service.removeIdNoise = function(testId) {
-    return testId.replace(/(?:setUp|tearDown)Class\((.+)\)/, '$1');
+    return testId.replace(/(?:setUp|tearDown)Class \((.+)\)/, '$1');
   };
 
   service.getShortName = function(testId) {
