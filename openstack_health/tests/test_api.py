@@ -732,3 +732,30 @@ class TestRestAPI(base.TestCase):
             u'status': 'fail'
         }]
         self.assertEqual(expected_res, response_data)
+
+    @mock.patch('subunit2sql.db.api.get_recent_failed_runs',
+                return_value=['a_convincing_id'])
+    @mock.patch('subunit2sql.db.api.get_test_runs_by_status_for_run_ids',
+                return_value=[
+                    {
+                        'test_id': u'fake_test',
+                        'link': u'fake_url',
+                        'start_time': timestamp_a,
+                        'stop_time': timestamp_b,
+                    }
+                ])
+    def test_get_recent_test_failures(self, db_mock, recent_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/tests/recent/fail')
+        self.assertEqual(200, res.status_code)
+        db_mock.assert_called_once_with('fail', ['a_convincing_id'],
+                                        session=api.Session())
+        response_data = json.loads(res.data)
+        expected_resp = [
+            {
+                'test_id': u'fake_test',
+                'link': u'fake_url',
+                'start_time': timestamp_a.isoformat(),
+                'stop_time': timestamp_b.isoformat(),
+            }]
+        self.assertEqual(expected_resp, response_data)

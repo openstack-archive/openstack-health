@@ -291,6 +291,21 @@ def get_recent_runs(run_metadata_key, value):
     return jsonify(runs)
 
 
+@app.route('/tests/recent/<string:status>', methods=['GET'])
+def get_recent_test_status(status):
+    session = get_session()
+    num_runs = flask.request.args.get('num_runs', 10)
+    failed_runs = api.get_recent_failed_runs(num_runs, session)
+    test_runs = api.get_test_runs_by_status_for_run_ids(status, failed_runs,
+                                                        session=session)
+    output = []
+    for run in test_runs:
+        run['start_time'] = run['start_time'].isoformat()
+        run['stop_time'] = run['stop_time'].isoformat()
+        output.append(run)
+    return jsonify(output)
+
+
 @app.route('/run/<string:run_id>/tests', methods=['GET'])
 def get_tests_from_run(run_id):
     session = get_session()
