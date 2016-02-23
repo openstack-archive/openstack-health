@@ -1,0 +1,31 @@
+table.status-table {
+    width: 100%;
+    overflow: auto;
+
+    thead {
+        white-space: nowrap;
+
+        th[sort-field="name"] {
+            width: 100%;
+        }
+
+        th:not(:first-child) {
+            min-width: 75px;
+        }
+
+        th:last-child {
+            @extend .hidden-xs;
+            @extend .hidden-sm;
+
+            min-width: 300px;
+            max-width: 300px;
+        }
+    }
+
+    tbody {
+        td:last-child {
+            @extend .hidden-xs;
+            @extend .hidden-sm;
+        }
+    }
+}
