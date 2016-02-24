@@ -100,6 +100,7 @@ function HealthService($http, config) {
   service.getTests = function() {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests', {
+        cache: true,
         params: { callback: 'JSON_CALLBACK' }
       });
     });

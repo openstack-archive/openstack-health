@@ -1,4 +1,4 @@
-describe('TestsController', function() {
+describe('TestsDetailController', function() {
   beforeEach(function() {
     module('app');
     module('app.controllers');
@@ -61,19 +61,47 @@ describe('TestsController', function() {
   }
 
   it('should process chart data correctly', function() {
-    var testsController = $controller('TestsController', {
+    var testsDetailController = $controller('TestsDetailController', {
       healthService: healthService,
-      $scope: $scope
+      $scope: $scope,
+      key: 'tempest'
     });
     $httpBackend.flush();
 
     var expectedChartData = {
       'tempest': [{
         key: 'tempest',
-        values: [],
-        tests: []
+        values: [{
+          label: 'tempest.api.identity.admin.v2.test_users.one',
+          value: 0.1
+        }],
+        tests: [{
+          failure: 5592,
+          id: '00187173-ab23-4181-9a15-e291a0d8e2d1',
+          run_count: 55920,
+          run_time: 0.608151,
+          success: 55920,
+          test_id: 'tempest.api.identity.admin.v2.test_users.one',
+          failureAverage: 0.1
+        }, {
+          failure: 1,
+          id: '002a15e0-f6d1-472a-bd66-bb13ac4d77aa',
+          run_count: 32292,
+          run_time: 1.18864,
+          success: 32291,
+          test_id: 'tempest.api.network.test_routers.three',
+          failureAverage: 0.0000309674222717701
+        }, {
+          failure: 0,
+          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
+          run_count: 4939,
+          run_time: 5.97596,
+          success: 4939,
+          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two',
+          failureAverage: 0
+        }]
       }]
     };
-    expect(testsController.chartData).toEqual(expectedChartData);
+    expect(testsDetailController.chartData).toEqual(expectedChartData);
   });
 });

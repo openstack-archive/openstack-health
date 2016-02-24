@@ -31,6 +31,17 @@ function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
       templateUrl: 'tests.html',
       title: 'Tests'
     })
+    .state('testsDetail', {
+      url: '/tests/:key',
+      controller: 'TestsDetailController as testsDetail',
+      templateUrl: 'tests-detail.html',
+      title: 'Tests Detail',
+      resolve: /*@ngInject*/ {
+        'key': function($stateParams) {
+          return $stateParams.key;
+        }
+      }
+    })
     .state('job', {
       url: '/job/:jobName',
       controller: 'JobController as job',
