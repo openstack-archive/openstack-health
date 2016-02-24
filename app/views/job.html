@@ -43,7 +43,7 @@
                 <h3 class="panel-title">Recent Runs</h3>
             </div>
             <div class="panel-body">
-                <table class="table">
+                <table class="table table-hover status-table">
                     <thead>
                         <tr>
                             <th>Link</th>
@@ -52,7 +52,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="run in job.recentRuns">
+                        <tr ng-repeat="run in job.recentRuns"
+                         ng-class="run.status == 'fail' ? 'danger' : 'success'">
                             <td><a href="{{ run.link }}">{{ run.link }}</a></td>
                             <td>{{ run.status }}</td>
                             <td>{{ run.start_date }}</td>
@@ -78,7 +79,7 @@
                         </div>
                     </div>
                 </form>
-                <table table-sort class="table table-striped" data="job.tests">
+                <table table-sort class="table table-hover status-table" data="job.tests">
                     <thead>
                         <tr>
                             <th sort-field="name">Test Name</a></th>
@@ -90,7 +91,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr table-ref="table" ng-repeat="test in table.dataSorted | filter:job.searchTest">
+                        <tr table-ref="table" ng-repeat="test in table.dataSorted | filter:job.searchTest"
+                         ng-class="test.failuresRate > 15 ? 'danger' : test.failuresRate > 8 ? 'warning' : test.failuresRate > 0 ? 'info' : 'success'">
                           <td><a ui-sref="test({ testId: test.name })">{{ test.name|limitTo:110 }}</a></td>
                             <td>{{ test.passes|number }}</td>
                             <td>{{ test.failures|number }}</td>

@@ -42,7 +42,7 @@
                 <h3 class="panel-title">Recent Runs</h3>
             </div>
             <div class="panel-body">
-                <table class="table">
+                <table class="table table-hover status-table">
                     <thead>
                         <tr>
                             <th>Job Name</th>
@@ -52,7 +52,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="run in groupedRuns.recentRuns">
+                        <tr ng-repeat="run in groupedRuns.recentRuns"
+                         ng-class="run.status == 'fail' ? 'danger' : 'success'">
                             <td><a ui-sref="job({ jobName: run.build_name })">{{ run.build_name }}</a></td>
                             <td>{{ run.status }}</td>
                             <td>{{ run.start_date }}</td>
@@ -79,7 +80,7 @@
                         </div>
                     </div>
                 </form>
-                <table table-sort class="table table-striped" data="groupedRuns.jobs">
+                <table table-sort class="table table-hover status-table" data="groupedRuns.jobs">
                     <thead>
                         <tr>
                             <th sort-field="name">Job Name</th>
@@ -89,7 +90,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:groupedRuns.searchJob">
+                        <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:groupedRuns.searchJob"
+                         ng-class="job.failuresRate > 15 ? 'danger' : job.failuresRate > 8 ? 'warning' : job.failuresRate > 0 ? 'info' : 'success'">
                             <td><a ui-sref="job({ jobName: job.name })">{{ job.name }}</a></td>
                             <td>{{ job.passes }}</td>
                             <td>{{ job.failures }}</td>
