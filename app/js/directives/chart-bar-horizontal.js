@@ -25,7 +25,9 @@ function chartBarHorizontal() {
 
     var svg = d3.select(el[0]).append('svg')
       .attr('width', attrs.width)
-      .attr('height', attrs.height);
+      .attr('height', attrs.height)
+      .style('width', attrs.width + 'px')
+      .style('height', attrs.height + 'px');
 
     var update = function(data) {
       if (typeof data === 'undefined') {

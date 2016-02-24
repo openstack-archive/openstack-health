@@ -84,40 +84,36 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Project status</h3>
                 </div>
-                <div class="panel-body">
-                    <table table-sort class="table table-hover" data="home.projects">
-                        <thead>
-                            <tr>
-                                <th field="number" class="text-center">#</th>
-                                <th sort-field="name" class="text-center">Project Name</a></th>
-                                <th sort-field="passes" class="text-center">Passes</th>
-                                <th sort-field="failures" class="text-center">Failures</th>
-                                <th sort-field="passRate" class="text-center">% Passes</th>
-                                <th sort-default sort-field="failRate" class="text-center">% Failures</th>
-                                <th field="barGraph" class="text-center" style="min-width:320px">Bar Graph</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr table-ref="table" ng-repeat="p in home.projects | filter:home.searchProject"
-                             ng-class="p.failRate > 0.15 ? 'danger' : p.failRate > 0.08 ? 'warning' : p.failRate > 0 ? 'info' : 'success'">
-                                <td class="text-right">{{$index+1}}</td>
-                                <td class="text-left">
-                                  <a ui-sref="groupedRuns({ runMetadataKey: home.groupKey, name: p.name })">{{p.name}}</a>
-                                </td>
-                                <td class="text-right">{{p.passes|number}}</td>
-                                <td class="text-right">{{p.failures|number}}</td>
-                                <td class="text-right">{{p.passRate*100|number:2}}</td>
-                                <td class="text-right">{{p.failRate*100|number:2}}</td>
-                                <td>
-                                  <div id="chart">
-                                    <chart-bar-horizontal data="p.data" height="20">
-                                    </chart-bar-horizontal>
-                                  </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <table table-sort class="table table-hover status-table" data="home.projects">
+                    <thead>
+                        <tr>
+                            <th field="number" class="text-center">#</th>
+                            <th sort-field="name" class="text-center">Project Name</a></th>
+                            <th sort-field="passes" class="text-center">Passes</th>
+                            <th sort-field="failures" class="text-center">Failures</th>
+                            <th sort-field="passRate" class="text-center">% Passes</th>
+                            <th sort-default sort-field="failRate" class="text-center">% Failures</th>
+                            <th class="text-center">Bar Graph</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr table-ref="table" ng-repeat="p in home.projects | filter:home.searchProject"
+                         ng-class="p.failRate > 0.15 ? 'danger' : p.failRate > 0.08 ? 'warning' : p.failRate > 0 ? 'info' : 'success'">
+                            <td class="text-right">{{$index+1}}</td>
+                            <td class="text-left">
+                              <a ui-sref="groupedRuns({ runMetadataKey: home.groupKey, name: p.name })">{{p.name}}</a>
+                            </td>
+                            <td class="text-right">{{p.passes|number}}</td>
+                            <td class="text-right">{{p.failures|number}}</td>
+                            <td class="text-right">{{p.passRate*100|number:2}}</td>
+                            <td class="text-right">{{p.failRate*100|number:2}}</td>
+                            <td>
+                                <chart-bar-horizontal data="p.data" width="300" height="20">
+                                </chart-bar-horizontal>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
