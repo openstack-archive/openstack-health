@@ -124,16 +124,21 @@ function HealthService($http, config) {
   };
 
   service.getRecentGroupedRuns = function(runMetadataKey, value, options) {
+    options = options || {};
+
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value + '/recent', {
-        params: { callback: 'JSON_CALLBACK' }
+        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
       });
     });
   };
+
   service.getRecentFailedTests = function(options) {
+    options = options || {};
+
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests/recent/fail', {
-        params: { callback: 'JSON_CALLBACK' }
+        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
       });
     });
   };
