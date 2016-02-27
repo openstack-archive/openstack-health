@@ -42,7 +42,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Recent Runs</h3>
             </div>
-            <div class="panel-body">
+            <div class="panel-body table-responsive">
                 <table class="table table-hover status-table">
                     <thead>
                         <tr>
@@ -79,29 +79,31 @@
                         </div>
                     </div>
                 </form>
-                <table table-sort class="table table-hover status-table" data="job.tests">
-                    <thead>
-                        <tr>
-                            <th sort-field="name">Test Name</a></th>
-                            <th sort-field="passes">Passes</th>
-                            <th sort-field="failures">Failures</th>
-                            <th sort-field="skips">Skips</th>
-                            <th sort-default sort-field="failuresRate">% Failures</th>
-                            <th sort-field="meanRuntime">Mean Runtime</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr table-ref="table" ng-repeat="test in table.dataSorted | filter:job.searchTest"
-                         ng-class="test.failuresRate > 15 ? 'danger' : test.failuresRate > 8 ? 'warning' : test.failuresRate > 0 ? 'info' : 'success'">
-                          <td><a ui-sref="test({ testId: test.name })">{{ test.name|limitTo:110 }}</a></td>
-                            <td>{{ test.passes|number }}</td>
-                            <td>{{ test.failures|number }}</td>
-                            <td>{{ test.skips|number }}</td>
-                            <td>{{ test.failuresRate|number:2 }}</td>
-                            <td>{{ test.meanRuntime|number:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table table-sort class="table table-hover status-table" data="job.tests">
+                        <thead>
+                            <tr>
+                                <th sort-field="name">Test Name</a></th>
+                                <th sort-field="passes">Passes</th>
+                                <th sort-field="failures">Failures</th>
+                                <th sort-field="skips">Skips</th>
+                                <th sort-default sort-field="failuresRate">% Failures</th>
+                                <th sort-field="meanRuntime">Mean Runtime</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr table-ref="table" ng-repeat="test in table.dataSorted | filter:job.searchTest"
+                             ng-class="test.failuresRate > 15 ? 'danger' : test.failuresRate > 8 ? 'warning' : test.failuresRate > 0 ? 'info' : 'success'">
+                              <td><a ui-sref="test({ testId: test.name })">{{ test.name|limitTo:110 }}</a></td>
+                                <td>{{ test.passes|number }}</td>
+                                <td>{{ test.failures|number }}</td>
+                                <td>{{ test.skips|number }}</td>
+                                <td>{{ test.failuresRate|number:2 }}</td>
+                                <td>{{ test.meanRuntime|number:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
