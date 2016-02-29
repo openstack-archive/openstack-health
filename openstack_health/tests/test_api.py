@@ -17,6 +17,7 @@ import json
 
 import mock
 import numpy
+import six
 from subunit2sql.db import models
 
 from openstack_health import api
@@ -67,7 +68,8 @@ class TestRestAPI(base.TestCase):
             u'project',
             u'build_uuid'
         ]
-        self.assertItemsEqual(expected_response, json.loads(res.data))
+        self.assertItemsEqual(expected_response,
+                              json.loads(res.data.decode('utf-8')))
 
     @mock.patch('subunit2sql.db.api.get_test_run_dict_by_run_meta_key_value',
                 return_value=[
@@ -86,7 +88,7 @@ class TestRestAPI(base.TestCase):
         api_mock.assert_called_once_with('build_name', 'fake_tests', None,
                                          None, api.Session())
         expected_response = {
-            unicode(timestamp_a.isoformat()): {
+            six.text_type(timestamp_a.isoformat()): {
                 u'fake_test_a': {
                     u'pass': 1,
                     u'fail': 0,
@@ -99,13 +101,14 @@ class TestRestAPI(base.TestCase):
                     u'run_time': 0},
             }
         }
-        self.assertEqual({u'tests': expected_response}, json.loads(res.data))
+        self.assertEqual({u'tests': expected_response},
+                         json.loads(res.data.decode('utf-8')))
 
     def test_list_routes(self):
         res = self.app.get('/')
-        res_dict = json.loads(res.data)
+        res_dict = json.loads(res.data.decode('utf-8'))
         self.assertEqual(200, res.status_code)
-        self.assertEqual(['routes'], res_dict.keys())
+        self.assertEqual(['routes'], list(res_dict.keys()))
         route_dict = {
             'name': 'list_routes',
             'methods': ['GET', 'HEAD', 'OPTIONS'],
@@ -128,7 +131,8 @@ class TestRestAPI(base.TestCase):
              "success": 2,
              "test_id": "test.id"}
         ]}
-        self.assertEqual(json.loads(res.data), expected_response)
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
 
     @mock.patch('subunit2sql.db.api.get_all_runs_by_date',
                 return_value=[models.Run(
@@ -148,7 +152,8 @@ class TestRestAPI(base.TestCase):
              "artifacts": "fake_url.com",
              "run_at": format_time}
         ]}
-        self.assertEqual(json.loads(res.data), expected_response)
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
 
     @mock.patch('subunit2sql.db.api.get_runs_by_key_value',
                 return_value=[models.Run(
@@ -168,7 +173,8 @@ class TestRestAPI(base.TestCase):
              "artifacts": "fake_url.com",
              "run_at": format_time}
         ]}
-        self.assertEqual(json.loads(res.data), expected_response)
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
 
     @mock.patch('subunit2sql.db.api.get_tests_from_run_id',
                 return_value=[models.Test(
@@ -185,7 +191,8 @@ class TestRestAPI(base.TestCase):
              "success": 2,
              "test_id": "test.id"}
         ]}
-        self.assertEqual(json.loads(res.data), expected_response)
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
 
     @mock.patch('subunit2sql.db.api.get_tests_run_dicts_from_run_id',
                 return_value={'tempest.api.compute.test_servers': {
@@ -205,14 +212,15 @@ class TestRestAPI(base.TestCase):
         format_time_b = timestamp_b.strftime('%a, %d %b %Y %H:%M:%S GMT')
         expected_response = {u'tempest.api.compute.test_servers': {
             u"status": u"success",
-            u"start_time": unicode(format_time_a),
-            u"stop_time": unicode(format_time_b),
+            u"start_time": six.text_type(format_time_a),
+            u"stop_time": six.text_type(format_time_b),
             u"metadata": {
                 u'attrs': u'ab,cd',
                 u'tags': u'worker-1',
             }
         }}
-        self.assertEqual(json.loads(res.data), expected_response)
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
 
     @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
                 return_value={
@@ -222,11 +230,12 @@ class TestRestAPI(base.TestCase):
         res = self.app.get('/runs/group_by/project')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
-            unicode(timestamp_a.isoformat()): [{
+            six.text_type(timestamp_a.isoformat()): [{
                 u'pass': 2, u'fail': 3, u'skip': 1
             }]
         }}
-        self.assertEqual(expected_response, json.loads(res.data))
+        self.assertEqual(expected_response,
+                         json.loads(res.data.decode('utf-8')))
         # Ensure db api called correctly
         api_mock.assert_called_once_with('project', None, None, api.Session())
 
@@ -238,13 +247,14 @@ class TestRestAPI(base.TestCase):
         res = self.app.get('/runs/group_by/project?datetime_resolution=min')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
-            unicode(timestamp_a.replace(second=0,
-                                        microsecond=0).isoformat()): [{
-                                            u'pass': 2,
-                                            u'fail': 3,
-                                            u'skip': 1}]
+            six.text_type(timestamp_a.replace(second=0,
+                                              microsecond=0).isoformat()): [{
+                                                  u'pass': 2,
+                                                  u'fail': 3,
+                                                  u'skip': 1}]
         }}
-        self.assertEqual(expected_response, json.loads(res.data))
+        self.assertEqual(expected_response,
+                         json.loads(res.data.decode('utf-8')))
 
     @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
                 return_value={
@@ -254,13 +264,14 @@ class TestRestAPI(base.TestCase):
         res = self.app.get('/runs/group_by/projects?datetime_resolution=hour')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
-            unicode(timestamp_a.replace(minute=0, second=0,
-                                        microsecond=0).isoformat()): [{
-                                            u'pass': 2,
-                                            u'fail': 3,
-                                            u'skip': 1}]
+            six.text_type(timestamp_a.replace(minute=0, second=0,
+                                              microsecond=0).isoformat()): [{
+                                                  u'pass': 2,
+                                                  u'fail': 3,
+                                                  u'skip': 1}]
         }}
-        self.assertEqual(expected_response, json.loads(res.data))
+        self.assertEqual(expected_response,
+                         json.loads(res.data.decode('utf-8')))
 
     @mock.patch('subunit2sql.db.api.get_all_runs_time_series_by_key',
                 return_value={
@@ -277,7 +288,7 @@ class TestRestAPI(base.TestCase):
     def test_get_runs_by_date_day_res(self, api_mock):
         res = self.app.get('runs/group_by/projects?datetime_resolution=day')
         self.assertEqual(200, res.status_code)
-        date = unicode(timestamp_a.date().isoformat())
+        date = six.text_type(timestamp_a.date().isoformat())
         expected_response = {u'runs': {
             date: {
                 u'neutron': sorted([{u'pass': 2,
@@ -285,18 +296,21 @@ class TestRestAPI(base.TestCase):
                                      u'skip': 1},
                                     {u'fail': 1,
                                      u'pass': 0,
-                                     u'skip': 0}]),
+                                     u'skip': 0}],
+                                   key=lambda run: run['fail']),
                 u'tempest': [{u'fail': 3,
                               u'pass': 2,
                               u'skip': 1}]}
         }}
-        response = json.loads(res.data)
+        response = json.loads(res.data.decode('utf-8'))
         self.assertEqual(sorted(expected_response['runs'].keys()),
                          sorted(response['runs'].keys()))
         for project in expected_response['runs'][date]:
             self.assertIn(project, response['runs'][date])
-            self.assertEqual(sorted(expected_response['runs'][date][project]),
-                             sorted(response['runs'][date][project]))
+            self.assertEqual(sorted(expected_response['runs'][date][project],
+                                    key=lambda run: run['fail']),
+                             sorted(response['runs'][date][project],
+                                    key=lambda run: run['fail']))
 
     def test_parse_datetimes_isoformat(self):
         parsed_out = api._parse_datetimes(timestamp_a.isoformat())
@@ -322,11 +336,12 @@ class TestRestAPI(base.TestCase):
         res = self.app.get('/runs/group_by/project?datetime_resolution=sec')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
-            unicode(timestamp_a.isoformat()): [{
+            six.text_type(timestamp_a.isoformat()): [{
                 u'pass': 2, u'fail': 3, u'skip': 1
             }]
         }}
-        self.assertEqual(expected_response, json.loads(res.data))
+        self.assertEqual(expected_response,
+                         json.loads(res.data.decode('utf-8')))
         # Ensure db api called correctly
         api_mock.assert_called_once_with('project', None, None, api.Session())
 
@@ -335,7 +350,7 @@ class TestRestAPI(base.TestCase):
             '/runs/group_by/projects?datetime_resolution=century')
         self.assertEqual(res.status_code, 400)
         self.assertEqual('Datetime resolution: century, is not a valid choice',
-                         res.data)
+                         res.data.decode('utf-8'))
 
     @mock.patch('subunit2sql.db.api.get_time_series_runs_by_key_value',
                 return_value={
@@ -383,7 +398,7 @@ class TestRestAPI(base.TestCase):
                            'job_name': 'value-3',
                            'mean_run_time': 3.0}]},
         ]}
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
@@ -438,7 +453,7 @@ class TestRestAPI(base.TestCase):
                            'job_name': 'value-3',
                            'mean_run_time': 3.0}]},
         ]}
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
@@ -493,7 +508,7 @@ class TestRestAPI(base.TestCase):
                            'job_name': 'value-3',
                            'mean_run_time': 3.0}]},
         ]}
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
@@ -555,7 +570,7 @@ class TestRestAPI(base.TestCase):
                            'mean_run_time': 20.0},
                           ]}
         ]}
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
@@ -621,7 +636,7 @@ class TestRestAPI(base.TestCase):
                            'mean_run_time': 20.0},
                           ]}
         ]}
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
@@ -636,7 +651,7 @@ class TestRestAPI(base.TestCase):
             '/runs/key/project/openstack/trove?datetime_resolution=century')
         self.assertEqual(res.status_code, 400)
         self.assertEqual('Datetime resolution: century, is not a valid choice',
-                         res.data)
+                         res.data.decode('utf-8'))
 
     @mock.patch('openstack_health.api._check_db_availability',
                 return_value=False)
@@ -645,7 +660,8 @@ class TestRestAPI(base.TestCase):
 
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 500)
-        self.assertEqual(json.loads(response.data), expected_response)
+        self.assertEqual(json.loads(response.data.decode('utf-8')),
+                         expected_response)
 
     @mock.patch('openstack_health.api._check_db_availability',
                 return_value=True)
@@ -654,7 +670,8 @@ class TestRestAPI(base.TestCase):
 
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.data), expected_response)
+        self.assertEqual(json.loads(response.data.decode('utf-8')),
+                         expected_response)
 
     def test_failed_runs_count_should_not_consider_unknown_ones(self):
         runs = [
@@ -674,7 +691,7 @@ class TestRestAPI(base.TestCase):
 
     @mock.patch('subunit2sql.db.api.get_test_runs_by_test_test_id',
                 return_value=[models.TestRun(
-                    id=2, test_id=1234, run_id=1234,
+                    id=2, test_id=1234, run_id=int(1234),
                     status='success', start_time=timestamp_a,
                     start_time_microsecond=0,
                     stop_time=timestamp_b,
@@ -694,7 +711,7 @@ class TestRestAPI(base.TestCase):
                 'std_dev_run_time': numpy.NaN
             }}
         }
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
         numpy.testing.assert_equal(exp_result, response_data)
         api_mock.assert_called_once_with('fake.test.id', start_date=None,
                                          stop_date=None,
@@ -717,7 +734,7 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(200, res.status_code)
         api_mock.assert_called_once_with('a_key', 'a_value',
                                          10, api.Session())
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
         expected_res = [{
             u'id': u'a_uuid',
             u'build_name': u'job',

@@ -14,10 +14,11 @@
 
 
 import argparse
-import ConfigParser
 from dateutil import parser as date_parser
 import itertools
-import urllib
+import six
+from six.moves import configparser as ConfigParser
+from six.moves.urllib import parse
 
 import flask
 from flask import abort
@@ -28,8 +29,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
 
-from run_aggregator import RunAggregator
-import test_run_aggregator
+from openstack_health.run_aggregator import RunAggregator
+from openstack_health import test_run_aggregator
 
 app = flask.Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -83,7 +84,7 @@ def list_routes():
         out_dict = {
             'name': rule.endpoint,
             'methods': sorted(rule.methods),
-            'url': urllib.unquote(url),
+            'url': parse.unquote(url),
         }
         output.append(out_dict)
     return jsonify({'routes': output})
@@ -150,7 +151,7 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 
     keyfunc = lambda c: c['metadata'][groupby_key]
     grouped_runs_by = {}
-    for timestamp, runs_by_time in runs_by_time.iteritems():
+    for timestamp, runs_by_time in six.iteritems(runs_by_time):
         if timestamp not in grouped_runs_by:
             grouped_runs_by[timestamp] = {}
         for key, val in itertools.groupby(runs_by_time, keyfunc):
