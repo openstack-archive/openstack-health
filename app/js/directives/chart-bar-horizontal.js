@@ -41,7 +41,6 @@ function chartBarHorizontal() {
         return d.value;
       });
       chart.margin({top: 0, right: 5, bottom: 1, left: 5});
-      chart.width(300);  // FIXME: this is workaround the for unstable width
       chart.duration(0);
       chart.groupSpacing(0);
       chart.showControls(false);
