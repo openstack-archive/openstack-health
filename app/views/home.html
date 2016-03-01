@@ -103,7 +103,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr table-ref="table" ng-repeat="p in home.projects | filter:home.searchProject"
+                        <tr table-ref="table" ng-repeat="p in home.projects | filter:{name:home.searchProject}"
                          ng-class="p.failRate > 0.15 ? 'danger' : p.failRate > 0.08 ? 'warning' : p.failRate > 0 ? 'info' : 'success'">
                             <td class="text-right">{{$index+1}}</td>
                             <td class="text-left">

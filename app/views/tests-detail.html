@@ -53,7 +53,7 @@
                                 </thead>
                                 <tbody>
                                     <tr table-ref="table"
-                                     ng-repeat="test in table.dataSorted | filter:testsDetail.searchTest"
+                                     ng-repeat="test in table.dataSorted | filter:{test_id:testsDetail.searchTest}"
                                      ng-class="test.failureAverage > 0.15 ? 'danger' : test.failureAverage > 0.8 ? 'warning' : test.failureAverage > 0 ? 'info' : 'success'">
                                         <td class="text-left">
                                           <a ui-sref="test({ testId: test.test_id })"> {{test.test_id | limitTo: 110}}</a>
