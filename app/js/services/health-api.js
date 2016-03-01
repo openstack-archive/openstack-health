@@ -12,19 +12,35 @@ function httpProviderInterceptor($httpProvider) {
    * @ngInject
    */
   $httpProvider.interceptors.push(/* @ngInject */ function($q, $rootScope) {
+    var count = 0;
+
     return {
       'request': function(config) {
+        count++;
+
         $rootScope.$broadcast('loading-started');
+        $rootScope.loadingStatus = 'loading';
+
         return config || $q.when(config);
       },
       'response': function(response) {
         $rootScope.$broadcast('loading-complete');
+        count--;
+
+        if (count === 0 && $rootScope.loadingStatus !== 'error') {
+          $rootScope.loadingStatus = null;
+        }
+
         return response || $q.when(response);
       },
       'responseError': function(rejection) {
+        count--;
+
         // we only ever get useless '404' errors with JSONP, so don't bother
         // including a message
         $rootScope.$broadcast('loading-error');
+        $rootScope.loadingStatus = 'error';
+
         return $q.reject(rejection);
       }
     };
