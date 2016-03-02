@@ -48,21 +48,29 @@
                 <h3 class="panel-title">Failed Tests in Last 10 Failed Runs</h3>
             </div>
             <div class="table-responsive">
-                <table class="table default-cols">
+                <table table-sort data="home.recentTests"
+                       class="table table-hover default-cols">
                     <thead>
                         <tr>
-                            <th>Test ID</th>
-                            <th>Run Link</th>
-                            <th>Start Time</th>
-                            <th>Stop Time</th>
+                            <th sort-field="test_id">Test ID</th>
+                            <th sort-field="link">Run Link</th>
+                            <th sort-field="start_time">Start Time</th>
+                            <th sort-default sort-field="stop_time">Stop Time</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="testRun in home.recentTests">
-                            <td><a ui-sref="test({ testId: testRun.test_id })"}>{{ testRun.test_id | limitTo: 80 }}</td>
-                            <td><a href="{{ testRun.link }}">{{ testRun.link | limitTo: -30 }}</a></td>
-                            <td>{{ testRun.start_time }}</td>
-                            <td>{{ testRun.stop_time }}</td>
+                        <tr table-ref="table" ng-repeat="testRun in table.dataSorted">
+                            <td><a ui-sref="test({ testId: testRun.test_id })"}>
+                                {{ testRun.test_id }}
+                            </td>
+                            <td>
+                                <a target="_blank" href="{{ testRun.link }}">
+                                    {{ testRun.link | split:'/' | last:2 | join:'/' }}
+                                    <fa name="external-link"></fa>
+                                </a>
+                            </td>
+                            <td>{{ testRun.start_time | date:'M/d/yyyy HH:mm' }}</td>
+                            <td>{{ testRun.stop_time | date:'M/d/yyyy HH:mm' }}</td>
                         </tr>
                     </tbody>
                 </table>

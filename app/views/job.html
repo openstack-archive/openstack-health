@@ -44,20 +44,26 @@
                 <h3 class="panel-title">Recent Runs</h3>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover default-cols">
+                <table table-sort data="job.recentRuns"
+                       class="table table-hover default-cols">
                     <thead>
                         <tr>
-                            <th>Link</th>
-                            <th>Status</th>
-                            <th>Run At</th>
+                            <th sort-field="link">Link</th>
+                            <th sort-field="status">Status</th>
+                            <th sort-default sort-field="start_date">Run At</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="run in job.recentRuns"
+                        <tr table-ref="table" ng-repeat="run in table.dataSorted"
                          ng-class="run.status == 'fail' ? 'danger' : 'success'">
-                            <td><a href="{{ run.link }}">{{ run.link }}</a></td>
+                            <td>
+                                <a target="_blank" href="{{ run.link }}">
+                                    {{ run.link }}
+                                    <fa name="external-link"></fa>
+                                </a>
+                            </td>
                             <td>{{ run.status }}</td>
-                            <td>{{ run.start_date }}</td>
+                            <td>{{ run.start_date | date:'M/d/yyyy HH:mm' }}</td>
                         </tr>
                     </tbody>
                 </table>
