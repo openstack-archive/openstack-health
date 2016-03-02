@@ -14,62 +14,55 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-          <accordion close-others="false">
-            <div class="panel panel-body panel-default">
-                <accordion-group heading="Details for {{ testsDetail.key }}" is-open="true">
-                    <div>
-                        <form>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                    <input type="text" class="form-control"
-                                           placeholder="Search for test"
-                                           ng-model="testsDetail.searchTest"
-                                           ng-model-options="{debounce: 250}"
-                                           ng-change="testsDetail.onSearchChange()">
-                                </div>
-                            </div>
-                        </form>
-                        <div class="table-responsive">
-                            <table table-sort data="testsDetail.chartData[testsDetail.key][0]['tests']" class="table table-hover default-cols">
-                                <thead>
-                                    <tr>
-                                        <th sort-field="test_id" class="text-left">
-                                            Test ID
-                                        </th>
-                                        <th sort-field="success" class="text-right">
-                                            Passes
-                                        </th>
-                                        <th sort-field="failure" class="text-right">
-                                            Failures
-                                        </th>
-                                        <th sort-default='reversed' sort-field="failureAverage" class="text-right">
-                                            % Failures
-                                        </th>
-                                        <th sort-field="run_time" class="text-right">
-                                            Avg. Runtime (secs.)
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr table-ref="table"
-                                     ng-repeat="test in table.dataSorted | filter:{test_id:testsDetail.searchTest}"
-                                     ng-class="test.failureAverage | ctxcls">
-                                        <td class="text-left">
-                                          <a ui-sref="test({ testId: test.test_id })"> {{test.test_id | limitTo: 110}}</a>
-                                        </td>
-                                        <td class="text-right">{{ test.success | number }}</td>
-                                        <td class="text-right">{{ test.failure | number }}</td>
-                                        <td class="text-right">{{ test.failureAverage * 100 | number: 2 }}%</td>
-                                        <td class="text-right">{{ test.run_time | number: 2 }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="panel panel-default">
+                <div class="panel-heading panel-controls">
+                    <h3 class="panel-title">Details for {{ testsDetail.key }}</h3>
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                        <input type="text" class="form-control"
+                               placeholder="Search for test"
+                               ng-model="testsDetail.searchTest"
+                               ng-model-options="{debounce: 250}"
+                               ng-change="testsDetail.onSearchChange()">
                     </div>
-                </accordion-group>
+                </div>
+                <div class="table-responsive">
+                    <table table-sort data="testsDetail.chartData[testsDetail.key][0]['tests']" class="table table-hover default-cols">
+                        <thead>
+                            <tr>
+                                <th sort-field="test_id" class="text-left">
+                                    Test ID
+                                </th>
+                                <th sort-field="success" class="text-right">
+                                    Passes
+                                </th>
+                                <th sort-field="failure" class="text-right">
+                                    Failures
+                                </th>
+                                <th sort-default='reversed' sort-field="failureAverage" class="text-right">
+                                    % Failures
+                                </th>
+                                <th sort-field="run_time" class="text-right">
+                                    Avg. Runtime (secs.)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr table-ref="table"
+                             ng-repeat="test in table.dataSorted | filter:{test_id:testsDetail.searchTest}"
+                             ng-class="test.failureAverage  | ctxcls">
+                                <td class="text-left">
+                                  <a ui-sref="test({ testId: test.test_id })"> {{test.test_id | limitTo: 110}}</a>
+                                </td>
+                                <td class="text-right">{{ test.success | number }}</td>
+                                <td class="text-right">{{ test.failure | number }}</td>
+                                <td class="text-right">{{ test.failureAverage * 100 | number: 2 }}%</td>
+                                <td class="text-right">{{ test.run_time | number: 2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </accordion>
         </div>
     </div>
 </div>

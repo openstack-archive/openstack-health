@@ -42,7 +42,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Recent Runs</h3>
             </div>
-            <div class="panel-body table-responsive">
+            <div class="table-responsive">
                 <table class="table table-hover default-cols">
                     <thead>
                         <tr>
@@ -68,40 +68,40 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Jobs</h3>
-            </div>
-            <div class="panel-body">
-                <form>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                            <input type="text" class="form-control" placeholder="Search for job" ng-model="groupedRuns.searchJob" ng-change="groupedRuns.onSearchChange()">
-                        </div>
+            <div class="panel panel-default">
+                <div class="panel-heading panel-controls">
+                    <h3 class="panel-title">Jobs</h3>
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Search for job"
+                               ng-model="groupedRuns.searchJob"
+                               ng-change="groupedRuns.onSearchChange()">
                     </div>
-                </form>
-                <table table-sort class="table table-hover default-cols" data="groupedRuns.jobs">
-                    <thead>
-                        <tr>
-                            <th sort-field="name">Job Name</th>
-                            <th sort-field="passes">Passes</th>
-                            <th sort-field="failures">Failures</th>
-                            <th sort-default sort-field="failuresRate">% Failures</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:{name:groupedRuns.searchJob}"
-                         ng-class="job.failuresRate / 100 | ctxcls">
-                            <td><a ui-sref="job({ jobName: job.name })">{{ job.name }}</a></td>
-                            <td>{{ job.passes }}</td>
-                            <td>{{ job.failures }}</td>
-                            <td>{{ job.failuresRate|number:2 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                </div>
+                <div class="table-responsive">
+                    <table table-sort class="table table-hover default-cols" data="groupedRuns.jobs">
+                        <thead>
+                            <tr>
+                                <th sort-field="name">Job Name</th>
+                                <th sort-field="passes">Passes</th>
+                                <th sort-field="failures">Failures</th>
+                                <th sort-default sort-field="failuresRate">% Failures</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:{name:groupedRuns.searchJob}"
+                             ng-class="job.failuresRate / 100 | ctxcls">
+                                <td><a ui-sref="job({ jobName: job.name })">{{ job.name }}</a></td>
+                                <td>{{ job.passes }}</td>
+                                <td>{{ job.failures }}</td>
+                                <td>{{ job.failuresRate|number:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 </div>

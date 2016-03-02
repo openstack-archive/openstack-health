@@ -47,7 +47,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Failed Tests in Last 10 Failed Runs</h3>
             </div>
-            <div class="panel-body table-responsive">
+            <div class="table-responsive">
                 <table class="table default-cols">
                     <thead>
                         <tr>
@@ -72,8 +72,9 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <form>
-                <div class="form-group">
+            <div class="panel panel-default table-responsive">
+                <div class="panel-heading panel-controls">
+                    <h3 class="panel-title">{{home.groupKey}} Status</h3>
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-search"></i></div>
                         <input type="text" class="form-control"
@@ -82,13 +83,6 @@
                                ng-model-options="{debounce: 250}"
                                ng-change="home.onSearchChange()">
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="col-lg-12">
-            <div class="panel panel-default table-responsive">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{home.groupKey}} Status</h3>
                 </div>
                 <table table-sort class="table table-hover status-table" data="home.projects">
                     <thead>

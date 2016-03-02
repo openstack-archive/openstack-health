@@ -47,3 +47,20 @@ table.default-cols {
     }
 
 }
+
+.panel-controls {
+    @extend .clearfix;
+
+    .panel-title {
+        @extend .pull-left;
+
+        padding-top: 8px;
+    }
+
+    .input-group {
+        @extend .input-group-sm;
+        @extend .pull-right;
+
+        width: 50%;
+    }
+}
