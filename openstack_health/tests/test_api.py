@@ -134,6 +134,34 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(json.loads(res.data.decode('utf-8')),
                          expected_response)
 
+    @mock.patch('subunit2sql.db.api.get_test_prefixes',
+                return_value=['tempest', 'common', 'api'])
+    def test_get_test_prefixes(self, api_mock):
+        res = self.app.get('/tests/prefix')
+        self.assertEqual(200, res.status_code)
+        expected_response = ['tempest', 'common', 'api']
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
+
+    @mock.patch('subunit2sql.db.api.get_tests_by_prefix',
+                return_value=[models.Test(id='fake_id', test_id='prefix.test',
+                                          run_count=1, success=2, failure=2,
+                                          run_time=1.0)])
+    def test_get_tests_by_prefix(self, api_mock):
+        res = self.app.get('/tests/prefix/prefix')
+        self.assertEqual(200, res.status_code)
+        expected_response = {'tests': [{
+            'id': 'fake_id',
+            'test_id': 'prefix.test',
+            'run_count': 1,
+            'success': 2,
+            'failure': 2,
+            'run_time': 1.0
+        }]}
+
+        self.assertEqual(json.loads(res.data.decode('utf-8')),
+                         expected_response)
+
     @mock.patch('subunit2sql.db.api.get_all_runs_by_date',
                 return_value=[models.Run(
                     id='fake_id', skips=2, fails=4, passes=2, run_time=21.2,

@@ -344,6 +344,25 @@ def get_tests():
         return jsonify({'tests': tests})
 
 
+@app.route('/tests/prefix', methods=['GET'])
+def get_test_prefixes():
+    with session_scope() as session:
+        return jsonify(api.get_test_prefixes(session))
+
+
+@app.route('/tests/prefix/<path:prefix>', methods=['GET'])
+def get_tests_by_prefix(prefix):
+    limit = flask.request.args.get('limit', 100)
+    offset = flask.request.args.get('offset', 0)
+
+    with session_scope() as session:
+        db_tests = api.get_tests_by_prefix(prefix, session,
+                                           limit=limit, offset=offset)
+
+        tests = [test.to_dict() for test in db_tests]
+        return jsonify({'tests': tests})
+
+
 def _check_db_availability():
     try:
         global engine
