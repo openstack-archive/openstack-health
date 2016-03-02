@@ -29,3 +29,21 @@ table.status-table {
         }
     }
 }
+
+table.default-cols {
+    thead {
+        th {
+            white-space: nowrap;
+            min-width: 75px;
+        }
+    }
+
+    tbody {
+        td {
+            white-space: normal !important;
+            word-wrap: break-word;
+            max-width: 650px;
+        }
+    }
+
+}
