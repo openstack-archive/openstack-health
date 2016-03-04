@@ -767,7 +767,7 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(200, res.status_code)
         db_mock.assert_called_once_with('fail', ['a_convincing_id'],
                                         session=api.Session())
-        response_data = json.loads(res.data)
+        response_data = json.loads(res.data.decode('utf-8'))
         expected_resp = [
             {
                 'test_id': u'fake_test',
