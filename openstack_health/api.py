@@ -394,7 +394,15 @@ def main():
     args = parse_command_line_args()
     config = ConfigParser.ConfigParser()
     config.read(args.config_file)
-    app.run(debug=True)
+    try:
+        host = config.get('default', 'host')
+    except ConfigParser.NoOptionError:
+        host = '127.0.0.1'
+    try:
+        port = config.getint('default', 'port')
+    except ConfigParser.NoOptionError:
+        port = 5000
+    app.run(debug=True, host=host, port=port)
 
 
 if __name__ == '__main__':
