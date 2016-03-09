@@ -3,6 +3,7 @@
 node_modules
 build
 cover
+./reports
 app/js/templates.js
 *.py[cod]
 

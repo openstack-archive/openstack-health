@@ -70,6 +70,11 @@ module.exports = {
   'devResources': {
     'src': ['etc/config.json'],
     'dest': 'build/'
+  },
+
+  'reports': {
+    'src': ['build/**/*', 'etc/reports/config.json'],
+    'dest': 'reports/build/'
   }
 
 };
