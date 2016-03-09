@@ -120,6 +120,12 @@ function HomeController(
     });
     healthService.getRecentFailedTests().then(function(response) {
       vm.recentTests = response.data;
+      angular.forEach(vm.recentTests, function(test) {
+        if (!vm.recentRuns[test.link]) {
+          vm.recentRuns[test.link] = [];
+        }
+        vm.recentRuns[test.link].push(test);
+      });
     });
   };
 
@@ -131,6 +137,7 @@ function HomeController(
   vm.loaded = false;
   vm.hold = 0;
   vm.recentTests = [];
+  vm.recentRuns = {};
 
   configurePeriods();
   loadData();
