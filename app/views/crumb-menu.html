@@ -1,12 +1,12 @@
 <nav class="navbar-breadcrumb navbar navbar-default">
     <ul class="nav navbar-nav navbar-left nav-breadcrumb">
         <li><a ui-sref="home"><fa name="home"></fa></a></li>
-        <li dropdown>
+        <li uib-dropdown>
             <span ng-switch on="'tests' | isState">
-                <a ng-switch-when="true" dropdown-toggle href>
+                <a ng-switch-when="true" uib-dropdown-toggle href>
                     Tests <fa name="caret-down"></fa>
                 </a>
-                <a ng-switch-default dropdown-toggle href>
+                <a ng-switch-default uib-dropdown-toggle href>
                     Overview <fa name="caret-down"></fa>
                 </a>
             </span>
@@ -23,18 +23,19 @@
     </ul>
     <div class="container-fluid">
         <ul class="nav navbar-nav navbar-right">
-            <li dropdown ng-if="showPeriod == 'true'">
-                <a popover-template="'crumb-period-popover.html'"
+            <li uib-popover ng-if="showPeriod == 'true'">
+                <a uib-popover-template="'crumb-period-popover.html'"
                    popover-placement="bottom"
                    popover-animation="false"
+                   popover-trigger="outsideClick"
                    href>
                     <fa name="calendar"></fa>
                     &nbsp;Period: {{duration.humanize()}}&nbsp;
                     <fa name="caret-down"></fa>
                 </a>
             </li>
-            <li dropdown ng-if="showGroupKey == 'true'">
-                <a dropdown-toggle href title="Group By Key">
+            <li uib-dropdown ng-if="showGroupKey == 'true'">
+                <a uib-dropdown-toggle href title="Group By Key">
                     <fa name="key"></fa>
                     &nbsp;Grouping: {{selectedGroupKey}}&nbsp;
                     <fa name="caret-down"></fa>
@@ -50,8 +51,8 @@
                     </li>
                 </ul>
             </li>
-            <li dropdown ng-if="showResolution == 'true'">
-                <a dropdown-toggle href title="Resolution">
+            <li uib-dropdown ng-if="showResolution == 'true'">
+                <a uib-dropdown-toggle href title="Resolution">
                     <fa name="expand"></fa>
                     &nbsp;Resolution: {{selectedResolution.key}}&nbsp;
                     <fa name="caret-down"></fa>
