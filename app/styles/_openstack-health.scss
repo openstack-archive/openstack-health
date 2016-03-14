@@ -64,3 +64,16 @@ table.default-cols {
         width: 50%;
     }
 }
+
+.tooltip .osh-tooltip {
+
+    td {
+        padding: 5px;
+    }
+
+    .legend-color-guide div {
+        width: 12px;
+        height: 12px;
+        border: 1px solid #999;
+    }
+}

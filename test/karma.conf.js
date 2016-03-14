@@ -11,6 +11,8 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'browserify'],
 
     files: [
+      // vendor js (normally included by browserify-shim)
+      'app/vendor-js/**/*.js',
       // app-specific code
       'app/js/main.js',
       // 3rd-party resources

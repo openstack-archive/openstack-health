@@ -115,9 +115,10 @@
                             <td class="text-right">{{p.failures|number}}</td>
                             <td class="text-right">{{p.passRate*100|number:2}}</td>
                             <td class="text-right">{{p.failRate*100|number:2}}</td>
-                            <td>
-                                <chart-bar-horizontal data="p.data" width="300" height="20">
-                                </chart-bar-horizontal>
+                            <td uib-tooltip-html="p.tooltip" tooltip-placement="right">
+                                <chart-gauge-horizontal value="1 - p.failRate"
+                                                        width="300"
+                                                        height="20"></chart-gauge-horizontal>
                             </td>
                         </tr>
                     </tbody>

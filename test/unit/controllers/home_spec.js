@@ -101,13 +101,10 @@ describe('HomeController', function() {
 
     var project = homeController.projects[0];
     expect(project.name).toEqual('p1');
-    expect(project.data.length).toEqual(2);
-    expect(project.data).toContain({ key: 'Passes Rate',
-                                     values: [{label: '', value: 0.6}],
-                                     color: 'blue'});
-    expect(project.data).toContain({ key: 'Failures Rate',
-                                     values: [{label: '', value: 0.4}],
-                                     color: 'red'});
+    expect(project.passRate).toEqual(0.6);
+    expect(project.failRate).toEqual(0.4);
+    expect(project.passes).toEqual(1);
+    expect(project.failures).toEqual(2);
   });
 
   it('should sort projects by descending percentage of failures', function() {

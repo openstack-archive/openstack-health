@@ -2,12 +2,14 @@
 
 var controllersModule = require('./_index');
 
+var d3 = require('d3');
+
 /**
  * @ngInject
  */
 function HomeController(
-  $scope, healthService, projectService, viewService, periodsService,
-  $location) {
+    $scope, $location, $sce,
+    healthService, projectService, viewService, tooltipService, periodsService) {
 
   var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
@@ -69,6 +71,27 @@ function HomeController(
     return { x: date.getTime(), y: value };
   };
 
+  var pctFormat = d3.format('.2f');
+  var metrics = function(d, name) {
+    if (d.data.metrics) {
+      return d.data.metrics[name];
+    } else {
+      return 'n/a';
+    }
+  };
+
+  var generateHorizontalTooltip = tooltipService.generator([
+    [
+      'Passes',
+      function(d) { return pctFormat((1 - d.failRate) * 100) + '%'; },
+      function(d) { return '(' + d.passes + ')'; }
+    ], [
+      'Failures',
+      function(d) { return pctFormat(d.failRate * 100) + '%'; },
+      function(d) { return '(' + d.failures + ')'; }
+    ]
+  ], { colors: ['blue', 'red'] });
+
   var generateHorizontalBarData = function(project) {
     return {
       name: project.name,
@@ -76,14 +99,7 @@ function HomeController(
       failRate: project.metrics.failRate,
       passes: project.metrics.passes,
       failures: project.metrics.failures,
-      data: [
-              { key: 'Passes Rate',
-                values: [{label:'',
-                  value: 1 - project.metrics.failRate}], color: 'blue' },
-              { key: 'Failures Rate',
-                values: [{label:'',
-                  value: project.metrics.failRate}], color: 'red' }
-      ]
+      tooltip: $sce.trustAsHtml(generateHorizontalTooltip(project.metrics))
     };
   };
 
