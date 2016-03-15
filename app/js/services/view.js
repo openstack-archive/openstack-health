@@ -24,9 +24,15 @@ var viewService = function($rootScope, $location) {
     }
   });
 
-  var regActionSuccess = $rootScope.$on('$stateChangeSuccess', function() {
+  var regActionSuccess = $rootScope.$on('$locationChangeSuccess', function() {
     $location.search('groupKey', groupKey);
     $location.search('resolutionKey', resolution.key);
+    if (userDuration !== null) {
+      $location.search('duration', userDuration.toISOString());
+    }
+    if (periodEnd !== null) {
+      $location.search('end', periodEnd.toISOString());
+    }
   });
 
   var periodEnd = new Date();
