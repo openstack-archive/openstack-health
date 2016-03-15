@@ -32,7 +32,7 @@ describe('JobController', function() {
   function mockHealthService() {
     var expectedResponse = {
       tests: {
-        '2014-11-19T01:00:00': {
+        '2014-11-19T01:00:00.000Z': {
           'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details': {
             fail: 1,
             pass: 27,

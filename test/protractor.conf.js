@@ -1,7 +1,5 @@
 'use strict';
 
-var phantomjs = require('phantomjs');
-
 var gulpConfig = require('../gulp/config');
 
 exports.config = {

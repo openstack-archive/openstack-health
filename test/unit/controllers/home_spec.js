@@ -65,7 +65,7 @@ describe('HomeController', function() {
     var timestamp;
 
     beforeEach(function() {
-      var date = new Date('2015-10-01T20:00:00');
+      var date = new Date('2015-10-01T20:00:00.000Z');
       timestamp = date.getTime();
       var metrics = { passes: 3, failures: 4, failRate: 0.57 };
       var stats = [{ date: date, metrics: metrics }];

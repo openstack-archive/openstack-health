@@ -33,7 +33,7 @@ describe('GroupedRunsController', function() {
     var expectedResponse = {
       timedelta: [
         {
-          datetime: '2014-11-19',
+          datetime: '2014-11-19T00:00:00.000Z',
           job_data: [
             {
               fail: 1,

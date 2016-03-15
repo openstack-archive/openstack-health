@@ -33,7 +33,7 @@ module.exports = function(config) {
 
     autoWatch: true,
 
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
     singleRun: true,
 
@@ -43,7 +43,7 @@ module.exports = function(config) {
       'karma-coverage',
       'karma-jasmine',
       'karma-spec-reporter',
-      'karma-phantomjs-launcher'
+      'karma-chrome-launcher'
     ],
 
     browserify: {
