@@ -5,7 +5,9 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function HomeController($scope, healthService, projectService, viewService, $location) {
+function HomeController(
+  $scope, healthService, projectService, viewService, periodsService,
+  $location) {
 
   var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
@@ -20,27 +22,10 @@ function HomeController($scope, healthService, projectService, viewService, $loc
     vm.hold += 1;
 
     var res = viewService.resolution();
-    var min = null;
-    var max = null;
-    var preference = null;
+    var periods = periodsService.get('home', res.key);
 
-    if (res.key === 'sec') {
-      max = { hours: 6 };
-      preference = { hours: 1 };
-    } else if (res.key === 'min') {
-      max = { days: 1 };
-      preference = { hours: 12 };
-    } else if (res.key === 'hour') {
-      min = { hours: 12 };
-      max = { months: 3 };
-      preference = { months: 1 };
-    } else if (res.key === 'day') {
-      min = { hours: 48 };
-      preference = { months: 3 };
-    }
-
-    viewService.periods(min, max, true);
-    viewService.preferredDuration(preference);
+    viewService.periods(periods.min, periods.max, true);
+    viewService.preferredDuration(periods.preference);
 
     vm.hold -= 1;
   };
