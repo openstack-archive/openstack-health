@@ -5,7 +5,9 @@ var controllersModule = require('./_index');
 /**
  * @ngInject
  */
-function JobController($scope, healthService, viewService, testService, jobName, $location) {
+function JobController(
+  $scope, healthService, viewService, testService, periodsService,
+  jobName, $location) {
   // ViewModel
   var vm = this;
 
@@ -19,27 +21,10 @@ function JobController($scope, healthService, viewService, testService, jobName,
     vm.hold += 1;
 
     var res = viewService.resolution();
-    var min = null;
-    var max = null;
-    var preference = null;
+    var periods = periodsService.get('job', res.key);
 
-    if (res.key === 'sec') {
-      max = { hours: 6 };
-      preference = { hours: 1 };
-    } else if (res.key === 'min') {
-      max = { days: 1 };
-      preference = { hours: 12 };
-    } else if (res.key === 'hour') {
-      min = { hours: 12 };
-      max = { months: 1 };
-      preference = { weeks: 1 };
-    } else if (res.key === 'day') {
-      min = { hours: 48 };
-      preference = { months: 3 };
-    }
-
-    viewService.periods(min, max, true);
-    viewService.preferredDuration(preference);
+    viewService.periods(periods.min, periods.max, true);
+    viewService.preferredDuration(periods.preference);
 
     vm.hold -= 1;
   };
