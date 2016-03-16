@@ -10,6 +10,7 @@ gulp.task('e2e', function(callback) {
   runSequence(
     'prod',
     'dev-resources',
+    'reports',
     'protractor',
     callback);
 
