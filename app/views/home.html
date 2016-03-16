@@ -104,7 +104,7 @@
                     </thead>
                     <tbody>
                         <tr table-ref="table" ng-repeat="p in home.projects | filter:{name:home.searchProject}"
-                         ng-class="p.failRate > 0.15 ? 'danger' : p.failRate > 0.08 ? 'warning' : p.failRate > 0 ? 'info' : 'success'">
+                         ng-class="p.failRate | ctxcls">
                             <td class="text-right">{{$index+1}}</td>
                             <td class="text-left">
                               <a ui-sref="groupedRuns({ runMetadataKey: home.groupKey, name: p.name })">{{p.name}}</a>
