@@ -6,3 +6,4 @@ doc
 app/vendor-js
 app/js/templates.js
 gulp
+reports
