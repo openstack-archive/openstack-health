@@ -6,6 +6,7 @@ var angular = require('angular');
 require('angular-ui-router');
 require('angular-ui-bootstrap');
 require('angular-fontawesome');
+require('angularjs-filters');
 require('./templates');
 require('./controllers/_index');
 require('./services/_index');
@@ -17,6 +18,7 @@ var requires = [
   'ui.router',
   'ui.bootstrap',
   'picardy.fontawesome',
+  'ch.filters',
   'templates',
   'app.controllers',
   'app.services',

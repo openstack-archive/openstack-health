@@ -11,6 +11,7 @@
     "angular-mocks": "^1.5.0",
     "angular-ui-bootstrap": "^1.2.3",
     "angular-ui-router": ">=0.2.16 <0.3.0",
+    "angularjs-filters": "^0.0.2",
     "babelify": "^5.0.4",
     "bootstrap": "^3.3.5",
     "brfs": "^1.2.0",
