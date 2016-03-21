@@ -97,7 +97,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr table-ref="table" ng-repeat="job in table.dataSorted | filter:{name:groupedRuns.searchJob}"
+                            <tr table-ref="table" ng-repeat="job in table.dataSorted | regex:'name':groupedRuns.searchJob"
                              ng-class="job.failuresRate / 100 | ctxcls">
                                 <td><a ui-sref="job({ jobName: job.name })">{{ job.name }}</a></td>
                                 <td>{{ job.passes }}</td>
