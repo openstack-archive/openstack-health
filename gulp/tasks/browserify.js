@@ -47,14 +47,14 @@ function buildScript(file) {
 
   function rebundle() {
     var stream = bundler.bundle();
-    var createSourcemap = global.isProd && config.browserify.sourcemap;
+    var createSourcemap = config.browserify.sourcemap;
 
     gutil.log('Rebundle...');
 
     return stream.on('error', handleErrors)
       .pipe(source(file))
       .pipe(gulpif(createSourcemap, buffer()))
-      .pipe(gulpif(createSourcemap, sourcemaps.init()))
+      .pipe(gulpif(createSourcemap, sourcemaps.init({ loadMaps: true })))
       .pipe(gulpif(global.isProd, streamify(uglify({
         compress: { drop_console: true }
       }))))
