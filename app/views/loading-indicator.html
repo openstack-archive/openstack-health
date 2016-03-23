@@ -1,8 +1,8 @@
-<div class="alert alert-info" ng-if="loadingStatus == 'loading'">
+<div class="alert alert-info navbar navbar-fixed-top text-center" ng-if="loadingStatus == 'loading'">
     <fa name="refresh" spin></fa> <strong>Loading...</strong>
 </div>
 
-<div class="alert alert-danger" ng-if="loadingStatus == 'error'">
+<div class="alert alert-danger navbar navbar-fixed-top text-center" ng-if="loadingStatus == 'error'">
     <fa name="exclamation-circle"></fa>
     <strong>Unable to load this page!</strong>
     An API error occurred.
