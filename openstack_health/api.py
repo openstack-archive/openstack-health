@@ -14,6 +14,7 @@
 
 
 import argparse
+from contextlib import contextmanager
 from dateutil import parser as date_parser
 import itertools
 import six
@@ -73,6 +74,19 @@ def get_session():
     return Session()
 
 
+@contextmanager
+def session_scope():
+    try:
+        session = get_session()
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
 @app.route('/', methods=['GET'])
 def list_routes():
     output = []
@@ -92,10 +106,10 @@ def list_routes():
 
 @app.route('/build_name/<string:build_name>/runs', methods=['GET'])
 def get_runs_from_build_name(build_name):
-    session = get_session()
-    db_runs = api.get_runs_by_key_value('build_name', build_name, session)
-    runs = [run.to_dict() for run in db_runs]
-    return jsonify({'runs': runs})
+    with session_scope() as session:
+        db_runs = api.get_runs_by_key_value('build_name', build_name, session)
+        runs = [run.to_dict() for run in db_runs]
+        return jsonify({'runs': runs})
 
 
 @app.route('/runs/metadata/keys', methods=['GET'])
@@ -111,11 +125,11 @@ def get_run_metadata_keys():
     except ConfigParser.NoOptionError:
         ignored_keys = []
 
-    session = get_session()
-    existing_keys = set(api.get_all_run_metadata_keys(session))
-    allowed_keys = existing_keys.difference(ignored_keys)
+    with session_scope() as session:
+        existing_keys = set(api.get_all_run_metadata_keys(session))
+        allowed_keys = existing_keys.difference(ignored_keys)
 
-    return jsonify(list(allowed_keys))
+        return jsonify(list(allowed_keys))
 
 
 def _parse_datetimes(datetime_str):
@@ -127,20 +141,20 @@ def _parse_datetimes(datetime_str):
 
 @app.route('/runs/group_by/<string:key>', methods=['GET'])
 def get_runs_grouped_by_metadata_per_datetime(key):
-    session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'sec')
-    sec_runs = api.get_all_runs_time_series_by_key(key, start_date,
-                                                   stop_date, session)
+    with session_scope() as session:
+        sec_runs = api.get_all_runs_time_series_by_key(key, start_date,
+                                                       stop_date, session)
 
-    if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
-        return ('Datetime resolution: %s, is not a valid'
-                ' choice' % datetime_resolution), 400
+        if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
+            return ('Datetime resolution: %s, is not a valid'
+                    ' choice' % datetime_resolution), 400
 
-    runs = RunAggregator(sec_runs).aggregate(datetime_resolution)
+        runs = RunAggregator(sec_runs).aggregate(datetime_resolution)
 
-    return jsonify({'runs': runs})
+        return jsonify({'runs': runs})
 
 
 def _group_runs_by_key(runs_by_time, groupby_key):
@@ -161,7 +175,6 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
 def get_test_runs_by_build_name(build_name):
-    session = get_session()
     key = 'build_name'
     value = build_name
     if not key or not value:
@@ -172,21 +185,23 @@ def get_test_runs_by_build_name(build_name):
     if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
         return ('Datetime resolution: %s, is not a valid'
                 ' choice' % datetime_resolution), 400
-    tests = api.get_test_run_dict_by_run_meta_key_value(key, value, start_date,
-                                                        stop_date, session)
-    tests = test_run_aggregator.TestRunAggregator(tests).aggregate(
-        datetime_resolution=datetime_resolution)
-    return jsonify({'tests': tests})
+    with session_scope() as session:
+        tests = api.get_test_run_dict_by_run_meta_key_value(key, value,
+                                                            start_date,
+                                                            stop_date, session)
+        tests = test_run_aggregator.TestRunAggregator(tests).aggregate(
+            datetime_resolution=datetime_resolution)
+        return jsonify({'tests': tests})
 
 
 @app.route('/runs', methods=['GET'])
 def get_runs():
-    session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
-    db_runs = api.get_all_runs_by_date(start_date, stop_date, session)
-    runs = [run.to_dict() for run in db_runs]
-    return jsonify({'runs': runs})
+    with session_scope() as session:
+        db_runs = api.get_all_runs_by_date(start_date, stop_date, session)
+        runs = [run.to_dict() for run in db_runs]
+        return jsonify({'runs': runs})
 
 
 def _calc_amount_of_successful_runs(runs):
@@ -229,8 +244,6 @@ def _aggregate_runs(runs_by_time_delta):
 
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>', methods=['GET'])
 def get_runs_by_run_metadata_key(run_metadata_key, value):
-    session = get_session()
-
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'day')
@@ -241,93 +254,94 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
         status_code = 400
         return abort(make_response(message, status_code))
 
-    runs = (api.get_time_series_runs_by_key_value(run_metadata_key,
-                                                  value,
-                                                  start_date,
-                                                  stop_date,
-                                                  session))
-    # Groups runs by metadata
-    group_by = "build_name"
-    runs_by_build_name = _group_runs_by_key(runs, group_by)
+    with session_scope() as session:
+        runs = (api.get_time_series_runs_by_key_value(run_metadata_key,
+                                                      value,
+                                                      start_date,
+                                                      stop_date,
+                                                      session))
+        # Groups runs by metadata
+        group_by = "build_name"
+        runs_by_build_name = _group_runs_by_key(runs, group_by)
 
-    # Group runs by the chosen data_range.
-    # That does not apply when you choose 'sec' since runs are already grouped
-    # by it.
-    aggregated_runs = \
-        RunAggregator(runs_by_build_name).aggregate(datetime_resolution)
+        # Group runs by the chosen data_range.
+        # That does not apply when you choose 'sec' since runs are already
+        # grouped by it.
+        aggregated_runs = \
+            RunAggregator(runs_by_build_name).aggregate(datetime_resolution)
 
-    return jsonify(_aggregate_runs(aggregated_runs))
+        return jsonify(_aggregate_runs(aggregated_runs))
 
 
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent',
            methods=['GET'])
 def get_recent_runs(run_metadata_key, value):
-    session = get_session()
-
     num_runs = flask.request.args.get('num_runs', 10)
-    results = api.get_recent_runs_by_key_value_metadata(
-        run_metadata_key, value, num_runs, session)
-    runs = []
-    for result in results:
-        if result.passes > 0 and result.fails == 0:
-            status = 'success'
-        elif result.fails > 0:
-            status = 'fail'
-        else:
-            continue
+    with session_scope() as session:
+        results = api.get_recent_runs_by_key_value_metadata(
+            run_metadata_key, value, num_runs, session)
+        runs = []
+        for result in results:
+            if result.passes > 0 and result.fails == 0:
+                status = 'success'
+            elif result.fails > 0:
+                status = 'fail'
+            else:
+                continue
 
-        run = {
-            'id': result.uuid,
-            'status': status,
-            'start_date': result.run_at.isoformat(),
-            'link': result.artifacts,
-        }
+            run = {
+                'id': result.uuid,
+                'status': status,
+                'start_date': result.run_at.isoformat(),
+                'link': result.artifacts,
+            }
 
-        run_meta = api.get_run_metadata(result.uuid, session)
-        for meta in run_meta:
-            if meta.key == 'build_name':
-                run['build_name'] = meta.value
-                break
-        runs.append(run)
-    return jsonify(runs)
+            run_meta = api.get_run_metadata(result.uuid, session)
+            for meta in run_meta:
+                if meta.key == 'build_name':
+                    run['build_name'] = meta.value
+                    break
+            runs.append(run)
+        return jsonify(runs)
 
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
 def get_recent_test_status(status):
-    session = get_session()
     num_runs = flask.request.args.get('num_runs', 10)
-    failed_runs = api.get_recent_failed_runs(num_runs, session)
-    test_runs = api.get_test_runs_by_status_for_run_ids(status, failed_runs,
-                                                        session=session)
-    output = []
-    for run in test_runs:
-        run['start_time'] = run['start_time'].isoformat()
-        run['stop_time'] = run['stop_time'].isoformat()
-        output.append(run)
-    return jsonify(output)
+    with session_scope() as session:
+        failed_runs = api.get_recent_failed_runs(num_runs, session)
+        test_runs = api.get_test_runs_by_status_for_run_ids(status,
+                                                            failed_runs,
+                                                            session=session)
+        output = []
+        for run in test_runs:
+            run['start_time'] = run['start_time'].isoformat()
+            run['stop_time'] = run['stop_time'].isoformat()
+            output.append(run)
+        return jsonify(output)
 
 
 @app.route('/run/<string:run_id>/tests', methods=['GET'])
 def get_tests_from_run(run_id):
-    session = get_session()
-    db_tests = api.get_tests_from_run_id(run_id, session)
-    tests = [test.to_dict() for test in db_tests]
-    return jsonify({'tests': tests})
+    with session_scope() as session:
+        db_tests = api.get_tests_from_run_id(run_id, session)
+        tests = [test.to_dict() for test in db_tests]
+        return jsonify({'tests': tests})
 
 
 @app.route('/run/<string:run_id>/test_runs', methods=['GET'])
 def get_run_test_runs(run_id):
-    session = get_session()
-    db_test_runs = api.get_tests_run_dicts_from_run_id(run_id, session)
-    return jsonify(db_test_runs)
+    with session_scope() as session:
+        db_test_runs = api.get_tests_run_dicts_from_run_id(run_id, session)
+        return jsonify(db_test_runs)
 
 
 @app.route('/tests', methods=['GET'])
 def get_tests():
-    session = get_session()
-    db_tests = api.get_all_tests(session)
-    tests = [test.to_dict() for test in db_tests]
-    return jsonify({'tests': tests})
+    with session_scope() as session:
+        db_tests = api.get_all_tests(session)
+        tests = [test.to_dict() for test in db_tests]
+        return jsonify({'tests': tests})
 
 
 def _check_db_availability():
@@ -366,7 +380,6 @@ def parse_command_line_args():
 
 @app.route('/test_runs/<string:test_id>', methods=['GET'])
 def get_test_runs_for_test(test_id):
-    session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'min')
@@ -376,17 +389,20 @@ def get_test_runs_for_test(test_id):
                    ' choice' % datetime_resolution)
         status_code = 400
         return abort(make_response(message, status_code))
-    db_test_runs = api.get_test_runs_by_test_test_id(test_id, session=session,
-                                                     start_date=start_date,
-                                                     stop_date=stop_date)
-    if not db_test_runs:
-        # NOTE(mtreinish) if no data is returned from the DB just return an
-        # empty set response, the test_run_aggregator function assumes data
-        # is present.
-        return jsonify({'numeric': {}, 'data': {}})
-    test_runs = test_run_aggregator.convert_test_runs_list_to_time_series_dict(
-        db_test_runs, datetime_resolution)
-    return jsonify(test_runs)
+    with session_scope() as session:
+        db_test_runs = api.get_test_runs_by_test_test_id(test_id,
+                                                         session=session,
+                                                         start_date=start_date,
+                                                         stop_date=stop_date)
+        if not db_test_runs:
+            # NOTE(mtreinish) if no data is returned from the DB just return an
+            # empty set response, the test_run_aggregator function assumes data
+            # is present.
+            return jsonify({'numeric': {}, 'data': {}})
+        test_runs =\
+            test_run_aggregator.convert_test_runs_list_to_time_series_dict(
+                db_test_runs, datetime_resolution)
+        return jsonify(test_runs)
 
 
 def main():
