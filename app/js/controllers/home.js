@@ -153,7 +153,7 @@ function HomeController(
   });
 
   vm.onSearchChange = function() {
-    $location.search('searchProject', $scope.home.searchProject);
+    $location.search('searchProject', $scope.home.searchProject).replace();
   };
 }
 controllersModule.controller('HomeController', HomeController);

@@ -152,7 +152,7 @@ function GroupedRunsController(
   });
 
   vm.onSearchChange = function() {
-    $location.search('searchJob', $scope.groupedRuns.searchJob);
+    $location.search('searchJob', $scope.groupedRuns.searchJob).replace();
   };
 }
 
