@@ -33,6 +33,8 @@ var viewService = function($rootScope, $location) {
     if (periodEnd !== null) {
       $location.search('end', periodEnd.toISOString());
     }
+
+    $location.replace();
   });
 
   var periodEnd = new Date();
@@ -102,7 +104,7 @@ var viewService = function($rootScope, $location) {
         return periodEnd;
       }
 
-      $location.search('end', end.toISOString());
+      $location.search('end', end.toISOString()).replace();
 
       periodEnd = end;
       $rootScope.$broadcast('view:periodEnd', end);
@@ -174,7 +176,7 @@ var viewService = function($rootScope, $location) {
       $rootScope.$broadcast('view:duration', duration, false);
       $rootScope.$broadcast('view:period', false);
 
-      $location.search('duration', userDuration.toISOString());
+      $location.search('duration', userDuration.toISOString()).replace();
 
       return duration;
     },

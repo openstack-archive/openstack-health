@@ -178,7 +178,7 @@ function JobController(
   });
 
   vm.onSearchChange = function() {
-    $location.search('searchTest', $scope.job.searchTest);
+    $location.search('searchTest', $scope.job.searchTest).replace();
   };
 }
 

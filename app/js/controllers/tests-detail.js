@@ -76,7 +76,7 @@ function TestsDetailController($scope, healthService, testService, key, $locatio
   vm.loadData();
 
   vm.onSearchChange = function() {
-    $location.search('searchTest', $scope.testsDetail.searchTest);
+    $location.search('searchTest', $scope.testsDetail.searchTest).replace();
   };
 }
 controllersModule.controller('TestsDetailController', TestsDetailController);
