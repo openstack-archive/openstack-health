@@ -7,7 +7,7 @@
           {{heading | split:'/' | last:2 | join:'/'}}
         </span>
       </a>
-      : <span class="text-info"><a target="_blank" href="{{heading}}"><fa name="external-link"></fa></a></span>
+      <span class="text-info"><a target="_blank" href="{{heading}}"><fa name="external-link"></fa></a></span>
     </h4>
   </div>
   <div id="{{::panelId}}" aria-labelledby="{{::headingId}}" aria-hidden="{{!isOpen}}" role="tabpanel" class="panel-collapse collapse" uib-collapse="!isOpen">
