@@ -364,7 +364,7 @@ def parse_command_line_args():
     return parser.parse_args()
 
 
-@app.route('/test_runs/<string:test_id>', methods=['GET'])
+@app.route('/test_runs/<path:test_id>', methods=['GET'])
 def get_test_runs_for_test(test_id):
     session = get_session()
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
