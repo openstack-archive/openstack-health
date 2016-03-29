@@ -28,7 +28,20 @@ function TestController(
     vm.hold -= 1;
   };
 
-  vm.processData = function(data) {
+  var incCount = function(status, count) {
+    if (status == 'success' || status == 'xfail') {
+      count.passes += 1;
+    }
+    else if (status == 'fail' || status == 'unxsuccess') {
+      count.failes += 1;
+    }
+    else if (status == 'skip') {
+      count.skips += 1;
+    }
+    return count;
+  };
+
+  vm.processData = function(data) {  // eslint-disable-line complexity
     var dates = {};
     var passEntries = [];
     var failEntries = [];
@@ -47,43 +60,19 @@ function TestController(
         var date = new Date(date.getFullYear(), date.getMonth(),
                             date.getDate()).getTime();
         if (!dates[date]) {
-          if (test.status == 'success' || test.status == 'xfail') {
-            var count = {
-              passes: 1,
-              fails: 0,
-              skips: 0
-            };
-          }
-          else if (test.status == 'fail' || test.status == 'unxsuccess') {
-            var count = {
-              passes: 0,
-              fails: 1,
-              skips: 0
-            };
-          }
-          else if (test.status == 'skip') {
-            var count = {
-              passes: 0,
-              fails: 0,
-              skips: 1
-            };
-          }
-          dates[date] = count;
+          var count = {
+            passes: 0,
+            fails: 0,
+            skips: 0
+          };
+          dates[date] = incCount(test.status, count);
         }
         else {
-          if (test.status == 'success' || test.status == 'xfail') {
-            dates[date].passes += 1;
-          }
-          else if (test.status == 'fail' || test.status == 'unxsuccess') {
-            dates[date].fails += 1;
-          }
-          else if (test.status == 'skip') {
-            dates[date].skips += 1;
-          }
+          dates[date] = incCount(test.status, dates[date]);
         }
       }
     }
-    for (date in dates) {
+    for (date in dates) {  // eslint-disable-line guard-for-in
       date = parseInt(date);
       if (dates.hasOwnProperty(date)) {
         passEntries.push({
