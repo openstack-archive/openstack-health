@@ -57,11 +57,25 @@ table.default-cols {
         padding-top: 8px;
     }
 
-    .input-group {
+    > .input-group {
         @extend .input-group-sm;
         @extend .pull-right;
 
         width: 50%;
+    }
+
+    > .form-inline {
+        @extend .pull-right;
+
+        .input-group {
+            @extend .input-group-sm;
+
+            min-width: 250px;
+        }
+
+        .btn-group {
+            @extend .btn-group-sm;
+        }
     }
 }
 

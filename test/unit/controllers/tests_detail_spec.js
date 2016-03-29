@@ -12,46 +12,34 @@ describe('TestsDetailController', function() {
     $httpBackend = _$httpBackend_;
 
     mockConfigService();
-    mockHealthService();
 
     $scope = $rootScope.$new();
     $controller = _$controller_;
     healthService = _healthService_;
   }));
 
-  function mockHealthService() {
-    var expectedResponse = {
-      tests: [
-        {
-          failure: 5592,
-          id: '00187173-ab23-4181-9a15-e291a0d8e2d1',
-          run_count: 55920,
-          run_time: 0.608151,
-          success: 55920,
-          test_id: 'tempest.api.identity.admin.v2.test_users.one'
-        },
-        {
-          failure: 0,
-          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
-          run_count: 4939,
-          run_time: 5.97596,
-          success: 4939,
-          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two'
-        },
-        {
-          failure: 1,
-          id: '002a15e0-f6d1-472a-bd66-bb13ac4d77aa',
-          run_count: 32292,
-          run_time: 1.18864,
-          success: 32291,
-          test_id: 'tempest.api.network.test_routers.three'
-        }
-      ]
-    };
+  function mockHealthService(offset, limit, count) {
+    if (typeof count === 'undefined') {
+      count = limit;
+    }
 
-    var endpoint = API_ROOT + '/tests?callback=JSON_CALLBACK';
-    $httpBackend.expectJSONP(endpoint)
-    .respond(200, expectedResponse);
+    var tests = [];
+    for (var i = 0; i < count; i++) {
+      tests.push({
+        failure: 0,
+        id: offset + i,
+        run_count: 0,
+        run_time: 0,
+        success: 0,
+        test_id: 'tempest.Test' + (offset + i)
+      });
+    }
+
+    $httpBackend.expectJSONP(API_ROOT + '/tests/prefix/tempest?' + [
+      'callback=JSON_CALLBACK',
+      'limit=' + limit,
+      'offset=' + offset
+    ].join('&')).respond(200, { tests: tests });
   }
 
   function mockConfigService() {
@@ -60,7 +48,8 @@ describe('TestsDetailController', function() {
     $httpBackend.expectGET(endpoint).respond(200, expectedResponse);
   }
 
-  it('should process chart data correctly', function() {
+  it('should load and process test data correctly', function() {
+    mockHealthService(0, 100);
     var testsDetailController = $controller('TestsDetailController', {
       healthService: healthService,
       $scope: $scope,
@@ -68,40 +57,33 @@ describe('TestsDetailController', function() {
     });
     $httpBackend.flush();
 
-    var expectedChartData = {
-      'tempest': [{
-        key: 'tempest',
-        values: [{
-          label: 'tempest.api.identity.admin.v2.test_users.one',
-          value: 0.1
-        }],
-        tests: [{
-          failure: 5592,
-          id: '00187173-ab23-4181-9a15-e291a0d8e2d1',
-          run_count: 55920,
-          run_time: 0.608151,
-          success: 55920,
-          test_id: 'tempest.api.identity.admin.v2.test_users.one',
-          failureAverage: 0.1
-        }, {
-          failure: 1,
-          id: '002a15e0-f6d1-472a-bd66-bb13ac4d77aa',
-          run_count: 32292,
-          run_time: 1.18864,
-          success: 32291,
-          test_id: 'tempest.api.network.test_routers.three',
-          failureAverage: 0.0000309674222717701
-        }, {
-          failure: 0,
-          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
-          run_count: 4939,
-          run_time: 5.97596,
-          success: 4939,
-          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two',
-          failureAverage: 0
-        }]
-      }]
-    };
-    expect(testsDetailController.chartData).toEqual(expectedChartData);
+    expect(testsDetailController.tests[0].test_id).toEqual('tempest.Test0');
+    expect(testsDetailController.tests.length).toEqual(100);
+    expect(testsDetailController.max).toEqual(100);
+    expect(testsDetailController.end).toBe(false);
+  });
+
+  it('should paginate correctly', function() {
+    mockHealthService(0, 100);
+    var testsDetailController = $controller('TestsDetailController', {
+      healthService: healthService,
+      $scope: $scope,
+      key: 'tempest'
+    });
+    $httpBackend.flush();
+
+    expect(testsDetailController.backAllowed).toBe(false);
+    expect(testsDetailController.nextAllowed).toBe(true);
+
+    mockHealthService(100, 100, 50);
+    testsDetailController.nextPage();
+    $httpBackend.flush();
+
+    expect(testsDetailController.tests.length).toEqual(50);
+    expect(testsDetailController.offset).toEqual(100);
+    expect(testsDetailController.max).toEqual(150);
+    expect(testsDetailController.end).toBe(true);
+    expect(testsDetailController.backAllowed).toBe(true);
+    expect(testsDetailController.nextAllowed).toBe(false);
   });
 });

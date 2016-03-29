@@ -20,38 +20,21 @@ describe('TestsController', function() {
   }));
 
   function mockHealthService() {
-    var expectedResponse = {
-      tests: [
-        {
-          failure: 5592,
-          id: '00187173-ab23-4181-9a15-e291a0d8e2d1',
-          run_count: 55920,
-          run_time: 0.608151,
-          success: 55920,
-          test_id: 'tempest.api.identity.admin.v2.test_users.one'
-        },
-        {
-          failure: 0,
-          id: '001c6860-c966-4c0b-9928-ecccd162bed0',
-          run_count: 4939,
-          run_time: 5.97596,
-          success: 4939,
-          test_id: 'tempest.api.volume.admin.test_snapshots_actions.two'
-        },
-        {
-          failure: 1,
-          id: '002a15e0-f6d1-472a-bd66-bb13ac4d77aa',
-          run_count: 32292,
-          run_time: 1.18864,
-          success: 32291,
-          test_id: 'tempest.api.network.test_routers.three'
-        }
-      ]
-    };
+    var expectedResponse = [
+      'os_brick',
+      'neutron_taas',
+      'neutron_lib',
+      'manila_tempest_tests',
+      'heatclient',
+      'solar/test/test_system_log_details',
+      'test_base',
+      'heat_keystone',
+      'test_images',
+      'test_hacking'
+    ];
 
-    var endpoint = API_ROOT + '/tests?callback=JSON_CALLBACK';
-    $httpBackend.expectJSONP(endpoint)
-    .respond(200, expectedResponse);
+    var endpoint = API_ROOT + '/tests/prefix?callback=JSON_CALLBACK';
+    $httpBackend.expectJSONP(endpoint).respond(200, expectedResponse);
   }
 
   function mockConfigService() {
@@ -60,20 +43,26 @@ describe('TestsController', function() {
     $httpBackend.expectGET(endpoint).respond(200, expectedResponse);
   }
 
-  it('should process chart data correctly', function() {
+  it('should process prefixes correctly', function() {
     var testsController = $controller('TestsController', {
       healthService: healthService,
       $scope: $scope
     });
     $httpBackend.flush();
 
-    var expectedChartData = {
-      'tempest': [{
-        key: 'tempest',
-        values: [],
-        tests: []
-      }]
-    };
-    expect(testsController.chartData).toEqual(expectedChartData);
+    var expectedData = [
+      'heat_keystone',
+      'heatclient',
+      'manila_tempest_tests',
+      'neutron_lib',
+      'neutron_taas',
+      'os_brick',
+      'solar/test/test_system_log_details',
+      'test_base',
+      'test_hacking',
+      'test_images'
+    ];
+
+    expect(testsController.prefixes).toEqual(expectedData);
   });
 });

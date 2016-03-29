@@ -159,6 +159,26 @@ function HealthService($http, config) {
     });
   };
 
+  service.getTestPrefixes = function() {
+    return config.get().then(function(config) {
+      return $http.jsonp(config.apiRoot + '/tests/prefix', {
+        cache: true,
+        params: { callback: 'JSON_CALLBACK' }
+      });
+    });
+  };
+
+  service.getTestsByPrefix = function(prefix, options) {
+    options = options || {};
+
+    return config.get().then(function(config) {
+      return $http.jsonp(config.apiRoot + '/tests/prefix/' + prefix, {
+        cache: true,
+        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+      });
+    });
+  };
+
   return service;
 }
 

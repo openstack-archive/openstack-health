@@ -19,7 +19,17 @@ function regex($filter) {
     }
 
     for (var i = 0; i < input.length; i++) {
-      if (pattern.test(input[i][field])) {
+      var entry = input[i];
+      var value;
+      if (field === null) {
+        // for flat string arrays there is no key, so allow a 'null' field to
+        // signal values should be used directly
+        value = entry;
+      } else {
+        value = entry[field];
+      }
+
+      if (pattern.test(value)) {
         out.push(input[i]);
       }
     }
