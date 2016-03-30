@@ -32,8 +32,8 @@ function HomeController(
     vm.hold -= 1;
   };
 
-  var processData = function(data) {
-    var projects = projectService.createProjects(data.runs);
+  var processData = function(data, projectRe) {
+    var projects = projectService.createProjects(data.runs, projectRe);
     var blanks = projectService.findBlanks(data.runs);
     var dateStats = projectService.getStatsByDate(projects);
     var entries = getChartEntries(dateStats, blanks);
@@ -115,11 +115,12 @@ function HomeController(
       stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
-      processData(response.data);
+      processData(response.data, vm.searchProject);
       vm.loaded = true;
     });
     healthService.getRecentFailedTests().then(function(response) {
       vm.recentTests = response.data;
+      vm.recentRuns = {};
       angular.forEach(vm.recentTests, function(test) {
         if (!vm.recentRuns[test.link]) {
           vm.recentRuns[test.link] = [];
@@ -161,6 +162,7 @@ function HomeController(
 
   vm.onSearchChange = function() {
     $location.search('searchProject', $scope.home.searchProject).replace();
+    loadData();
   };
 }
 controllersModule.controller('HomeController', HomeController);

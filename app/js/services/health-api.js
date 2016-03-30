@@ -76,6 +76,7 @@ function HealthService($http, config) {
   service.getRunsGroupedByMetadataPerDatetime = function(key, options) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/group_by/' + key, {
+        cache: true,
         params: angular.extend(options, { callback: 'JSON_CALLBACK' })
       });
     });
@@ -144,6 +145,7 @@ function HealthService($http, config) {
 
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value + '/recent', {
+        cache: true,
         params: angular.extend(options, { callback: 'JSON_CALLBACK' })
       });
     });
@@ -154,6 +156,7 @@ function HealthService($http, config) {
 
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests/recent/fail', {
+        cache: true,
         params: angular.extend(options, { callback: 'JSON_CALLBACK' })
       });
     });
