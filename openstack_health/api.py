@@ -276,25 +276,40 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent',
            methods=['GET'])
 def get_recent_runs(run_metadata_key, value):
+    runs = get_recent_runs_data(run_metadata_key, value)
+    return jsonify(runs)
+
+
+@app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent/detail',
+           methods=['GET'])
+def get_recent_runs_detail(run_metadata_key, value):
+    runs = get_recent_runs_data(run_metadata_key, value, detail=True)
+    return jsonify(runs)
+
+
+def get_recent_runs_data(run_metadata_key, value, detail=False):
     num_runs = flask.request.args.get('num_runs', 10)
     with session_scope() as session:
         results = api.get_recent_runs_by_key_value_metadata(
             run_metadata_key, value, num_runs, session)
         runs = []
         for result in results:
-            if result.passes > 0 and result.fails == 0:
-                status = 'success'
-            elif result.fails > 0:
-                status = 'fail'
+            if detail:
+                run = result.to_dict()
             else:
-                continue
+                if result.passes > 0 and result.fails == 0:
+                    status = 'success'
+                elif result.fails > 0:
+                    status = 'fail'
+                else:
+                    continue
 
-            run = {
-                'id': result.uuid,
-                'status': status,
-                'start_date': result.run_at.isoformat(),
-                'link': result.artifacts,
-            }
+                run = {
+                    'id': result.uuid,
+                    'status': status,
+                    'start_date': result.run_at.isoformat(),
+                    'link': result.artifacts,
+                }
 
             run_meta = api.get_run_metadata(result.uuid, session)
             for meta in run_meta:
@@ -302,7 +317,7 @@ def get_recent_runs(run_metadata_key, value):
                     run['build_name'] = meta.value
                     break
             runs.append(run)
-        return jsonify(runs)
+    return runs
 
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
