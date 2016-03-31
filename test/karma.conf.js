@@ -2,6 +2,7 @@
 
 var istanbul = require('browserify-istanbul');
 var isparta  = require('isparta');
+var ngAnnotate = require('browserify-ngannotate');
 
 module.exports = function(config) {
   config.set({
@@ -52,6 +53,7 @@ module.exports = function(config) {
       debug: true,
       transform: [
         'bulkify',
+        ngAnnotate,
         istanbul({
           instrumenter: isparta,
           ignore: ['**/node_modules/**', '**/test/**']
