@@ -12,7 +12,7 @@ function TestsDetailController($scope, healthService, key, $location) {
   vm.searchTest = $location.search().searchTest || '';
   vm.key = decodeURIComponent(key);
   vm.tests = [];
-  vm.limit = 100;
+  vm.limit = $location.search().limit || 100;
   vm.limitOptions = [100, 250, 500, 1000];
   vm.offset = 0;
   vm.max = 0;
@@ -95,6 +95,7 @@ function TestsDetailController($scope, healthService, key, $location) {
 
   vm.setLimit = function(limit) {
     vm.limit = limit;
+    $location.search('limit', $scope.testsDetail.limit).replace();
     vm.loadData();
   };
 
