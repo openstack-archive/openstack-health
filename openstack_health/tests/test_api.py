@@ -360,7 +360,6 @@ class TestRestAPI(base.TestCase):
                     timestamp_a: [{'pass': 2, 'fail': 3, 'skip': 1}]
                 })
     def test_get_runs_by_date_explicit_sec_res(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/runs/group_by/project?datetime_resolution=sec')
         self.assertEqual(200, res.status_code)
         expected_response = {u'runs': {
@@ -402,7 +401,6 @@ class TestRestAPI(base.TestCase):
                                     'metadata': {'build_name': 'value-3'}}],
                 })
     def test_get_runs_by_project_resolution_sec(self, api_mock):
-        api.Session = mock.MagicMock()
         query = 'datetime_resolution=sec'
         res = self.app.get('/runs/key/project/openstack/trove?{0}'
                            .format(query))
@@ -457,7 +455,6 @@ class TestRestAPI(base.TestCase):
                                     'metadata': {'build_name': 'value-3'}}],
                 })
     def test_get_runs_by_project_resolution_min(self, api_mock):
-        api.Session = mock.MagicMock()
         query = 'datetime_resolution=min'
         res = self.app.get('/runs/key/project/openstack/trove?{0}'
                            .format(query))
@@ -512,7 +509,6 @@ class TestRestAPI(base.TestCase):
                                     'metadata': {'build_name': 'value-3'}}],
                 })
     def test_get_runs_by_project_resolution_hour(self, api_mock):
-        api.Session = mock.MagicMock()
         query = 'datetime_resolution=hour'
         res = self.app.get('/runs/key/project/openstack/trove?{0}'
                            .format(query))
@@ -573,7 +569,6 @@ class TestRestAPI(base.TestCase):
                                     'metadata': {'build_name': 'value-3'}}]
                 })
     def test_get_runs_by_project_resolution_day(self, api_mock):
-        api.Session = mock.MagicMock()
         query = 'datetime_resolution=day'
         res = self.app.get('/runs/key/project/openstack/trove?{0}'
                            .format(query))
@@ -635,8 +630,6 @@ class TestRestAPI(base.TestCase):
                                     'metadata': {'build_name': 'value-3'}}]
                 })
     def test_get_runs_by_project_by_start_and_end_date(self, api_mock):
-        api.Session = mock.MagicMock()
-
         start_date = timestamp_d1.date().isoformat()
         stop_date = timestamp_d2.date().isoformat()
         query = ('datetime_resolution=day&start_date={0}&stop_date={1}'
@@ -674,7 +667,6 @@ class TestRestAPI(base.TestCase):
                                          api.Session())
 
     def test_get_runs_by_project_invalid_resolution(self):
-        api.Session = mock.MagicMock()
         res = self.app.get(
             '/runs/key/project/openstack/trove?datetime_resolution=century')
         self.assertEqual(res.status_code, 400)
@@ -725,7 +717,6 @@ class TestRestAPI(base.TestCase):
                     stop_time=timestamp_b,
                     stop_time_microsecond=0)])
     def test_get_test_runs_for_test(self, api_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/test_runs/fake.test.id')
         self.assertEqual(200, res.status_code)
         exp_result = {'data': {
@@ -757,7 +748,6 @@ class TestRestAPI(base.TestCase):
                                passes=42)
                 ])
     def test_get_recent_runs(self, api_mock, api_meta_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/runs/key/a_key/a_value/recent')
         self.assertEqual(200, res.status_code)
         api_mock.assert_called_once_with('a_key', 'a_value',
@@ -790,7 +780,6 @@ class TestRestAPI(base.TestCase):
                     }
                 ])
     def test_get_recent_test_failures(self, db_mock, recent_mock):
-        api.Session = mock.MagicMock()
         res = self.app.get('/tests/recent/fail')
         self.assertEqual(200, res.status_code)
         db_mock.assert_called_once_with('fail', ['a_convincing_id'],
