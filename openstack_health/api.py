@@ -53,11 +53,11 @@ def setup():
     global engine
     db_uri = config.get('default', 'db_uri')
     try:
-        pool_size = config.get('default', 'pool_size')
+        pool_size = config.getint('default', 'pool_size')
     except ConfigParser.NoOptionError:
         pool_size = 20
     try:
-        pool_recycle = config.get('default', 'pool_recycle')
+        pool_recycle = config.getint('default', 'pool_recycle')
     except ConfigParser.NoOptionError:
         pool_recycle = 3600
     engine = create_engine(db_uri,
