@@ -73,7 +73,7 @@
     "pretest": "npm install",
     "unit": "gulp unit",
     "protractor": "gulp e2e",
-    "test": "gulp unit && gulp e2e",
+    "test": "gulp unit && gulp reports",
     "lint": "eslint ./"
   },
   "dependencies": {},
