@@ -768,6 +768,36 @@ class TestRestAPI(base.TestCase):
         }]
         self.assertEqual(expected_res, response_data)
 
+    @mock.patch('subunit2sql.db.api.get_run_metadata',
+                return_value=[models.RunMetadata(key='build_name',
+                                                 value='job')])
+    @mock.patch('subunit2sql.db.api.get_recent_runs_by_key_value_metadata',
+                return_value=[
+                    models.Run(uuid='uuid', run_at=timestamp_a,
+                               artifacts='http://fake_url', passes=2, fails=0,
+                               id='a_id', run_time=174, skips=10),
+                ])
+    def test_get_recent_runs_detail(self, api_mock, api_meta_mock):
+        api.Session = mock.MagicMock()
+        res = self.app.get('/runs/key/a_key/a_value/recent/detail')
+        self.assertEqual(200, res.status_code)
+        api_mock.assert_called_once_with('a_key', 'a_value',
+                                         10, api.Session())
+        response_data = json.loads(res.data.decode('utf-8'))
+        format_time = timestamp_a.strftime('%a, %d %b %Y %H:%M:%S GMT')
+        expected_res = [{
+            u'artifacts': u'http://fake_url',
+            u'id': u'a_id',
+            u'build_name': u'job',
+            u'fails': 0,
+            u'passes': 2,
+            u'skips': 10,
+            u'run_at': format_time,
+            u'run_time': 174,
+            u'uuid': u'uuid'
+        }]
+        self.assertEqual(expected_res, response_data)
+
     @mock.patch('subunit2sql.db.api.get_recent_failed_runs',
                 return_value=['a_convincing_id'])
     @mock.patch('subunit2sql.db.api.get_test_runs_by_status_for_run_ids',
