@@ -94,7 +94,10 @@
                                ng-change="home.onSearchChange()">
                     </div>
                 </div>
-                <table table-sort class="table table-hover status-table" data="home.projects">
+                <table table-sort class="table table-hover status-table" data="home.projects"
+                       uib-popover-template="'context-legend.html'"
+                       popover-placement="top"
+                       popover-trigger="mouseenter">
                     <thead>
                         <tr>
                             <th field="number" class="text-center">#</th>

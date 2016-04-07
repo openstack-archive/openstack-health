@@ -14,4 +14,22 @@ function ctxcls($filter) {
   };
 }
 
+/**
+ * @ngInject
+ */
+function ctxnum() {
+  return function(input, multiple) {
+    var m = multiple;
+    if (!multiple) {
+      m = 1;
+    }
+    return input === 'danger' ? 0.15 * m
+         : input === 'warning' ? 0.08 * m
+         : input === 'info' ? 0
+         : input === 'success' ? 0
+         : null;
+  };
+}
+
 filtersModule.filter('ctxcls', ctxcls);
+filtersModule.filter('ctxnum', ctxnum);

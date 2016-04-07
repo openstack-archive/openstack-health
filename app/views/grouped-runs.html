@@ -87,7 +87,10 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table table-sort class="table table-hover default-cols" data="groupedRuns.jobs">
+                    <table table-sort class="table table-hover default-cols" data="groupedRuns.jobs"
+                           uib-popover-template="'context-legend.html'"
+                           popover-placement="top"
+                           popover-trigger="mouseenter">
                         <thead>
                             <tr>
                                 <th sort-field="name">Job Name</th>

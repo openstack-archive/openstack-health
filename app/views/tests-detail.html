@@ -71,7 +71,10 @@
                     </span>
                 </div>
                 <div class="table-responsive">
-                    <table table-sort data="testsDetail.tests" class="table table-hover default-cols">
+                    <table table-sort data="testsDetail.tests" class="table table-hover default-cols"
+                           uib-popover-template="'context-legend.html'"
+                           popover-placement="top"
+                           popover-trigger="mouseenter">
                         <thead>
                             <tr class="text-right">
                                 <th sort-field="test_id" class="text-left">
