@@ -17,15 +17,21 @@ import argparse
 from contextlib import contextmanager
 from dateutil import parser as date_parser
 import itertools
+import os
 import six
 from six.moves import configparser as ConfigParser
 from six.moves.urllib import parse
+import tempfile
 
+from feedgen import feed
+import feedparser
 import flask
 from flask import abort
 from flask.ext.jsonpify import jsonify
 from flask import make_response
+from flask import request
 from operator import itemgetter
+import pytz
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
@@ -38,6 +44,8 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 config = None
 engine = None
 Session = None
+rss_opts = {}
+feeds = {'last runs': {}}
 
 
 def get_app():
@@ -65,6 +73,15 @@ def setup():
                            pool_recycle=pool_recycle)
     global Session
     Session = sessionmaker(bind=engine)
+    try:
+        rss_opts['data_dir'] = config.get('default', 'data_dir')
+    except ConfigParser.Error:
+        rss_opts['data_dir'] = tempfile.gettempdir()
+    try:
+        rss_opts['frontend_url'] = config.get('default', 'frontend_url')
+    except ConfigParser.Error:
+        rss_opts['frontend_url'] = ('http://status.openstack.org/'
+                                    'openstack-health')
 
 
 def get_session():
@@ -318,6 +335,102 @@ def get_recent_runs_data(run_metadata_key, value, detail=False):
                     break
             runs.append(run)
     return runs
+
+
+def _gen_feed(url, key, value):
+    title = 'Failures for %s: %s' % (key, value)
+    fg = feed.FeedGenerator()
+    fg.title(title)
+    fg.id(url)
+    fg.link(href=url, rel='self')
+    fg.description("The failed %s: %s tests feed" % (key, value))
+    fg.language('en')
+    return fg
+
+
+def _get_stored_feed(url, key, value):
+    filename = key + '_' + value + '.xml'
+    file_path = os.path.join(rss_opts['data_dir'], filename)
+    if not os.path.isfile(file_path):
+        return None
+    feed = feedparser.parse(file_path)
+    out_feed = _gen_feed(url, key, value)
+    if not feed.entries:
+        return None
+    last_run = sorted(
+        [date_parser.parse(x.published) for x in feed.entries])[-1]
+    last_run = last_run.replace(tzinfo=None)
+    for i in feed.entries:
+        entry = out_feed.add_entry()
+        entry.id(i.id)
+        entry.title(i.title)
+        time = date_parser.parse(i.published)
+        entry.published(time)
+        entry.link({'href': i.link, 'rel': 'alternate'})
+        entry.description(i.description)
+    return out_feed, last_run
+
+
+@app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent/rss',
+           methods=['GET'])
+def get_recent_failed_runs_rss(run_metadata_key, value):
+    url = request.url
+    if run_metadata_key not in feeds:
+        stored_feed = _get_stored_feed(url, run_metadata_key, value)
+        if stored_feed:
+            feeds[run_metadata_key] = {value: stored_feed[0]}
+            feeds["last runs"][run_metadata_key] = {value: stored_feed[1]}
+        else:
+            feeds[run_metadata_key] = {value: _gen_feed(url,
+                                                        run_metadata_key,
+                                                        value)}
+            feeds["last runs"][run_metadata_key] = {value: None}
+    elif value not in feeds[run_metadata_key]:
+        stored_feed = _get_stored_feed(url, run_metadata_key, value)
+        if stored_feed:
+            feeds[run_metadata_key][value] = stored_feed[0]
+            feeds["last runs"][run_metadata_key][value] = stored_feed[1]
+        else:
+            feeds[run_metadata_key][value] = _gen_feed(url,
+                                                       run_metadata_key,
+                                                       value)
+            feeds["last runs"][run_metadata_key][value] = None
+    fg = feeds[run_metadata_key][value]
+    with session_scope() as session:
+        failed_runs = api.get_recent_failed_runs_by_run_metadata(
+            run_metadata_key, value,
+            start_date=feeds["last runs"][run_metadata_key][value],
+            session=session)
+        if failed_runs:
+            last_run = sorted([x.run_at for x in failed_runs])[-1]
+            if feeds["last runs"][run_metadata_key][value] == last_run:
+                return feeds[run_metadata_key][value].rss_str()
+            feeds["last runs"][run_metadata_key][value] = last_run
+        else:
+            msg = 'No Failed Runs for run metadata %s: %s' % (
+                run_metadata_key, value)
+            return abort(make_response(msg, 400))
+        for run in failed_runs:
+            meta = api.get_run_metadata(run.uuid, session=session)
+            uuid = [x.value for x in meta if x.key == 'build_uuid'][0]
+            entry = fg.add_entry()
+            entry.id(uuid)
+            entry.title('Failed Run %s' % uuid)
+            entry.published(pytz.utc.localize(run.run_at))
+            entry.link({'href': run.artifacts, 'rel': 'alternate'})
+            build_name = [x.value for x in meta if x.key == 'build_name'][0]
+            # TODO(mtreinish): Make this html
+            metadata_url = rss_opts['frontend_url'] + '/#/' + parse.quote(
+                'g/%s/%s' % (run_metadata_key, value))
+            job_url = rss_opts['frontend_url'] + '/#/' + parse.quote(
+                'job/%s' % build_name)
+            content = 'Metadata page: %s\n' % metadata_url
+            content += '\nJob Page %s' % job_url
+            entry.description(content)
+    filename = run_metadata_key + '_' + value + '.xml'
+    out_path = os.path.join(rss_opts['data_dir'], filename)
+    feeds[run_metadata_key][value].rss_file(out_path)
+    return feeds[run_metadata_key][value].rss_str()
 
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
