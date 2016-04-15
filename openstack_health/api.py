@@ -44,6 +44,18 @@ def get_app():
     return app
 
 
+def _config_get(config_func, section, option, default_val=None):
+    retval = default_val
+    if default_val:
+        try:
+            retval = config_func(section, option)
+        except ConfigParser.NoOptionError:
+            pass
+    else:
+        retval = config_func(section, option)
+    return retval
+
+
 @app.before_first_request
 def setup():
     global config
@@ -51,15 +63,9 @@ def setup():
         config = ConfigParser.ConfigParser()
         config.read('/etc/openstack-health.conf')
     global engine
-    db_uri = config.get('default', 'db_uri')
-    try:
-        pool_size = config.getint('default', 'pool_size')
-    except ConfigParser.NoOptionError:
-        pool_size = 20
-    try:
-        pool_recycle = config.getint('default', 'pool_recycle')
-    except ConfigParser.NoOptionError:
-        pool_recycle = 3600
+    db_uri = _config_get(config.get, 'default', 'db_uri')
+    pool_size = _config_get(config.getint, 'default', 'pool_size', 20)
+    pool_recycle = _config_get(config.getint, 'default', 'pool_recycle', 3600)
     engine = create_engine(db_uri,
                            pool_size=pool_size,
                            pool_recycle=pool_recycle)
