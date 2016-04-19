@@ -124,6 +124,7 @@ def list_routes():
 @app.route('/build_name/<string:build_name>/runs', methods=['GET'])
 def get_runs_from_build_name(build_name):
     with session_scope() as session:
+        build_name = parse.unquote(build_name)
         db_runs = api.get_runs_by_key_value('build_name', build_name, session)
         runs = [run.to_dict() for run in db_runs]
         return jsonify({'runs': runs})
@@ -158,6 +159,7 @@ def _parse_datetimes(datetime_str):
 
 @app.route('/runs/group_by/<string:key>', methods=['GET'])
 def get_runs_grouped_by_metadata_per_datetime(key):
+    key = parse.unquote(key)
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'sec')
@@ -193,7 +195,7 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
 def get_test_runs_by_build_name(build_name):
     key = 'build_name'
-    value = build_name
+    value = parse.unquote(build_name)
     if not key or not value:
         return 'A key and value must be specified', 400
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
@@ -261,6 +263,8 @@ def _aggregate_runs(runs_by_time_delta):
 
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>', methods=['GET'])
 def get_runs_by_run_metadata_key(run_metadata_key, value):
+    run_metadata_key = parse.unquote(run_metadata_key)
+    value = parse.unquote(value)
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'day')
@@ -293,6 +297,8 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent',
            methods=['GET'])
 def get_recent_runs(run_metadata_key, value):
+    run_metadata_key = parse.unquote(run_metadata_key)
+    value = parse.unquote(value)
     runs = get_recent_runs_data(run_metadata_key, value)
     return jsonify(runs)
 
@@ -300,6 +306,8 @@ def get_recent_runs(run_metadata_key, value):
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent/detail',
            methods=['GET'])
 def get_recent_runs_detail(run_metadata_key, value):
+    run_metadata_key = parse.unquote(run_metadata_key)
+    value = parse.unquote(value)
     runs = get_recent_runs_data(run_metadata_key, value, detail=True)
     return jsonify(runs)
 
@@ -374,6 +382,8 @@ def _get_stored_feed(url, key, value):
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent/rss',
            methods=['GET'])
 def get_recent_failed_runs_rss(run_metadata_key, value):
+    run_metadata_key = parse.unquote(run_metadata_key)
+    value = parse.unquote(value)
     url = request.url
     if run_metadata_key not in feeds:
         stored_feed = _get_stored_feed(url, run_metadata_key, value)
@@ -435,6 +445,7 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
 def get_recent_test_status(status):
+    status = parse.unquote(status)
     num_runs = flask.request.args.get('num_runs', 10)
     with session_scope() as session:
         failed_runs = api.get_recent_failed_runs(num_runs, session)
@@ -451,6 +462,7 @@ def get_recent_test_status(status):
 
 @app.route('/run/<string:run_id>/tests', methods=['GET'])
 def get_tests_from_run(run_id):
+    run_id = parse.unquote(run_id)
     with session_scope() as session:
         db_tests = api.get_tests_from_run_id(run_id, session)
         tests = [test.to_dict() for test in db_tests]
@@ -459,6 +471,7 @@ def get_tests_from_run(run_id):
 
 @app.route('/run/<string:run_id>/test_runs', methods=['GET'])
 def get_run_test_runs(run_id):
+    run_id = parse.unquote(run_id)
     with session_scope() as session:
         db_test_runs = api.get_tests_run_dicts_from_run_id(run_id, session)
         return jsonify(db_test_runs)
@@ -480,6 +493,7 @@ def get_test_prefixes():
 
 @app.route('/tests/prefix/<path:prefix>', methods=['GET'])
 def get_tests_by_prefix(prefix):
+    prefix = parse.unquote(prefix)
     limit = flask.request.args.get('limit', 100)
     offset = flask.request.args.get('offset', 0)
 
@@ -527,6 +541,7 @@ def parse_command_line_args():
 
 @app.route('/test_runs/<path:test_id>', methods=['GET'])
 def get_test_runs_for_test(test_id):
+    test_id = parse.unquote(test_id)
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'min')
