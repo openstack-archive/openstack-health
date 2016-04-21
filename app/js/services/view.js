@@ -24,19 +24,6 @@ var viewService = function($rootScope, $location) {
     }
   });
 
-  var regActionSuccess = $rootScope.$on('$locationChangeSuccess', function() {
-    $location.search('groupKey', groupKey);
-    $location.search('resolutionKey', resolution.key);
-    if (userDuration !== null) {
-      $location.search('duration', userDuration.toISOString());
-    }
-    if (periodEnd !== null) {
-      $location.search('end', periodEnd.toISOString());
-    }
-
-    $location.replace();
-  });
-
   var periodEnd = new Date();
   var periodOptions = [
     moment.duration({ hours: 1 }),
@@ -62,6 +49,20 @@ var viewService = function($rootScope, $location) {
     periodEnd = new Date(searchEnd);
   }
 
+  var searchParams = new Map();
+  var search = function(key, value) {
+    $location.search(key, value).replace();
+    searchParams.set(key, value);
+  };
+
+  var regActionSuccess = $rootScope.$on('$locationChangeSuccess', function() {
+    searchParams.forEach(function(value, key) {
+      $location.search(key, value);
+    });
+
+    $location.replace();
+  });
+
   var selectDuration = function() {
     if (userDuration) {
       return userDuration;
@@ -77,6 +78,7 @@ var viewService = function($rootScope, $location) {
       if (arguments.length === 1) {
         resolution = res;
         $rootScope.$broadcast('view:resolution', res);
+        search('resolutionKey', resolution.key);
       }
 
       return resolution;
@@ -87,7 +89,7 @@ var viewService = function($rootScope, $location) {
     },
 
     groupKey: function(key) {
-      if (arguments.length === 1) {
+      if (arguments.length === 1 && groupKey !== key) {
         groupKey = key;
         $rootScope.$broadcast('view:groupKey', groupKey);
       }
@@ -104,7 +106,7 @@ var viewService = function($rootScope, $location) {
         return periodEnd;
       }
 
-      $location.search('end', end.toISOString()).replace();
+      search('end', end.toISOString());
 
       periodEnd = end;
       $rootScope.$broadcast('view:periodEnd', end);
@@ -176,7 +178,7 @@ var viewService = function($rootScope, $location) {
       $rootScope.$broadcast('view:duration', duration, false);
       $rootScope.$broadcast('view:period', false);
 
-      $location.search('duration', userDuration.toISOString()).replace();
+      search('duration', userDuration.toISOString());
 
       return duration;
     },

@@ -162,13 +162,17 @@ function HomeController(
   // ViewModel
   var vm = this;
   vm.loadData = loadData;
-  vm.groupKey = viewService.groupKey();
   vm.searchProject = $location.search().searchProject || '';
   vm.loaded = false;
   vm.hold = 0;
   vm.recentTests = [];
   vm.recentRuns = {};
   vm.apiRoot = null;
+
+  vm.groupKey = viewService.groupKey();
+  if (vm.groupKey !== 'project') {
+    $location.search('groupKey', vm.groupKey);
+  }
 
   configurePeriods();
   loadData();
@@ -177,6 +181,10 @@ function HomeController(
     vm.groupKey = groupKey;
     configurePeriods();
     loadData();
+
+    // set the groupKey here instead of in the viewService, since we only need
+    // it to be sharable from the this page
+    $location.search('groupKey', groupKey).replace();
   });
 
   $scope.$on('view:resolution', function(event, resolution) {
