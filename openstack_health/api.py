@@ -299,7 +299,7 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
 def get_recent_runs(run_metadata_key, value):
     run_metadata_key = parse.unquote(run_metadata_key)
     value = parse.unquote(value)
-    runs = get_recent_runs_data(run_metadata_key, value)
+    runs = _get_recent_runs_data(run_metadata_key, value)
     return jsonify(runs)
 
 
@@ -308,11 +308,11 @@ def get_recent_runs(run_metadata_key, value):
 def get_recent_runs_detail(run_metadata_key, value):
     run_metadata_key = parse.unquote(run_metadata_key)
     value = parse.unquote(value)
-    runs = get_recent_runs_data(run_metadata_key, value, detail=True)
+    runs = _get_recent_runs_data(run_metadata_key, value, detail=True)
     return jsonify(runs)
 
 
-def get_recent_runs_data(run_metadata_key, value, detail=False):
+def _get_recent_runs_data(run_metadata_key, value, detail=False):
     num_runs = flask.request.args.get('num_runs', 10)
     with session_scope() as session:
         results = api.get_recent_runs_by_key_value_metadata(
