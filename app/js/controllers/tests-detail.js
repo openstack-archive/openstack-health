@@ -12,9 +12,9 @@ function TestsDetailController($scope, healthService, key, $location) {
   vm.searchTest = $location.search().searchTest || '';
   vm.key = decodeURIComponent(key);
   vm.tests = [];
-  vm.limit = $location.search().limit || 100;
+  vm.limit = parseInt($location.search().limit) || 100;
   vm.limitOptions = [100, 250, 500, 1000];
-  vm.offset = 0;
+  vm.offset = parseInt($location.search().offset) || 0;
   vm.max = 0;
   vm.end = false;
   vm.backAllowed = false;
@@ -77,6 +77,7 @@ function TestsDetailController($scope, healthService, key, $location) {
       // we either don't have any results yet, or there's enough that we
       // probably have a next page
       vm.offset += vm.limit;
+      $location.search('offset', vm.offset).replace();
       vm.backAllowed = true;
 
       vm.loadData();
@@ -87,6 +88,7 @@ function TestsDetailController($scope, healthService, key, $location) {
     var newOffset = Math.max(0, vm.offset - vm.limit);
     if (newOffset !== vm.offset) {
       vm.offset = newOffset;
+      $location.search('offset', newOffset).replace();
       vm.loadData();
 
       vm.backAllowed = newOffset !== 0;
