@@ -36,14 +36,21 @@ var projectService = function(projectFactory, metricsService) {
     return blanks;
   };
 
-  service.createProjects = function(runsJson) {
+  service.createProjects = function(runsJson, projectRe) {
     var projects = [];
     var index = {};
-
+    var pattern = null;
+    try {
+      pattern = new RegExp(projectRe);
+    } catch (e) {
+      pattern = '';
+    }
     angular.forEach(runsJson, function(projectsJson, dateString) {
       angular.forEach(projectsJson, function(runEntries, name) {
-        var project = findOrCreate(index, projects, name, projectFactory.create);
-        project.addRuns(dateString, runEntries);
+        if (pattern.test(name)) {
+          var project = findOrCreate(index, projects, name, projectFactory.create);
+          project.addRuns(dateString, runEntries);
+        }
       });
     });
 
