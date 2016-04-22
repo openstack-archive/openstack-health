@@ -9,7 +9,8 @@ var d3 = require('d3');
  */
 function HomeController(
     $scope, $location, $sce,
-    healthService, projectService, viewService, tooltipService, periodsService) {
+    config, healthService, projectService, viewService,
+    tooltipService, periodsService) {
 
   var byFailRateDesc = function(project1, project2) {
     // To get descending order, project2 should come first
@@ -128,6 +129,9 @@ function HomeController(
         vm.recentRuns[test.link].push(test);
       });
     });
+    config.get().then(function(config) {
+      vm.apiRoot = config.apiRoot;
+    });
   };
 
   // ViewModel
@@ -139,6 +143,7 @@ function HomeController(
   vm.hold = 0;
   vm.recentTests = [];
   vm.recentRuns = {};
+  vm.apiRoot = null;
 
   configurePeriods();
   loadData();

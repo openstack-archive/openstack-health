@@ -131,6 +131,12 @@
                             <td class="text-right">{{$index+1}}</td>
                             <td class="text-left">
                               <a ui-sref="groupedRuns({ runMetadataKey: home.groupKey, name: p.name })">{{p.name}}</a>
+                              <span ng-if="!!home.apiRoot">
+                                  <a href="{{ home.apiRoot }}/runs/key/{{ home.groupKey }}/{{ p.name }}/recent/rss"
+                                     target="_blank">
+                                      <fa name="rss-square"></fa>
+                                  </a>
+                              </span>
                             </td>
                             <td class="text-right">{{p.passes|number}}</td>
                             <td class="text-right">{{p.failures|number}}</td>
