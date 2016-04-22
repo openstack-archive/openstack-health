@@ -14,7 +14,6 @@
 
 import datetime
 import json
-import os
 import tempfile
 import uuid
 
@@ -22,7 +21,6 @@ from dateutil import parser as date_parser
 import feedparser
 import mock
 import numpy
-import pytz
 import six
 from subunit2sql.db import models
 
@@ -841,48 +839,6 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(url, res['feed']['link'])
         self.assertEqual('en', res['feed']['language'])
 
-    def test__get_stored_feed_no_feed(self):
-        api.rss_opts['data_dir'] = tempfile.gettempdir()
-        self.assertIsNone(
-            api._get_stored_feed('fake_url', 'not_a_real_key', 'real_value'))
-
-    def test__get_stored_feed_with_file_no_entries(self):
-        api.rss_opts['data_dir'] = tempfile.gettempdir()
-        url = 'fake_url'
-        key = 'zeon'
-        value = 'zaku'
-        fg = api._gen_feed(url, key, value)
-        filename = key + '_' + value + '.xml'
-        path = os.path.join(api.rss_opts['data_dir'], filename)
-        fg.rss_file(path)
-        self.addCleanup(os.remove, path)
-        self.assertIsNone(api._get_stored_feed(url, key, value))
-
-    def test__get_stored_feed_with_file_with_entries(self):
-        api.rss_opts['data_dir'] = tempfile.gettempdir()
-        url = 'fake_url'
-        key = 'zeon'
-        value = 'gouf'
-        fg = api._gen_feed(url, key, value)
-        entry = fg.add_entry()
-        entry.id('not a zaku')
-        entry.title("This i snot the title you're looking for")
-        entry.published(pytz.utc.localize(timestamp_a))
-        entry.link({'href': 'a_link'})
-        entry.description('A description')
-        filename = key + '_' + value + '.xml'
-        path = os.path.join(api.rss_opts['data_dir'], filename)
-        fg.rss_file(path)
-        self.addCleanup(os.remove, path)
-        out = api._get_stored_feed(url, key, value)
-        res = feedparser.parse(out[0].rss_str())
-        title = 'Failures for %s: %s' % (key, value)
-        self.assertEqual(timestamp_a, out[1])
-        self.assertEqual(title, res['feed']['title'])
-        self.assertEqual(url, res['feed']['link'])
-        self.assertEqual('en', res['feed']['language'])
-        self.assertEqual(1, len(res.entries))
-
     @mock.patch('subunit2sql.db.api.get_recent_failed_runs_by_run_metadata',
                 return_value=[
                     models.Run(uuid='a_uuid', run_at=timestamp_b,
@@ -891,9 +847,6 @@ class TestRestAPI(base.TestCase):
                 ])
     def test_get_recent_failed_runs_rss_no_previous(self, db_mock):
         api.rss_opts['data_dir'] = tempfile.gettempdir()
-        filename = 'a_key_a_value.xml'
-        path = os.path.join(api.rss_opts['data_dir'], filename)
-        self.addCleanup(os.remove, path)
         api.rss_opts['frontend_url'] = 'http://status.openstack.org'
         build_uuid = str(uuid.uuid4())
         meta_mock = mock.patch(
@@ -925,9 +878,6 @@ class TestRestAPI(base.TestCase):
                 ])
     def test_get_recent_failed_runs_rss_with_previous(self, db_mock):
         api.rss_opts['data_dir'] = tempfile.gettempdir()
-        filename = 'b_key_b_value.xml'
-        path = os.path.join(api.rss_opts['data_dir'], filename)
-        self.addCleanup(os.remove, path)
         api.rss_opts['frontend_url'] = 'http://status.openstack.org'
         build_uuid = str(uuid.uuid4())
         meta_mock = mock.patch(

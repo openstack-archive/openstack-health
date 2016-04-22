@@ -17,14 +17,11 @@ import argparse
 from contextlib import contextmanager
 from dateutil import parser as date_parser
 import itertools
-import os
 import six
 from six.moves import configparser as ConfigParser
 from six.moves.urllib import parse
-import tempfile
 
 from feedgen import feed
-import feedparser
 import flask
 from flask import abort
 from flask.ext.jsonpify import jsonify
@@ -73,10 +70,6 @@ def setup():
                            pool_recycle=pool_recycle)
     global Session
     Session = sessionmaker(bind=engine)
-    try:
-        rss_opts['data_dir'] = config.get('default', 'data_dir')
-    except ConfigParser.Error:
-        rss_opts['data_dir'] = tempfile.gettempdir()
     try:
         rss_opts['frontend_url'] = config.get('default', 'frontend_url')
     except ConfigParser.Error:
@@ -356,29 +349,6 @@ def _gen_feed(url, key, value):
     return fg
 
 
-def _get_stored_feed(url, key, value):
-    filename = key + '_' + value + '.xml'
-    file_path = os.path.join(rss_opts['data_dir'], filename)
-    if not os.path.isfile(file_path):
-        return None
-    feed = feedparser.parse(file_path)
-    out_feed = _gen_feed(url, key, value)
-    if not feed.entries:
-        return None
-    last_run = sorted(
-        [date_parser.parse(x.published) for x in feed.entries])[-1]
-    last_run = last_run.replace(tzinfo=None)
-    for i in feed.entries:
-        entry = out_feed.add_entry()
-        entry.id(i.id)
-        entry.title(i.title)
-        time = date_parser.parse(i.published)
-        entry.published(time)
-        entry.link({'href': i.link, 'rel': 'alternate'})
-        entry.description(i.description)
-    return out_feed, last_run
-
-
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent/rss',
            methods=['GET'])
 def get_recent_failed_runs_rss(run_metadata_key, value):
@@ -386,25 +356,15 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
     value = parse.unquote(value)
     url = request.url
     if run_metadata_key not in feeds:
-        stored_feed = _get_stored_feed(url, run_metadata_key, value)
-        if stored_feed:
-            feeds[run_metadata_key] = {value: stored_feed[0]}
-            feeds["last runs"][run_metadata_key] = {value: stored_feed[1]}
-        else:
-            feeds[run_metadata_key] = {value: _gen_feed(url,
-                                                        run_metadata_key,
-                                                        value)}
-            feeds["last runs"][run_metadata_key] = {value: None}
+        feeds[run_metadata_key] = {value: _gen_feed(url,
+                                                    run_metadata_key,
+                                                    value)}
+        feeds["last runs"][run_metadata_key] = {value: None}
     elif value not in feeds[run_metadata_key]:
-        stored_feed = _get_stored_feed(url, run_metadata_key, value)
-        if stored_feed:
-            feeds[run_metadata_key][value] = stored_feed[0]
-            feeds["last runs"][run_metadata_key][value] = stored_feed[1]
-        else:
-            feeds[run_metadata_key][value] = _gen_feed(url,
-                                                       run_metadata_key,
-                                                       value)
-            feeds["last runs"][run_metadata_key][value] = None
+        feeds[run_metadata_key][value] = _gen_feed(url,
+                                                   run_metadata_key,
+                                                   value)
+        feeds["last runs"][run_metadata_key][value] = None
     fg = feeds[run_metadata_key][value]
     with session_scope() as session:
         failed_runs = api.get_recent_failed_runs_by_run_metadata(
@@ -437,9 +397,6 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
             content = 'Metadata page: %s\n' % metadata_url
             content += '\nJob Page %s' % job_url
             entry.description(content)
-    filename = run_metadata_key + '_' + value + '.xml'
-    out_path = os.path.join(rss_opts['data_dir'], filename)
-    feeds[run_metadata_key][value].rss_file(out_path)
     return feeds[run_metadata_key][value].rss_str()
 
 
