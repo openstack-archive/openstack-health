@@ -32,7 +32,7 @@ function chartScatter() {
       chart = nv.models.scatterChart()
         .duration(300);
 
-      chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
+      chart.xAxis.tickFormat(function(d) { return d3.time.format('%m/%d %H:%M')(new Date(d)); });
       if (attrs.forceY) {
         chart.forceY(angular.fromJson(attrs.forceY));
       }

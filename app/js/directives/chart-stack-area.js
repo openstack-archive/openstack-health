@@ -38,7 +38,7 @@ function chartStackArea() {
         .clipEdge(true)
         .style('expand');
 
-      chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
+      chart.xAxis.tickFormat(function(d) { return d3.time.format('%m/%d %H:%M')(new Date(d)); });
 
       chart.yAxis.tickFormat(d3.format(',.2f'));
       svg.datum(data).call(chart);
