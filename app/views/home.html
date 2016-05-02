@@ -67,7 +67,7 @@
                     <uib-accordion close-others="false">
                         <div ng-repeat="(key, value) in home.recentRuns">
                             <uib-accordion-group
-                             template-url="accordion-group-run.html"
+                             template-url="templates/accordion-group-run.html"
                              heading="{{ key }}"
                              is-open="false">
                                 <table table-sort data="value"
@@ -111,7 +111,7 @@
                     </div>
                 </div>
                 <table table-sort class="table table-hover status-table" data="home.projects"
-                       uib-popover-template="'context-legend.html'"
+                       uib-popover-template="'templates/context-legend.html'"
                        popover-placement="top"
                        popover-trigger="mouseenter">
                     <thead>

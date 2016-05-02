@@ -91,7 +91,7 @@ function crumbMenu() {
   return {
     restrict: 'E',
     transclude: true,
-    templateUrl: 'crumb-menu.html',
+    templateUrl: 'templates/crumb-menu.html',
     link: link,
     controller: controller,
     controllerAs: 'menu',

@@ -29,7 +29,7 @@ function freshCheck() {
   };
   return {
     restrict : 'EA',
-    templateUrl: 'fresh-check.html',
+    templateUrl: 'templates/fresh-check.html',
     scope: true,
     controller: controller
   };

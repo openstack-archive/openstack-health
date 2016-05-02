@@ -8,7 +8,7 @@ var directivesModule = require('./_index.js');
 function loadingIndicator() {
   return {
     restrict : 'EA',
-    templateUrl: 'loading-indicator.html',
+    templateUrl: 'templates/loading-indicator.html',
     scope: true
   };
 }
