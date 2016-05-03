@@ -15,12 +15,17 @@
 
 import argparse
 from contextlib import contextmanager
+import datetime
 from dateutil import parser as date_parser
 import itertools
+import os
 import six
 from six.moves import configparser as ConfigParser
 from six.moves.urllib import parse
+import tempfile
+import threading
 
+import dogpile.cache
 from feedgen import feed
 import flask
 from flask import abort
@@ -36,13 +41,21 @@ from subunit2sql.db import api
 from openstack_health.run_aggregator import RunAggregator
 from openstack_health import test_run_aggregator
 
+try:
+    from elastic_recheck import elasticRecheck as er
+except ImportError:
+    er = None
+
 app = flask.Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 config = None
 engine = None
 Session = None
+query_dir = None
+classifier = None
 rss_opts = {}
 feeds = {'last runs': {}}
+region = None
 
 
 def get_app():
@@ -50,6 +63,10 @@ def get_app():
 
 
 @app.before_first_request
+def _setup():
+    setup()
+
+
 def setup():
     global config
     if not config:
@@ -75,6 +92,41 @@ def setup():
     except ConfigParser.Error:
         rss_opts['frontend_url'] = ('http://status.openstack.org/'
                                     'openstack-health')
+    try:
+        query_dir = config.get('default', 'query_dir')
+    except ConfigParser.Error:
+        pass
+    try:
+        es_url = config.get('default', 'es_url')
+    except ConfigParser.Error:
+        es_url = None
+
+    if query_dir and er:
+        global classifier
+        classifier = er.Classifier(query_dir, es_url=es_url)
+
+    try:
+        backend = config.get('default', 'cache_backend')
+    except ConfigParser.Error:
+        backend = 'dogpile.cache.dbm'
+    try:
+        expire = config.get('default', 'cache_expiration')
+    except ConfigParser.Error:
+        expire = datetime.timedelta(minutes=30)
+    try:
+        cache_file = config.get('default', 'cache_file')
+    except ConfigParser.Error:
+        cache_file = os.path.join(tempfile.gettempdir(),
+                                  'openstack-health.dbm')
+
+    global region
+    if backend == 'dogpile.cache.dbm':
+        args = {'filename': cache_file}
+    else:
+        args = {}
+    region = dogpile.cache.make_region().configure(backend,
+                                                   expiration_time=expire,
+                                                   arguments=args)
 
 
 def get_session():
@@ -402,19 +454,49 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
 def get_recent_test_status(status):
+    global region
+    if not region:
+        setup()
     status = parse.unquote(status)
     num_runs = flask.request.args.get('num_runs', 10)
-    with session_scope() as session:
-        failed_runs = api.get_recent_failed_runs(num_runs, session)
-        test_runs = api.get_test_runs_by_status_for_run_ids(status,
-                                                            failed_runs,
-                                                            session=session)
-        output = []
-        for run in test_runs:
-            run['start_time'] = run['start_time'].isoformat()
-            run['stop_time'] = run['stop_time'].isoformat()
-            output.append(run)
-        return jsonify(output)
+    bug_dict = {}
+    query_threads = []
+
+    def _populate_bug_dict(change_num, patch_num, short_uuid, run):
+        bug_dict[run] = classifier.classify(change_num, patch_num,
+                                            short_uuid, recent=True)
+
+    @region.cache_on_arguments()
+    def _get_recent(status):
+        with session_scope() as session:
+            failed_runs = api.get_recent_failed_runs(num_runs, session)
+            global classifier
+            if classifier:
+                for run in failed_runs:
+                    metadata = api.get_run_metadata(run, session=session)
+                    for meta in metadata:
+                        if meta.key == 'build_short_uuid':
+                            short_uuid = meta.value
+                        elif meta.key == 'build_change':
+                            change_num = meta.value
+                        elif meta.key == 'build_patchset':
+                            patch_num = meta.value
+                    query_thread = threading.Thread(
+                        target=_populate_bug_dict, args=(change_num, patch_num,
+                                                         short_uuid, run))
+                    query_threads.append(query_thread)
+                    query_thread.start()
+            test_runs = api.get_test_runs_by_status_for_run_ids(
+                status, failed_runs, session=session, include_run_id=True)
+            output = []
+            for run in test_runs:
+                run['start_time'] = run['start_time'].isoformat()
+                run['stop_time'] = run['stop_time'].isoformat()
+                output.append(run)
+            for thread in query_threads:
+                thread.join()
+            return {'test_runs': output, 'bugs': bug_dict}
+    return jsonify(_get_recent(status))
 
 
 @app.route('/run/<string:run_id>/tests', methods=['GET'])

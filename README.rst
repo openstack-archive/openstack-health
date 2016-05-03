@@ -86,6 +86,55 @@ something like::
 
 That will startup a uwsgi server running the rest api on port 5000.
 
+Elastic Recheck Configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+There are certain API operations which will use the `elastic-recheck`_ project
+to pull in additional information about failures that occur during a run.
+However, since elastic-recheck is not widely deployed this is an optional
+feature and is only enabled if elastic-recheck is installed. (and importable
+by the API server) Also note that elastic-recheck is not published on pypi and
+must be manually installed via git. Additionally, after you install
+elastic-recheck you also need to configure the location of the queries by
+using the `query_dir` configuration option. If this is not set than the
+elastic-recheck support will be disabled. Optionally, if you need to set
+the url of you elasticsearch API endpoint you can set this with the `es_url`
+configuration option. By default it is configured to talk to openstack-infra's
+elasticsearch server at http://logstash.openstack.org/elasticsearch
+
+
+.. _elastic-recheck: http://git.openstack.org/cgit/openstack-infra/elastic-recheck/
+
+
+Caching Configuration
+^^^^^^^^^^^^^^^^^^^^^
+Since the introduction of elastic recheck querying dogpile.cache has been
+used to cache any request that hits elasticsearch. This is because the
+query times for using elastic-recheck are quite variable and often very slow.
+(at least for talking to openstack-infra's elasticsearch) To enable reasonable
+interactive response times we cache the api response from requests using
+elasticsearch data. Note, that this caching is enabled regardless of whether
+elastic-recheck is enabled or not.
+
+There are three configuration options available around configuring caching.
+While the defaults were picked to work in most situations depending on your
+specific deployment specifics there are other choices that might make more
+sense.
+
+The first is `cache_backend` which is used to set the python class for the
+`dogpile.cache.api.CacheBackend`_ to use. By default this is set to
+`dogpile.cache.dbm` which uses a DBM file on disk. You can effectively disable
+all caching by setting this value to `dogpile.cache.null`.
+
+.. __dogpile.cache.api.CacheBackend: http://dogpilecache.readthedocs.io/en/latest/api.html#dogpile.cache.api.CacheBackend
+
+The second option is `cache_expiration` which is used to set the timeout value
+to use for any cached responses. This is an integer for the number of seconds
+to keep a response cached. By default this is set to 30mins.
+
+The third option is `cache_file` which is used to set the file path when using
+the DBM backend is used. By default this is configured to use
+TEMPDIR/openstack-health.dbm
+
 Frontend
 --------
 The production application can be build using::

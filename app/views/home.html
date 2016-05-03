@@ -68,9 +68,9 @@
                         <div ng-repeat="(key, value) in home.recentRuns">
                             <uib-accordion-group
                              template-url="templates/accordion-group-run.html"
-                             heading="{{ key }}"
+                             heading="{{ key }};{{ value.bugs }}"
                              is-open="false">
-                                <table table-sort data="value"
+                                <table table-sort data="value.fails"
                                        class="table table-hover default-cols">
                                     <thead>
                                         <tr>
@@ -80,7 +80,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                      <tr ng-repeat="(k, v) in value">
+                                      <tr ng-repeat="(k, v) in value.fails">
                                           <td><a ui-sref="test({ testId: v.test_id })"}>
                                             {{ v.test_id }}</a>
                                           </td>
