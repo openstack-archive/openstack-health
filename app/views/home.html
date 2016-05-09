@@ -27,10 +27,11 @@
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-search"></i></div>
                         <input type="text" class="form-control"
-                               placeholder="Search for {{ home.groupKey }}"
+                               placeholder="Search for {{ home.groupKey }} with regex"
                                ng-model="home.searchProject"
                                ng-model-options="{debounce: 250}"
-                               ng-change="home.onSearchChange()">
+                               ng-change="home.onSearchChange()"
+                               uib-tooltip="You can see {{home.projects.length}} {{ home.groupKey }}(s). Details are at the bottom.">
                     </div>
                 </div>
                 <div class="panel-body">
@@ -44,10 +45,11 @@
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-search"></i></div>
                         <input type="text" class="form-control"
-                               placeholder="Search for {{ home.groupKey }}"
+                               placeholder="Search for {{ home.groupKey }} with regex"
                                ng-model="home.searchProject"
                                ng-model-options="{debounce: 250}"
-                               ng-change="home.onSearchChange()">
+                               ng-change="home.onSearchChange()"
+                               uib-tooltip="You can see {{home.projects.length}} {{ home.groupKey }}(s). Details are at the bottom.">
                     </div>
                 </div>
                 <div class="panel-body">
@@ -104,7 +106,7 @@
                     <div class="input-group">
                         <div class="input-group-addon"><i class="fa fa-search"></i></div>
                         <input type="text" class="form-control"
-                               placeholder="Search for {{ home.groupKey }}"
+                               placeholder="Search for {{ home.groupKey }} with regex"
                                ng-model="home.searchProject"
                                ng-model-options="{debounce: 250}"
                                ng-change="home.onSearchChange()">
