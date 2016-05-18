@@ -32,7 +32,11 @@ table.status-table {
 
 table.default-cols {
     thead {
-        th {
+        .tiny {
+            width: 1px;
+        }
+
+        th:not(.tiny) {
             white-space: nowrap;
             min-width: 75px;
         }
@@ -122,6 +126,10 @@ h1.page-header {
     word-wrap: break-word;
 }
 
+h1.page-header {
+    word-wrap: break-word;
+}
+
 .feedback {
     border: 1px solid #ccc;
     background-color: #f5f5f5;
@@ -135,4 +143,19 @@ h1.page-header {
     right: 0;
     padding: 1em;
     z-index: 5;
+}
+
+[nest-toggle] {
+    cursor: pointer;
+}
+
+tr.nest {
+    nest-transclude table {
+        background-color: transparent !important;
+        margin-bottom: 0 !important;
+    }
+
+    > td {
+        padding: 0 !important;
+    }
 }
