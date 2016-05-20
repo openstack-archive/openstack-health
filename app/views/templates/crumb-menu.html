@@ -2,7 +2,7 @@
     <ul class="nav navbar-nav navbar-left nav-breadcrumb">
         <li><a ui-sref="home"><fa name="home"></fa></a></li>
         <li uib-dropdown>
-            <span ng-switch on="'tests' | isState">
+            <span ng-switch on="['tests', 'testsDetail', 'test'] | anyState">
                 <a ng-switch-when="true" uib-dropdown-toggle href>
                     Tests <fa name="caret-down"></fa>
                 </a>
