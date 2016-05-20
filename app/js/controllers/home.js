@@ -4,6 +4,17 @@ var controllersModule = require('./_index');
 
 var d3 = require('d3');
 
+function unique(arr) {
+  var u = {}, a = [];
+  for (var i = 0, l = arr.length; i < l; ++i) {
+    if (!u.hasOwnProperty(arr[i])) {
+      a.push(arr[i]);
+      u[arr[i]] = 1;
+    }
+  }
+  return a;
+}
+
 /**
  * @ngInject
  */
@@ -122,12 +133,26 @@ function HomeController(
     healthService.getRecentFailedTests().then(function(response) {
       vm.recentTests = response.data;
       vm.recentRuns = {};
-      angular.forEach(vm.recentTests, function(test) {
-        if (!vm.recentRuns[test.link]) {
-          vm.recentRuns[test.link] = [];
+      angular.forEach(vm.recentTests.test_runs, function(test) {
+        if (typeof vm.recentRuns[test.link] === 'undefined') {
+          vm.recentRuns[test.link] = {};
+          vm.recentRuns[test.link].bugs = [];
+          vm.recentRuns[test.link].fails = [];
         }
-        vm.recentRuns[test.link].push(test);
+        if (vm.recentTests.bugs[test.uuid] && vm.recentTests.bugs[test.uuid].length > 0) {
+          vm.recentRuns[test.link].bugs.push(vm.recentTests.bugs[test.uuid]);
+          vm.recentRuns[test.link].bugs = unique(vm.recentRuns[test.link].bugs);
+        }
+        vm.recentRuns[test.link].fails.push(test);
       });
+
+      for (var link in vm.recentRuns) {
+        if (vm.recentRuns[link].bugs.length === 0) {
+          vm.recentRuns[link].bugs = '';
+        } else {
+          vm.recentRuns[link].bugs = 'Likely bugs: ' + vm.recentRuns[link].bugs.join();
+        }
+      }
     });
     config.get().then(function(config) {
       vm.apiRoot = config.apiRoot;
