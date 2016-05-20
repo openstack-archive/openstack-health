@@ -86,6 +86,32 @@ something like::
 
 That will startup a uwsgi server running the rest api on port 5000.
 
+Database Configuration
+^^^^^^^^^^^^^^^^^^^^^^
+Depending on how your backend subunit2sql database is configured and how you've
+configured the WSGI app deployed you might want to adjust the access patterns
+used for querying the database. There are 3 options related to database access.
+The first is **mandatory**, `db_uri` is the sqlalchemy connection string for
+connecting to the database. The second option is `pool_size` which sets the size
+of the connection pool to use, the default being 20. This option is used to set
+the maxinum number of persistent connections allowed per process. It can be set
+to 0 to indicate there is no limit and -1 is used to disable pooling (which is
+normally a really bad idea). The last option is `pool_recycle` which is used to
+prevent the pool from using a connection which has passed a certain age. This is
+a value in seconds and it defaults to 3600 (1 hour) for more info about this
+option refer to the sqlalchemy documentation:
+`http://docs.sqlalchemy.org/en/latest/core/pooling.html#setting-pool-recycle <http://docs.sqlalchemy.org/en/latest/core/pooling.html#setting-pool-recycle>`_
+
+RSS Configuration
+^^^^^^^^^^^^^^^^^
+There are certain API queries that return an RSS feed on the wire. As part of
+the events generated on these feed there are links to pages on the JS frontend.
+To generate the correct links you have to tell the api server the base url of
+the frontend. This is set with the `frontend_url` option and it defaults to
+'http://status.openstack.org/openstack-health' the OpenStack community instance
+of OpenStack-Health.
+
+
 Elastic Recheck Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 There are certain API operations which will use the `elastic-recheck`_ project
