@@ -33,6 +33,7 @@ from flask.ext.jsonpify import jsonify
 from flask import make_response
 from flask import request
 from operator import itemgetter
+import pyelasticsearch
 import pytz
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -56,6 +57,7 @@ classifier = None
 rss_opts = {}
 feeds = {'last runs': {}}
 region = None
+es_url = None
 
 
 def get_app():
@@ -98,15 +100,16 @@ def setup():
     except ConfigParser.Error:
         rss_opts['frontend_url'] = ('http://status.openstack.org/'
                                     'openstack-health')
+    global query_dir
     try:
         query_dir = config.get('default', 'query_dir')
     except ConfigParser.Error:
         pass
+    global es_url
     try:
         es_url = config.get('default', 'es_url')
     except ConfigParser.Error:
         es_url = None
-
     if query_dir and er:
         global classifier
         classifier = er.Classifier(query_dir, es_url=es_url)
@@ -561,12 +564,31 @@ def _check_db_availability():
         return False
 
 
+def _check_er_availability():
+    global es_url
+    global query_dir
+    if not classifier:
+        if not er:
+            health = 'NotInstalled'
+        elif not es_url or not query_dir:
+            health = 'NotConfigured'
+    else:
+        url = classifier.es_url
+        es = pyelasticsearch.ElasticSearch(url)
+        health = {'Configured': {'elastic-search': es.health()['status']}}
+    return health
+
+
 @app.route('/status', methods=['GET'])
 def get_status():
 
     is_db_available = _check_db_availability()
+    is_er_available = _check_er_availability()
 
-    status = {'status': {'availability': {'database': is_db_available}}}
+    status = {'status': {'availability': {
+        'database': is_db_available,
+        'elastic-recheck': is_er_available
+    }}}
     response = jsonify(status)
 
     if not is_db_available:
