@@ -86,6 +86,7 @@ def setup():
     if not config:
         config = ConfigParser.ConfigParser()
         config.read('/etc/openstack-health.conf')
+    # Database Configuration
     global engine
     db_uri = _config_get(config.get, 'default', 'db_uri')
     pool_size = _config_get(config.getint, 'default', 'pool_size', 20)
@@ -95,38 +96,26 @@ def setup():
                            pool_recycle=pool_recycle)
     global Session
     Session = sessionmaker(bind=engine)
-    try:
-        rss_opts['frontend_url'] = config.get('default', 'frontend_url')
-    except ConfigParser.Error:
-        rss_opts['frontend_url'] = ('http://status.openstack.org/'
-                                    'openstack-health')
+    # RSS Configuration
+    rss_opts['frontend_url'] = _config_get(
+        config.get, 'default', 'frontend_url',
+        'http://status.openstack.org/openstack-health')
+    # Elastic-recheck Configuration
     global query_dir
-    try:
-        query_dir = config.get('default', 'query_dir')
-    except ConfigParser.Error:
-        pass
+    query_dir = _config_get(config.get, 'default', 'query_dir', None)
     global es_url
-    try:
-        es_url = config.get('default', 'es_url')
-    except ConfigParser.Error:
-        es_url = None
+    es_url = _config_get(config.get, 'default', 'es_url', None)
     if query_dir and er:
         global classifier
         classifier = er.Classifier(query_dir, es_url=es_url)
-
-    try:
-        backend = config.get('default', 'cache_backend')
-    except ConfigParser.Error:
-        backend = 'dogpile.cache.dbm'
-    try:
-        expire = config.getint('default', 'cache_expiration')
-    except ConfigParser.Error:
-        expire = datetime.timedelta(minutes=30)
-    try:
-        cache_file = config.get('default', 'cache_file')
-    except ConfigParser.Error:
-        cache_file = os.path.join(tempfile.gettempdir(),
-                                  'openstack-health.dbm')
+    # Cache Configuration
+    backend = _config_get(config.get, 'default', 'cache_backend',
+                          'dogpile.cache.dbm')
+    expire = _config_get(config.getint, 'default', 'cache_expiration',
+                         datetime.timedelta(minutes=30))
+    cache_file = _config_get(config.get, 'default', 'cache_file',
+                             os.path.join(tempfile.gettempdir(),
+                                          'openstack-health.dbm'))
     cache_url = _config_get(config.get, 'default', 'cache_url', None)
 
     global region
