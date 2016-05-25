@@ -141,7 +141,7 @@ interactive response times we cache the api response from requests using
 elasticsearch data. Note, that this caching is enabled regardless of whether
 elastic-recheck is enabled or not.
 
-There are three configuration options available around configuring caching.
+There are four configuration options available around configuring caching.
 While the defaults were picked to work in most situations depending on your
 specific deployment specifics there are other choices that might make more
 sense.
@@ -160,6 +160,16 @@ to keep a response cached. By default this is set to 30mins.
 The third option is `cache_file` which is used to set the file path when using
 the DBM backend is used. By default this is configured to use
 TEMPDIR/openstack-health.dbm
+
+The fourth option is `cache_url` which is used to provide the url to an external
+service, like memcached, for storing the cache data. This only needs to be set
+if you're using a backend that requires this.
+
+It also should be noted that when configuring caching using a non-default
+backend the API server will attempt to configure refreshing the cache
+asynchronously with a background thread. This makes the end user response near
+instantaneous in all cases because the cache is updated in the background
+instead of on an incoming request.
 
 Frontend
 --------

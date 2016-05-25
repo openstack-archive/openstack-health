@@ -119,7 +119,7 @@ def setup():
     except ConfigParser.Error:
         backend = 'dogpile.cache.dbm'
     try:
-        expire = config.get('default', 'cache_expiration')
+        expire = config.getint('default', 'cache_expiration')
     except ConfigParser.Error:
         expire = datetime.timedelta(minutes=30)
     try:
@@ -127,15 +127,20 @@ def setup():
     except ConfigParser.Error:
         cache_file = os.path.join(tempfile.gettempdir(),
                                   'openstack-health.dbm')
+    cache_url = _config_get(config.get, 'default', 'cache_url', None)
 
     global region
     if backend == 'dogpile.cache.dbm':
         args = {'filename': cache_file}
+        region = dogpile.cache.make_region().configure(
+            backend, expiration_time=expire, arguments=args)
     else:
-        args = {}
-    region = dogpile.cache.make_region().configure(backend,
-                                                   expiration_time=expire,
-                                                   arguments=args)
+        args = {'distributed_lock': True}
+        if cache_url:
+            args['url'] = cache_url
+        region = dogpile.cache.make_region(
+            async_creation_runner=_periodic_refresh_cache).configure(
+                backend, expiration_time=expire, arguments=args)
 
 
 def get_session():
@@ -462,12 +467,15 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
 
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
-def get_recent_test_status(status):
+def get_recent_test_status(status, num_runs=None):
     global region
     if not region:
         setup()
     status = parse.unquote(status)
-    num_runs = flask.request.args.get('num_runs', 10)
+    try:
+        num_runs = flask.request.args.get('num_runs', 10)
+    except RuntimeError:
+        num_runs = num_runs or 10
     bug_dict = {}
     query_threads = []
 
@@ -505,7 +513,22 @@ def get_recent_test_status(status):
             for thread in query_threads:
                 thread.join()
             return {'test_runs': output, 'bugs': bug_dict}
-    return jsonify(_get_recent(status))
+    results = _get_recent(status)
+    try:
+        return jsonify(results)
+    except RuntimeError:
+        return results
+
+
+def _periodic_refresh_cache(cache, status, creator, mutex):
+    def runner():
+        try:
+            value = creator()
+            cache.set(status, value)
+        finally:
+            mutex.release()
+    thread = threading.Thread(target=runner)
+    thread.start()
 
 
 @app.route('/run/<string:run_id>/tests', methods=['GET'])
