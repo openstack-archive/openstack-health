@@ -14,3 +14,4 @@ numpy>=1.7.0 # BSD
 six>=1.9.0 # MIT
 pytz>=2013.6 # MIT
 feedgen>=0.3.2 # BSD
+pyelasticsearch<1.0
