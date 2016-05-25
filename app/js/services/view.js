@@ -24,7 +24,10 @@ var viewService = function($rootScope, $location) {
     }
   });
 
-  var periodEnd = new Date();
+  var periodEnd = moment()
+        .startOf('hour')
+        .add(1,'hours')
+        .toDate();
   var periodOptions = [
     moment.duration({ hours: 1 }),
     moment.duration({ hours: 12 }),
@@ -117,8 +120,9 @@ var viewService = function($rootScope, $location) {
 
     periodStart: function() {
       return moment(periodEnd)
-          .subtract(selectDuration())
-          .toDate();
+        .startOf('hour')
+        .subtract(selectDuration())
+        .toDate();
     },
 
     periodOptions: function() {
