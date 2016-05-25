@@ -905,6 +905,50 @@ class TestRestAPI(base.TestCase):
             }]}
         self.assertEqual(expected_resp, response_data)
 
+    @mock.patch('subunit2sql.db.api.get_recent_failed_runs',
+                return_value=['a_convincing_id'])
+    @mock.patch('subunit2sql.db.api.get_test_runs_by_status_for_run_ids',
+                return_value=[
+                    {
+                        'test_id': u'fake_test',
+                        'link': u'fake_url',
+                        'start_time': timestamp_a,
+                        'stop_time': timestamp_b,
+                    }
+                ])
+    @mock.patch('subunit2sql.db.api.get_run_metadata',
+                return_value=[
+                    models.RunMetadata(key='build_short_uuid', value='abcd'),
+                    models.RunMetadata(key='build_patchset', value='3'),
+                ])
+    def test_get_recent_test_failures_with_missing_meta(self, meta_mock,
+                                                        db_mock, recent_mock):
+        setup_mock = mock.patch('openstack_health.api.setup')
+        setup_mock.start()
+        self.addCleanup(setup_mock.stop)
+        api.region = mock.MagicMock()
+        api.region.cache_on_arguments = mock.MagicMock()
+        api.region.cache_on_arguments.return_value = lambda x: x
+        api.classifier = mock.MagicMock()
+        api.classifier.classify = mock.MagicMock()
+        api.classifier.classify.return_value = ['12345']
+        res = self.app.get('/tests/recent/fail')
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(0, api.classifier.classify.call_count)
+        db_mock.assert_called_once_with('fail', ['a_convincing_id'],
+                                        session=api.Session(),
+                                        include_run_id=True)
+        response_data = json.loads(res.data.decode('utf-8'))
+        expected_resp = {
+            'bugs': {},
+            'test_runs': [{
+                'test_id': u'fake_test',
+                'link': u'fake_url',
+                'start_time': timestamp_a.isoformat(),
+                'stop_time': timestamp_b.isoformat(),
+            }]}
+        self.assertEqual(expected_resp, response_data)
+
     def test__gen_feed(self):
         url = 'fake_url'
         key = 'zeon'

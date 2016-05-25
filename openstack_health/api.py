@@ -483,6 +483,9 @@ def get_recent_test_status(status):
             if classifier:
                 for run in failed_runs:
                     metadata = api.get_run_metadata(run, session=session)
+                    short_uuid = None
+                    change_num = None
+                    patch_num = None
                     for meta in metadata:
                         if meta.key == 'build_short_uuid':
                             short_uuid = meta.value
@@ -490,6 +493,10 @@ def get_recent_test_status(status):
                             change_num = meta.value
                         elif meta.key == 'build_patchset':
                             patch_num = meta.value
+                    # NOTE(mtreinish): If the required metadata fields aren't
+                    # present skip ES lookup
+                    if not short_uuid or not change_num or not patch_num:
+                        continue
                     query_thread = threading.Thread(
                         target=_populate_bug_dict, args=(change_num, patch_num,
                                                          short_uuid, run))
