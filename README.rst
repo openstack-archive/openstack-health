@@ -151,7 +151,7 @@ The first is `cache_backend` which is used to set the python class for the
 `dogpile.cache.dbm` which uses a DBM file on disk. You can effectively disable
 all caching by setting this value to `dogpile.cache.null`.
 
-.. __dogpile.cache.api.CacheBackend: http://dogpilecache.readthedocs.io/en/latest/api.html#dogpile.cache.api.CacheBackend
+.. _dogpile.cache.api.CacheBackend: http://dogpilecache.readthedocs.io/en/latest/api.html#dogpile.cache.api.CacheBackend
 
 The second option is `cache_expiration` which is used to set the timeout value
 to use for any cached responses. This is an integer for the number of seconds
