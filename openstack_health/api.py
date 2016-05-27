@@ -64,9 +64,9 @@ def get_app():
     return app
 
 
-def _config_get(config_func, section, option, default_val=None):
+def _config_get(config_func, section, option, default_val=False):
     retval = default_val
-    if default_val:
+    if default_val is not False:
         try:
             retval = config_func(section, option)
         except ConfigParser.NoOptionError:
