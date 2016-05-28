@@ -5,6 +5,7 @@ build
 cover
 ./reports
 app/js/templates.js
+karma.subunit
 *.py[cod]
 
 # C extensions

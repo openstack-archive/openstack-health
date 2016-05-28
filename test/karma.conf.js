@@ -26,7 +26,7 @@ module.exports = function(config) {
       'app/js/**/*.js': ['browserify', 'babel', 'coverage']
     },
 
-    reporters: ['spec', 'coverage'],
+    reporters: ['spec', 'coverage', 'subunit'],
 
     port: 9876,
 
@@ -46,7 +46,8 @@ module.exports = function(config) {
       'karma-coverage',
       'karma-jasmine',
       'karma-spec-reporter',
-      'karma-chrome-launcher'
+      'karma-chrome-launcher',
+      'karma-subunit-reporter'
     ],
 
     browserify: {
@@ -67,6 +68,11 @@ module.exports = function(config) {
       instrumenterOptions: {
         istanbul: {noCompact: true}
       }
+    },
+
+    subunitReporter: {
+      tags: ['worker-0'],
+      slug: true
     },
 
     proxies: {
