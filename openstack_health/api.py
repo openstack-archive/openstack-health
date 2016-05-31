@@ -457,9 +457,12 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
                 return feeds[run_metadata_key][value].rss_str()
             feeds["last runs"][run_metadata_key][value] = last_run
         else:
-            msg = 'No Failed Runs for run metadata %s: %s' % (
-                run_metadata_key, value)
-            return abort(make_response(msg, 400))
+            count = api.get_runs_counts_by_run_metadata(
+                run_metadata_key, value, session=session)
+            if count == 0:
+                msg = 'No Failed Runs for run metadata %s: %s' % (
+                    run_metadata_key, value)
+                return abort(make_response(msg, 400))
         for run in failed_runs:
             meta = api.get_run_metadata(run.uuid, session=session)
             uuid = [x.value for x in meta if x.key == 'build_uuid'][0]

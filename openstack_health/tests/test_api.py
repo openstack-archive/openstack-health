@@ -1029,3 +1029,33 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(timestamp_b,
                          date_parser.parse(out.entries[0].published).replace(
                              tzinfo=None))
+
+    @mock.patch('subunit2sql.db.api.get_recent_failed_runs_by_run_metadata',
+                return_value=[])
+    @mock.patch('subunit2sql.db.api.get_runs_counts_by_run_metadata',
+                return_value=1)
+    def test_get_recent_failed_runs_rss_no_failure_valid_meta(self, count_mock,
+                                                              db_mock):
+        api.rss_opts['data_dir'] = tempfile.gettempdir()
+        api.rss_opts['frontend_url'] = 'http://status.openstack.org'
+        build_uuid = str(uuid.uuid4())
+        meta_mock = mock.patch(
+            'subunit2sql.db.api.get_run_metadata',
+            return_value=[
+                models.RunMetadata(key='build_name', value='job'),
+                models.RunMetadata(key='build_uuid', value=build_uuid)])
+        meta_mock.start()
+        self.addCleanup(meta_mock.stop)
+        res = self.app.get('/runs/key/b_key/b_value/recent/rss')
+        self.assertEqual(200, res.status_code)
+        db_mock.assert_called_once_with('b_key', 'b_value',
+                                        start_date=None, session=api.Session())
+        count_mock.assert_called_once_with('b_key', 'b_value',
+                                           session=api.Session())
+        db_mock.reset_mock()
+        count_mock.reset_mock()
+        out = feedparser.parse(res.data.decode('utf-8'))
+        title = 'Failures for %s: %s' % ('b_key', 'b_value')
+        self.assertEqual(title, out['feed']['title'])
+        self.assertEqual('en', out['feed']['language'])
+        self.assertEqual(0, len(out.entries))
