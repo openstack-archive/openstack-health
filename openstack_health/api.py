@@ -452,7 +452,9 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
             content = 'Metadata page: %s\n' % metadata_url
             content += '\nJob Page %s' % job_url
             entry.description(content)
-    return feeds[run_metadata_key][value].rss_str()
+    response = make_response(feeds[run_metadata_key][value].rss_str())
+    response.headers['Content-Type'] = 'application/xml; charset=utf-8'
+    return response
 
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
