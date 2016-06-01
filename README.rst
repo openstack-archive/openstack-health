@@ -171,6 +171,20 @@ asynchronously with a background thread. This makes the end user response near
 instantaneous in all cases because the cache is updated in the background
 instead of on an incoming request.
 
+**Recommended Production Cache Configuration:**
+The recommend way to configure your cache is to have memcached setup to use for
+distributed locking and then use the default dbm file store for the actual
+caching. This enables using an async worker that will update the cache in the
+background ensuring that users will never recieve an uncached response. To set
+this up you need to have memcached installed and running, then set the
+*cache_url* option set to the hostname for that server. After that the defaults
+to use the *dogpile.cache.dbm* backend are sufficient, however you can change
+the *cache_file* to live somewhere else. You can also set the *cache_expiration*
+to be a much lower value because the async worker updates the cache in the
+background, so you don't have to worry about a stale cache having a user facing
+performance impact.
+
+
 Frontend
 --------
 The production application can be build using::

@@ -39,6 +39,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
 
+from openstack_health import distributed_dbm
 from openstack_health.run_aggregator import RunAggregator
 from openstack_health import test_run_aggregator
 
@@ -121,8 +122,16 @@ def setup():
     global region
     if backend == 'dogpile.cache.dbm':
         args = {'filename': cache_file}
-        region = dogpile.cache.make_region().configure(
-            backend, expiration_time=expire, arguments=args)
+        if cache_url:
+            memcache_proxy = distributed_dbm.MemcachedLockedDBMProxy(
+                cache_url)
+            region = dogpile.cache.make_region(
+                async_creation_runner=_periodic_refresh_cache).configure(
+                    backend, expiration_time=expire, arguments=args,
+                    wrap=[memcache_proxy])
+        else:
+            region = dogpile.cache.make_region().configure(
+                backend, expiration_time=expire, arguments=args)
     else:
         args = {'distributed_lock': True}
         if cache_url:
