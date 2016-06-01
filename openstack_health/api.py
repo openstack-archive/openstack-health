@@ -438,12 +438,12 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
         for run in failed_runs:
             meta = api.get_run_metadata(run.uuid, session=session)
             uuid = [x.value for x in meta if x.key == 'build_uuid'][0]
+            build_name = [x.value for x in meta if x.key == 'build_name'][0]
             entry = fg.add_entry()
             entry.id(uuid)
-            entry.title('Failed Run %s' % uuid)
+            entry.title('Failed Run %s/%s' % (build_name, uuid[:7]))
             entry.published(pytz.utc.localize(run.run_at))
             entry.link({'href': run.artifacts, 'rel': 'alternate'})
-            build_name = [x.value for x in meta if x.key == 'build_name'][0]
             # TODO(mtreinish): Make this html
             metadata_url = rss_opts['frontend_url'] + '/#/' + parse.quote(
                 'g/%s/%s' % (run_metadata_key, value))
