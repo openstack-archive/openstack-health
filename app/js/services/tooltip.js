@@ -43,7 +43,7 @@ function TooltipService() {
       }
 
       angular.forEach(content, function(row) {
-        // row can be a function to output colum values (or more functions)
+        // row can be a function to output column values (or more functions)
         if (angular.isFunction(row)) {
           row = row(d);
         }
