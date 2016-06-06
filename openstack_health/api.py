@@ -29,9 +29,9 @@ import dogpile.cache
 from feedgen import feed
 import flask
 from flask import abort
-from flask.ext.jsonpify import jsonify
 from flask import make_response
 from flask import request
+from flask_jsonpify import jsonify
 from operator import itemgetter
 import pyelasticsearch
 import pytz
