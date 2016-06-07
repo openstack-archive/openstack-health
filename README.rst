@@ -94,7 +94,7 @@ used for querying the database. There are 3 options related to database access.
 The first is **mandatory**, `db_uri` is the sqlalchemy connection string for
 connecting to the database. The second option is `pool_size` which sets the size
 of the connection pool to use, the default being 20. This option is used to set
-the maxinum number of persistent connections allowed per process. It can be set
+the maximum number of persistent connections allowed per process. It can be set
 to 0 to indicate there is no limit and -1 is used to disable pooling (which is
 normally a really bad idea). The last option is `pool_recycle` which is used to
 prevent the pool from using a connection which has passed a certain age. This is
@@ -175,7 +175,7 @@ instead of on an incoming request.
 The recommend way to configure your cache is to have memcached setup to use for
 distributed locking and then use the default dbm file store for the actual
 caching. This enables using an async worker that will update the cache in the
-background ensuring that users will never recieve an uncached response. To set
+background ensuring that users will never receive an uncached response. To set
 this up you need to have memcached installed and running, then set the
 *cache_url* option set to the hostname for that server. After that the defaults
 to use the *dogpile.cache.dbm* backend are sufficient, however you can change

@@ -16,7 +16,7 @@ function GroupedRunsController(
 
   // decodeURI is needed here because project names contains slash as part
   // of the name. As this come from an URL part and URL can be encoded,
-  // this decode call make the project name exebition properly.
+  // this decode call make the project name exhibition properly.
   vm.runMetadataKey = decodeURIComponent(runMetadataKey);
   vm.name = decodeURIComponent(name);
   vm.recentRuns = [];
