@@ -48,12 +48,10 @@ function crumbMenu() {
     };
 
     $scope.$on('view:resolution', function(event, resolution) {
-      $location.search('resolutionKey', resolution.key).replace();
       $scope.selectedResolution = resolution;
     });
 
     $scope.$on('view:groupKey', function(event, groupKey) {
-      $location.search('groupKey', groupKey).replace();
       $scope.selectedGroupKey = groupKey;
     });
 
