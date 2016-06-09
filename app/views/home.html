@@ -61,40 +61,42 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default table-responsive">
                 <div class="panel-heading">
                     <h3 class="panel-title">Failed Tests in Last 10 Failed Runs</h3>
                 </div>
-                <div class="table-responsive">
-                    <uib-accordion close-others="false">
-                        <div ng-repeat="(key, value) in home.recentRuns">
-                            <uib-accordion-group
-                             template-url="templates/accordion-group-run.html"
-                             heading="{{ key }};{{ value.bugs }}"
-                             is-open="false">
-                                <table table-sort data="value.fails"
-                                       class="table table-hover default-cols">
-                                    <thead>
-                                        <tr>
-                                          <th sort-field="test_id">Test ID</th>
-                                          <th sort-field="start_time">Start Time</th>
-                                          <th sort-default sort-field="stop_time">Stop Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr ng-repeat="(k, v) in value.fails">
-                                          <td><a ui-sref="test({ testId: v.test_id })"}>
-                                            {{ v.test_id }}</a>
-                                          </td>
-                                          <td>{{ v.start_time | date:'M/d/yyyy HH:mm' }}</td>
-                                          <td>{{ v.stop_time | date:'M/d/yyyy HH:mm' }}</td>
-                                      </tr>
-                                    </tbody>
-                                </table>
-                            </uib-accordion-group>
-                        </div>
-                    </uib-accordion>
-                </div>
+                <table class="table table-hover default-cols">
+                    <thead>
+                        <tr>
+                            <th class="tiny"></th>
+                            <th>Job</th>
+                            <th>Artifacts Link</th>
+                            <th># Failed</th>
+                            <th>Likely Bugs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr nest="templates/run-details.html"
+                            ng-repeat="(key, value) in home.recentRuns">
+
+                            <td><span nest-toggle nest-indicator></span></td>
+                            <td><a href nest-toggle>{{key | split:'/' | last:2 | pick:0}}</a></td>
+                            <td>
+                                <a target="_blank" href="{{ key }}">
+                                    {{key | split:'/' | last:2 | pick:1}}
+                                    <fa name="external-link"></fa>
+                                </a>
+                            </td>
+                            <td>{{ value.fails.length }}</td>
+                            <td>
+                              <span ng-if="!!value.bugs">
+                                  {{ scope.value.bugs}}
+                              </span>
+                              <span ng-if="!value.bugs">-</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
