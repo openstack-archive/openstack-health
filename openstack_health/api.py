@@ -251,23 +251,30 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 
 @app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
 def get_test_runs_by_build_name(build_name):
-    key = 'build_name'
     value = parse.unquote(build_name)
-    if not key or not value:
-        return 'A key and value must be specified', 400
+    if not value:
+        return 'A build name must be specified', 400
     start_date = _parse_datetimes(flask.request.args.get('start_date', None))
     stop_date = _parse_datetimes(flask.request.args.get('stop_date', None))
     datetime_resolution = flask.request.args.get('datetime_resolution', 'sec')
     if datetime_resolution not in ['sec', 'min', 'hour', 'day']:
         return ('Datetime resolution: %s, is not a valid'
                 ' choice' % datetime_resolution), 400
-    with session_scope() as session:
-        tests = api.get_test_run_dict_by_run_meta_key_value(key, value,
-                                                            start_date,
-                                                            stop_date, session)
-        tests = test_run_aggregator.TestRunAggregator(tests).aggregate(
-            datetime_resolution=datetime_resolution)
-        return jsonify({'tests': tests})
+
+    @region.cache_on_arguments()
+    def _query_test_runs_by_build_name(name, start_date, stop_date):
+        with session_scope() as session:
+            tests = api.get_test_run_dict_by_run_meta_key_value('build_name',
+                                                                name,
+                                                                start_date,
+                                                                stop_date,
+                                                                session)
+            tests = test_run_aggregator.TestRunAggregator(tests).aggregate(
+                datetime_resolution=datetime_resolution)
+        return tests
+
+    output = _query_test_runs_by_build_name(value, start_date, stop_date)
+    return jsonify({'tests': output})
 
 
 @app.route('/runs', methods=['GET'])

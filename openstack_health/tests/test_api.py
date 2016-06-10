@@ -87,6 +87,9 @@ class TestRestAPI(base.TestCase):
                      'stop_time': timestamp_b}
                 ])
     def test_get_test_runs_by_build_name(self, api_mock):
+        api.region = mock.MagicMock()
+        api.region.cache_on_arguments = mock.MagicMock()
+        api.region.cache_on_arguments.return_value = lambda x: x
         res = self.app.get('/build_name/fake_tests/test_runs')
         self.assertEqual(200, res.status_code)
         api_mock.assert_called_once_with('build_name', 'fake_tests', None,
