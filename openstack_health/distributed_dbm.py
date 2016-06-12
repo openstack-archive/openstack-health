@@ -14,9 +14,9 @@
 
 
 from dogpile.cache.backends import memcached
-from dogpile.cache import compat
 from dogpile.cache import proxy
-from dogpile.cache import util
+from dogpile import util
+from dogpile.util import compat
 from pymemcache.client import base
 
 
