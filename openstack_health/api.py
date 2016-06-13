@@ -467,15 +467,12 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
 
 
 @app.route('/tests/recent/<string:status>', methods=['GET'])
-def get_recent_test_status(status, num_runs=None):
+def get_recent_test_status(status):
     global region
     if not region:
         setup()
     status = parse.unquote(status)
-    try:
-        num_runs = flask.request.args.get('num_runs', 10)
-    except RuntimeError:
-        num_runs = num_runs or 10
+    num_runs = flask.request.args.get('num_runs', 10)
     bug_dict = {}
     query_threads = []
 
@@ -521,10 +518,7 @@ def get_recent_test_status(status, num_runs=None):
                 thread.join()
             return {'test_runs': output, 'bugs': bug_dict}
     results = _get_recent(status)
-    try:
-        return jsonify(results)
-    except RuntimeError:
-        return results
+    return jsonify(results)
 
 
 def _periodic_refresh_cache(cache, status, creator, mutex):
