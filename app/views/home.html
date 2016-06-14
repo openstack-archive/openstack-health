@@ -90,7 +90,11 @@
                             <td>{{ value.fails.length }}</td>
                             <td>
                               <span ng-if="!!value.bugs">
-                                  {{ scope.value.bugs}}
+                                <a ng-repeat="bug in value.bugs"
+                                   href="https://launchpad.net/bugs/{{bug}}"
+                                   uib-tooltip="Launchpad Bugs: {{bug}}"
+                                   target="_blank">{{bug}} <fa name="external-link"></fa>
+                                </a>
                               </span>
                               <span ng-if="!value.bugs">-</span>
                             </td>

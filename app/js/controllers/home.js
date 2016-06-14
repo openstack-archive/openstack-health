@@ -150,7 +150,7 @@ function HomeController(
         if (vm.recentRuns[link].bugs.length === 0) {
           vm.recentRuns[link].bugs = '';
         } else {
-          vm.recentRuns[link].bugs = vm.recentRuns[link].bugs.join();
+          vm.recentRuns[link].bugs = [].concat.apply([], vm.recentRuns[link].bugs);
         }
       }
     });
