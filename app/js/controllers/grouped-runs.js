@@ -42,12 +42,18 @@ function GroupedRunsController(
     vm.hold -= 1;
   };
 
-  vm.processData = function(data) {
+  vm.processData = function(data, regex) {
     // prepare chart data
     var jobs = {};
     var passEntries = [];
     var failEntries = [];
     var failRateEntries = [];
+    var pattern = null;
+    try {
+      pattern = new RegExp(regex);
+    } catch (e) {
+      pattern = '';
+    }
 
     if (!data.timedelta) {
       return;
@@ -60,31 +66,34 @@ function GroupedRunsController(
       var DEFAULT_FAIL_RATE = 0;
 
       timedelta.job_data.forEach(function(job) {
-        var successfulJobs = 0;
-        var failedJobs = 0;
-        var jobFailRate = 0;
+        if (pattern.test(job.job_name)) {
 
-        if (!jobs[job.job_name]) {
-          var jobMetrics = {
-            name: job.job_name,
-            passes: 0,
-            failures: 0,
-            failuresRate: 0
-          };
-          jobs[job.job_name] = jobMetrics;
+          var successfulJobs = 0;
+          var failedJobs = 0;
+          var jobFailRate = 0;
+
+          if (!jobs[job.job_name]) {
+            var jobMetrics = {
+              name: job.job_name,
+              passes: 0,
+              failures: 0,
+              failuresRate: 0
+            };
+            jobs[job.job_name] = jobMetrics;
+          }
+
+          totalPass += job.pass;
+          totalFail += job.fail;
+
+          jobs[job.job_name].passes += job.pass;
+          jobs[job.job_name].failures += job.fail;
+
+          successfulJobs = jobs[job.job_name].passes;
+          failedJobs = jobs[job.job_name].failures;
+          jobFailRate = (failedJobs / (failedJobs + successfulJobs)) * 100 || DEFAULT_FAIL_RATE;
+
+          jobs[job.job_name].failuresRate = jobFailRate;
         }
-
-        totalPass += job.pass;
-        totalFail += job.fail;
-
-        jobs[job.job_name].passes += job.pass;
-        jobs[job.job_name].failures += job.fail;
-
-        successfulJobs = jobs[job.job_name].passes;
-        failedJobs = jobs[job.job_name].failures;
-        jobFailRate = (failedJobs / (failedJobs + successfulJobs)) * 100 || DEFAULT_FAIL_RATE;
-
-        jobs[job.job_name].failuresRate = jobFailRate;
       });
 
       failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
@@ -129,7 +138,7 @@ function GroupedRunsController(
       stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
-      vm.processData(response.data);
+      vm.processData(response.data, vm.searchJob);
       vm.loaded = true;
     });
     healthService.getRecentGroupedRuns(vm.runMetadataKey, vm.name).then(function(response) {
@@ -153,6 +162,7 @@ function GroupedRunsController(
 
   vm.onSearchChange = function() {
     $location.search('searchJob', $scope.groupedRuns.searchJob).replace();
+    vm.loadData();
   };
 }
 
