@@ -453,13 +453,15 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
             entry.title('Failed Run %s/%s' % (build_name, uuid[:7]))
             entry.published(pytz.utc.localize(run.run_at))
             entry.link({'href': run.artifacts, 'rel': 'alternate'})
-            # TODO(mtreinish): Make this html
             metadata_url = rss_opts['frontend_url'] + '/#/' + parse.quote(
                 'g/%s/%s' % (run_metadata_key, value))
             job_url = rss_opts['frontend_url'] + '/#/' + parse.quote(
                 'job/%s' % build_name)
-            content = 'Metadata page: %s\n' % metadata_url
-            content += '\nJob Page %s' % job_url
+            content = '<ul>'
+            content += '<li><a href="%s">Metadata page</a></li>\n' % (
+                metadata_url)
+            content += '<li><a href="%s">Job Page</a></li>' % (job_url)
+            content += '</ul>'
             entry.description(content)
     response = make_response(feeds[run_metadata_key][value].rss_str())
     response.headers['Content-Type'] = 'application/xml; charset=utf-8'
