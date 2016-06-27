@@ -60,6 +60,7 @@
     "karma-subunit-reporter": "0.0.4",
     "moment": "^2.11.1",
     "morgan": "^1.6.1",
+    "nprogress": "^0.2.0",
     "pretty-hrtime": "^1.0.0",
     "protractor": "^2.2.0",
     "protractor-http-mock": "^0.1.18",

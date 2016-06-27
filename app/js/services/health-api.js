@@ -3,6 +3,8 @@
 var angular = require('angular');
 
 var servicesModule = require('./_index.js');
+var nprogress = require('nprogress');
+nprogress.configure();
 
 /**
  * @ngInject
@@ -17,6 +19,7 @@ function httpProviderInterceptor($httpProvider) {
     return {
       'request': function(config) {
         count++;
+        nprogress.start();
 
         $rootScope.$broadcast('loading-started');
         $rootScope.loadingStatus = 'loading';
@@ -29,12 +32,14 @@ function httpProviderInterceptor($httpProvider) {
 
         if (count === 0 && $rootScope.loadingStatus !== 'error') {
           $rootScope.loadingStatus = null;
+          nprogress.done();
         }
 
         return response || $q.when(response);
       },
       'responseError': function(rejection) {
         count--;
+        nprogress.done();
 
         // we only ever get useless '404' errors with JSONP, so don't bother
         // including a message
