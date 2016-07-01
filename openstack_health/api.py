@@ -123,10 +123,19 @@ def setup():
     if backend == 'dogpile.cache.dbm':
         args = {'filename': cache_file}
         if cache_url:
+            def _key_generator(namespace, fn, **kw):
+                namespace = fn.__name__ + (namespace or '')
+
+                def generate_key(*arg):
+                    return namespace + "_".join(
+                        str(s).replace(' ', '_') for s in arg)
+                return generate_key
+
             memcache_proxy = distributed_dbm.MemcachedLockedDBMProxy(
                 cache_url)
             region = dogpile.cache.make_region(
-                async_creation_runner=_periodic_refresh_cache).configure(
+                async_creation_runner=_periodic_refresh_cache,
+                function_key_generator=_key_generator).configure(
                     backend, expiration_time=expire, arguments=args,
                     wrap=[memcache_proxy])
         else:
