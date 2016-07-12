@@ -33,7 +33,7 @@ function TestController(
       count.passes += 1;
     }
     else if (status == 'fail' || status == 'unxsuccess') {
-      count.failes += 1;
+      count.fails += 1;
     }
     else if (status == 'skip') {
       count.skips += 1;
