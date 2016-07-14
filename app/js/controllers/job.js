@@ -29,7 +29,7 @@ function JobController(
     vm.hold -= 1;
   };
 
-  vm.processData = function(data) {
+  vm.processData = function(data, regex) {
     vm.chartData = [];
     vm.chartDataRate = [];
     vm.tests = [];
@@ -38,12 +38,19 @@ function JobController(
       return;
     }
 
+    var pattern = null;
+    try {
+      pattern = new RegExp(regex);
+    } catch (e) {
+      pattern = '';
+    }
     // prepare chart data
     var tests = {};
     var passEntries = [];
     var failEntries = [];
     var skipEntries = [];
     var failRateEntries = [];
+    var DEFAULT_FAIL_RATE = 0;
 
     var date = '';
     for (date in data.tests) {
@@ -65,6 +72,9 @@ function JobController(
 
         var testData = testsInDate[testName];
         var cleanTestName = testService.removeIdNoise(testName);
+        if (!pattern.test(cleanTestName)) {
+          continue;
+        }
 
         if (!tests[cleanTestName]) {
           var testMetrics = {
@@ -115,9 +125,10 @@ function JobController(
         y: totalFail
       });
 
+      failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
       failRateEntries.push({
         x: new Date(date).getTime(),
-        y: totalFail / (totalFail + totalPass)
+        y: failRate
       });
 
       skipEntries.push({
@@ -153,7 +164,7 @@ function JobController(
       stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
-      vm.processData(response.data);
+      vm.processData(response.data, vm.searchTest);
       vm.loaded = true;
     });
     healthService.getRecentGroupedRuns('build_name', vm.name).then(function(response) {
@@ -179,6 +190,7 @@ function JobController(
 
   vm.onSearchChange = function() {
     $location.search('searchTest', $scope.job.searchTest).replace();
+    vm.loadData();
   };
 }
 
