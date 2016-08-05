@@ -49,6 +49,11 @@ function TestController(
     var runTimeEntries = [];
     var avgRunTimeEntries = [];
     var dateString, dateTimeString;
+    vm.totalCounts = {
+      passes: 0,
+      fails: 0,
+      skips: 0
+    };
 
     for (dateString in data.data) {
       if (data.data.hasOwnProperty(dateString)) {
@@ -70,6 +75,7 @@ function TestController(
         else {
           dates[date] = incCount(test.status, dates[date]);
         }
+        vm.totalCounts = incCount(test.status, vm.totalCounts);
       }
     }
     for (date in dates) {  // eslint-disable-line guard-for-in
@@ -89,6 +95,11 @@ function TestController(
         });
       }
     }
+    var totalRuns = vm.totalCounts.passes + vm.totalCounts.fails + vm.totalCounts.skips;
+    vm.totalCounts.failPercent = (vm.totalCounts.fails / totalRuns) * 100.0;
+    vm.totalCounts.skipPercent = (vm.totalCounts.skips / totalRuns) * 100.0;
+    vm.totalCounts.passPercent = (vm.totalCounts.passes / totalRuns) * 100.0;
+
     vm.statusData = [
       { key: 'Passes', values: passEntries, color: 'blue' },
       { key: 'Failures', values: failEntries, color: 'red' },
