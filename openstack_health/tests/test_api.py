@@ -748,6 +748,13 @@ class TestRestAPI(base.TestCase):
                     stop_time=timestamp_b,
                     stop_time_microsecond=0)])
     def test_get_test_runs_for_test(self, api_mock):
+        setup_mock = mock.patch('openstack_health.api.setup')
+        setup_mock.start()
+        self.addCleanup(setup_mock.stop)
+        api.classifier = None
+        api.region = mock.MagicMock()
+        api.region.cache_on_arguments = mock.MagicMock()
+        api.region.cache_on_arguments.return_value = lambda x: x
         res = self.app.get('/test_runs/fake.test.id')
         self.assertEqual(200, res.status_code)
         exp_result = {'data': {
@@ -759,7 +766,7 @@ class TestRestAPI(base.TestCase):
                 'avg_run_time': numpy.NaN,
                 'run_time': 1.0,
                 'std_dev_run_time': numpy.NaN
-            }}
+            }}, 'failed_runs': []
         }
         response_data = json.loads(res.data.decode('utf-8'))
         numpy.testing.assert_equal(exp_result, response_data)

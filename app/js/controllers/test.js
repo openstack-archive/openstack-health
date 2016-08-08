@@ -133,6 +133,7 @@ function TestController(
       {key: 'Run Time (sec.)', values: runTimeEntries, color: 'blue'},
       {key: 'Avg. Run Time (sec.)', values: avgRunTimeEntries, color: 'black'}
     ];
+    vm.recentRuns = data.failed_runs;
   };
 
   vm.loadData = function() {

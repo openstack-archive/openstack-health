@@ -660,20 +660,95 @@ def get_test_runs_for_test(test_id):
                    ' choice' % datetime_resolution)
         status_code = 400
         return abort(make_response(message, status_code))
-    with session_scope() as session:
-        db_test_runs = api.get_test_runs_by_test_test_id(test_id,
-                                                         session=session,
-                                                         start_date=start_date,
-                                                         stop_date=stop_date)
-        if not db_test_runs:
-            # NOTE(mtreinish) if no data is returned from the DB just return an
-            # empty set response, the test_run_aggregator function assumes data
-            # is present.
-            return jsonify({'numeric': {}, 'data': {}})
-        test_runs =\
-            test_run_aggregator.convert_test_runs_list_to_time_series_dict(
-                db_test_runs, datetime_resolution)
-        return jsonify(test_runs)
+
+    bug_dict = {}
+    query_threads = []
+
+    def _populate_bug_dict(change_dict):
+        for run in change_dict:
+            change_num = change_dict[run]['change_num']
+            patch_num = change_dict[run]['patch_num']
+            short_uuid = change_dict[run]['short_uuid']
+            result = classifier.classify(change_num, patch_num,
+                                         short_uuid)
+            bug_dict[run] = result
+
+    @region.cache_on_arguments()
+    def _get_data(test_id, start_date, stop_date):
+        with session_scope() as session:
+            db_test_runs = api.get_test_runs_by_test_test_id(
+                test_id, session=session, start_date=start_date,
+                stop_date=stop_date)
+            if not db_test_runs:
+                # NOTE(mtreinish) if no data is returned from the DB just
+                # return an empty set response, the test_run_aggregator
+                # function assumes data is present.
+                return jsonify({'numeric': {}, 'data': {}, 'failed_runs': {}})
+            test_runs =\
+                test_run_aggregator.convert_test_runs_list_to_time_series_dict(
+                    db_test_runs, datetime_resolution)
+            failed_run_ids = [
+                x.run_id for x in db_test_runs if x.status == 'fail']
+            failed_runs = api.get_runs_by_ids(failed_run_ids, session=session)
+            job_names = {}
+            providers = {}
+            failed_uuids = [x.uuid for x in failed_runs]
+            split_uuids = []
+            if len(failed_uuids) <= 10:
+                split_uuids = [[x] for x in failed_uuids]
+            else:
+                for i in range(0, len(failed_uuids), 10):
+                    end = i + 10
+                    split_uuids.append(failed_uuids[i:end])
+            for uuids in split_uuids:
+                change_dict = {}
+                for uuid in uuids:
+                    metadata = api.get_run_metadata(uuid, session=session)
+                    short_uuid = None
+                    change_num = None
+                    patch_num = None
+                    for meta in metadata:
+                        if meta.key == 'build_short_uuid':
+                            short_uuid = meta.value
+                        elif meta.key == 'build_change':
+                            change_num = meta.value
+                        elif meta.key == 'build_patchset':
+                            patch_num = meta.value
+                        elif meta.key == 'build_name':
+                            job_names[uuid] = meta.value
+                        elif meta.key == 'node_provider':
+                            providers[uuid] = meta.value
+                    # NOTE(mtreinish): If the required metadata fields
+                    # aren't present skip ES lookup
+                    if not short_uuid or not change_num or not patch_num:
+                        continue
+                global classifier
+                if classifier:
+                    change_dict[uuid] = {
+                        'change_num': change_num,
+                        'patch_num': patch_num,
+                        'short_uuid': short_uuid,
+                    }
+                    query_thread = threading.Thread(
+                        target=_populate_bug_dict, args=[change_dict])
+                    query_threads.append(query_thread)
+                    query_thread.start()
+            output = []
+            for thread in query_threads:
+                thread.join()
+            for run in failed_runs:
+                temp_run = {}
+                temp_run['provider'] = providers.get(run.uuid)
+                temp_run['job_name'] = job_names.get(run.uuid)
+                temp_run['run_at'] = run.run_at.isoformat()
+                temp_run['artifacts'] = run.artifacts
+                temp_run['bugs'] = bug_dict.get(run.uuid, [])
+                output.append(temp_run)
+            test_runs['failed_runs'] = output
+        return test_runs
+
+    results = _get_data(test_id, start_date, stop_date)
+    return jsonify(results)
 
 
 def main():
