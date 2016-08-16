@@ -43,7 +43,10 @@ table.default-cols {
     }
 
     tbody {
-        td {
+        td.nowrap{
+            white-space: nowrap;
+        }
+        td:not(.nowrap) {
             white-space: normal !important;
             word-wrap: break-word;
             max-width: 650px;
