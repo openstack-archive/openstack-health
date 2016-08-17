@@ -6,7 +6,8 @@ var controllersModule = require('./_index');
  * @ngInject
  */
 function TestController(
-  $scope, healthService, testService, viewService, periodsService,
+  $scope, healthService, testService,
+  viewService, periodsService, pageTitleService,
   testId) {
 
   // ViewModel
@@ -15,6 +16,8 @@ function TestController(
   vm.testShortName = testService.getShortName(testId);
   vm.loaded = false;
   vm.hold = 0;
+
+  pageTitleService.update('Test: ' + vm.testShortName);
 
   var configurePeriods = function() {
     vm.hold += 1;

@@ -6,8 +6,9 @@ var controllersModule = require('./_index');
  * @ngInject
  */
 function JobController(
-  $scope, healthService, viewService, testService, periodsService,
-  jobName, $location) {
+  $location, $scope,
+  healthService, viewService, testService, periodsService, pageTitleService,
+  jobName) {
   // ViewModel
   var vm = this;
 
@@ -16,6 +17,8 @@ function JobController(
   vm.recentRuns = [];
   vm.loaded = false;
   vm.hold = 0;
+
+  pageTitleService.update('Job: ' + vm.name);
 
   var configurePeriods = function() {
     vm.hold += 1;
