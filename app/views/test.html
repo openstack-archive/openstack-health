@@ -94,7 +94,7 @@
                     <tbody>
                         <tr table-ref="table" ng-repeat="run in table.dataSorted">
                             <td><a ui-sref="job({ jobName: run.job_name })">{{ run.job_name }}</a></td>
-                            <td>{{ run.provider }}</td>
+                            <td><a ui-sref="groupedRuns({ runMetadataKey: 'node_provider', name: run.provider })">{{ run.provider }}</a></td>
                             <td class="nowrap">{{ run.run_at | date:'M/d/yyyy HH:mm' }}</td>
                             <td>
                                 <a target="_blank" href="{{ run.artifacts }}">
