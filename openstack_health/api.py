@@ -170,6 +170,19 @@ def session_scope():
         session.close()
 
 
+def elastic_recheck_cached(change_num, patch_num, short_uuid):
+    global region
+    if not region:
+        setup()
+
+    @region.cache_on_arguments()
+    def _elastic_recheck_cached(change_num, patch_num, short_uuid):
+        return classifier.classify(change_num, patch_num,
+                                   short_uuid, recent=False)
+
+    return _elastic_recheck_cached(change_num, patch_num, short_uuid)
+
+
 @app.route('/', methods=['GET'])
 def list_routes():
     output = []
@@ -498,8 +511,8 @@ def get_recent_test_status(status):
     query_threads = []
 
     def _populate_bug_dict(change_num, patch_num, short_uuid, run):
-        bug_dict[run] = classifier.classify(change_num, patch_num,
-                                            short_uuid, recent=True)
+        bug_dict[run] = elastic_recheck_cached(change_num, patch_num,
+                                               short_uuid)
 
     @region.cache_on_arguments()
     def _get_recent(status):
@@ -672,8 +685,8 @@ def get_test_runs_for_test(test_id):
             change_num = change_dict[run]['change_num']
             patch_num = change_dict[run]['patch_num']
             short_uuid = change_dict[run]['short_uuid']
-            result = classifier.classify(change_num, patch_num,
-                                         short_uuid)
+            result = elastic_recheck_cached(change_num, patch_num,
+                                            short_uuid)
             bug_dict[run] = result
 
     @region.cache_on_arguments()
