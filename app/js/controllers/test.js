@@ -119,9 +119,7 @@ function TestController(
         if (!isNaN(test.run_time)) {
           runTimeEntries.push({
             x: date,
-            y: parseFloat(test.run_time),
-            size: 1,
-            shape: 'circle'
+            y: parseFloat(test.run_time)
           });
         }
         if (!isNaN(test.avg_run_time)) {
@@ -133,8 +131,10 @@ function TestController(
       }
     }
     vm.timeData = [
-      {key: 'Run Time (sec.)', values: runTimeEntries, color: 'blue'},
-      {key: 'Avg. Run Time (sec.)', values: avgRunTimeEntries, color: 'black'}
+      {key: 'Run Time (sec.)', values: runTimeEntries, color: 'blue',
+       type: 'scatter', yAxis: 1},
+      {key: 'Avg. Run Time (sec.)', values: avgRunTimeEntries, color: 'black',
+       type: 'line', yAxis: 1}
     ];
     vm.recentRuns = data.failed_runs;
   };
