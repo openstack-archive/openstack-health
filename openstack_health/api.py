@@ -699,7 +699,7 @@ def get_test_runs_for_test(test_id):
                 # NOTE(mtreinish) if no data is returned from the DB just
                 # return an empty set response, the test_run_aggregator
                 # function assumes data is present.
-                return jsonify({'numeric': {}, 'data': {}, 'failed_runs': {}})
+                return {'numeric': {}, 'data': {}, 'failed_runs': {}}
             test_runs =\
                 test_run_aggregator.convert_test_runs_list_to_time_series_dict(
                     db_test_runs, datetime_resolution)
