@@ -44,6 +44,7 @@ from openstack_health.run_aggregator import RunAggregator
 from openstack_health import test_run_aggregator
 
 try:
+    from elastic_recheck import config as er_config
     from elastic_recheck import elasticRecheck as er
 except ImportError:
     er = None
@@ -107,8 +108,9 @@ def setup():
     global es_url
     es_url = _config_get(config.get, 'default', 'es_url', None)
     if query_dir and er:
+        elastic_config = er_config.Config(es_url=es_url)
         global classifier
-        classifier = er.Classifier(query_dir, es_url=es_url)
+        classifier = er.Classifier(query_dir, config=elastic_config)
     # Cache Configuration
     backend = _config_get(config.get, 'default', 'cache_backend',
                           'dogpile.cache.dbm')
@@ -631,7 +633,7 @@ def _check_er_availability():
         elif not es_url or not query_dir:
             health = 'NotConfigured'
     else:
-        url = classifier.es_url
+        url = classifier.config.es_url
         es = pyelasticsearch.ElasticSearch(url)
         health = {'Configured': {'elastic-search': es.health()['status']}}
     return health
