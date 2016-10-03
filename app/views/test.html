@@ -14,14 +14,39 @@
             <fresh-check></fresh-check>
         </div>
     </div>
-    <div class=row>
+    <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Run Time</h3>
                 </div>
                 <div class="panel-body">
-                    <chart-multi data="testCtrl.timeData" width="100%" height="450"></chart-multi>
+                    <chart width="100%" height="450px">
+                        <chart-axis name="x" type="time" path=".x" opposes="y"
+                                    align="bottom" orient="horizontal" draw="true"
+                                    granular-format="%x %X"></chart-axis>
+                        <chart-axis name="y" type="linear" path=".y" opposes="x"
+                                    align="left" orient="vertical" draw="true" grid="true"
+                                    granular-format=".1f| sec"></chart-axis>
+
+                        <chart-dataset name="runtime"
+                                       title="Run Time"
+                                       data="testCtrl.runTimeEntries"></chart-dataset>
+                        <chart-dataset name="avg"
+                                       title="Avg. Run Time"
+                                       data="testCtrl.avgRunTimeEntries"></chart-dataset>
+
+                        <chart-canvas-line dataset="avg"
+                                           axes="x y"
+                                           stroke="black"
+                                           line-width="2"></chart-canvas-line>
+                        <chart-canvas-scatter dataset="runtime"
+                                              axes="x y"
+                                              fill="rgba(0,0,255,0.5)"
+                                              radius="2"></chart-canvas-scatter>
+
+                        <chart-tooltip primary="x" secondary="y"></chart-tooltip>
+                    </chart>
                 </div>
             </div>
         </div>
