@@ -50,11 +50,9 @@ function HomeController(
     var dateStats = projectService.getStatsByDate(projects);
     var entries = getChartEntries(dateStats, blanks);
 
-    vm.chartData = [
-      { key: 'Passes', values: entries.passes, color: 'blue' },
-      { key: 'Failures', values: entries.failures, color: 'red' }
-    ];
-    vm.chartDataRate = [{ key: '% Failures', values: entries.failRate }];
+    vm.passes = entries.passes;
+    vm.failures = entries.failures;
+    vm.failRate = entries.failRate;
     vm.projects = projects
       .sort(byFailRateDesc)
       .map(function(project) { return generateHorizontalBarData(project); });

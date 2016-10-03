@@ -31,8 +31,39 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <chart-line data="job.chartData" width="100%" height="250"
-                                tick-format-x="d"></chart-line>
+                    <chart width="100%" height="250px">
+                        <chart-axis name="x" opposes="y" type="time"
+                                    path=".x" align="bottom" orient="horizontal"
+                                    granular-format="%x %X"></chart-axis>
+                        <chart-axis name="y" opposes="x" type="linear"
+                                    path=".y" align="left" orient="vertical"
+                                    draw="true"></chart-axis>
+
+                        <chart-dataset name="passes"
+                                       title="Passes"
+                                       data="job.passes"></chart-dataset>
+                        <chart-dataset name="failures"
+                                       title="Failures"
+                                       data="job.failures"></chart-dataset>
+                        <chart-dataset name="skips"
+                                       title="Skips"
+                                       data="job.skips"></chart-dataset>
+
+                        <chart-canvas-line dataset="passes"
+                                           axes="x y"
+                                           stroke="blue"
+                                           line-width="1"></chart-canvas-line>
+                        <chart-canvas-line dataset="failures"
+                                           axes="x y"
+                                           stroke="red"
+                                           line-width="1"></chart-canvas-line>
+                        <chart-canvas-line dataset="skips"
+                                           axes="x y"
+                                           stroke="violet"
+                                           line-width="1"></chart-canvas-line>
+
+                        <chart-tooltip primary="x" secondary="y"></chart-tooltip>
+                    </chart>
                 </div>
             </div>
             <div class="panel panel-default">
@@ -50,8 +81,25 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <chart-line data="job.chartDataRate" width="100%" height="250"
-                                forceY="[0,1]" tick-format-x="%"></chart-line>
+                    <chart width="100%" height="250px">
+                        <chart-axis name="x" opposes="y" type="time"
+                                    path=".x" align="bottom" orient="horizontal"
+                                    granular-format="%x %X"></chart-axis>
+                        <chart-axis name="y" opposes="x" type="linear"
+                                    path=".y" align="left" orient="vertical"
+                                    domain="[0, 1]" draw="true"></chart-axis>
+
+                        <chart-dataset name="rate"
+                                       title="% Failures"
+                                       data="job.failRates"></chart-dataset>
+
+                        <chart-canvas-line dataset="rate"
+                                           axes="x y"
+                                           stroke="red"
+                                           line-width="1"></chart-canvas-line>
+
+                        <chart-tooltip primary="x" secondary="y"></chart-tooltip>
+                    </chart>
                 </div>
             </div>
 

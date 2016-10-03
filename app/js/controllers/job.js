@@ -140,15 +140,10 @@ function JobController(
       });
     }
 
-    vm.chartData = [
-      { key: 'Passes', values: passEntries, color: 'blue' },
-      { key: 'Failures', values: failEntries, color: 'red' },
-      { key: 'Skips', values: skipEntries, color: 'violet' }
-    ];
-
-    vm.chartDataRate = [
-      { key: '% Failures', values: failRateEntries }
-    ];
+    vm.passes = passEntries;
+    vm.failures = failEntries;
+    vm.skips = skipEntries;
+    vm.failRates = failRateEntries;
 
     vm.tests = Object.keys(tests).map(function(test) {
       return tests[test];
