@@ -15,7 +15,7 @@ API
 Make sure the python dependencies are installed preferably in a virtualenv
 if doing development work::
 
-    pip install -r requirements.txt
+    $ pip install -r requirements.txt
 
 Frontend
 --------
@@ -23,21 +23,21 @@ Installation of the frontend requires Node.js and Gulp.
 
 Ubuntu::
 
-    sudo apt-get install nodejs npm nodejs-legacy
-    sudo npm -g install npm@2
-    sudo npm -g config set prefix /usr/local
-    sudo npm -g install npm
-    sudo npm -g install gulp
+    $ sudo apt-get install nodejs npm nodejs-legacy
+    $ sudo npm -g install npm@2
+    $ sudo npm -g config set prefix /usr/local
+    $ sudo npm -g install npm
+    $ sudo npm -g install gulp
 
 OSX (via HomeBrew, note no sudo)::
 
-    brew install nodejs
-    npm install -g gulp
+    $ brew install nodejs
+    $ npm install -g gulp
 
 
 Then, install the Node modules by running, from the project directory::
 
-    npm install
+    $ npm install
 
 Usage - Development
 ===================
@@ -47,13 +47,13 @@ API
 To run the REST API for development you can install the openstack_health python
 package in development mode and start the API service with::
 
-    python setup.py develop
-    openstack-health-api <config_file>
+    $ python setup.py develop
+    $ openstack-health-api <config_file>
 
 or alternatively just can just run the api.py file manually. For example,
 from the top of the repo you would run::
 
-    python2 openstack_health/api.py <config_file>
+    $ python2 openstack_health/api.py <config_file>
 
 A sample of ``<config_file>`` can be found in
 ``etc/openstack-health-api.conf``. This will start up a local webserver
@@ -65,7 +65,7 @@ Frontend
 --------
 A development server can be run as follows::
 
-    gulp dev
+    $ gulp dev
 
 This will open a web browser and reload code automatically as it changes on the
 filesystem.
@@ -82,7 +82,7 @@ a wsgi container, something like uwsgi, gunicorn, or mod_wsgi to deploy it
 for real. For example, running the API with uwsgi standalone you can do
 something like::
 
-    uwsgi -s /tmp/uwsgi.sock --module openstack_health.api --callable app --pyargv config_file --http :5000
+    $ uwsgi -s /tmp/uwsgi.sock --module openstack_health.api --callable app --pyargv config_file --http :5000
 
 That will startup a uwsgi server running the rest api on port 5000.
 
@@ -189,7 +189,7 @@ Frontend
 --------
 The production application can be build using::
 
-    gulp prod
+    $ gulp prod
 
 The result will be written to :code:`./build` and should be appropriate for
 distribution. Note that all files are not required:
@@ -212,24 +212,24 @@ API
 
 To test python code, run::
 
-    tox -e py27
+    $ tox -e py27
 
 Frontend
 --------
 
 To test javascript code, run::
 
-    npm test
+    $ npm test
 
 This will execute both unit and end-to-end tests, and will write coverage
 reports to :code:`./cover`. To individually run unit tests and generate coverage
 reports, run::
 
-    npm run unit
+    $ npm run unit
 
 Similarly, to run only end-to-end tests, run::
 
-    npm run protractor
+    $ npm run protractor
 
 Alternatively, you can start the karma server and have it watch for changes in
 your files so that unit tests are run every time they change, allowing for much
