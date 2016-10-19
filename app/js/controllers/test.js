@@ -137,6 +137,9 @@ function TestController(
        type: 'line', yAxis: 1}
     ];
     vm.recentRuns = data.failed_runs;
+
+    vm.runTimeEntries = runTimeEntries;
+    vm.avgRunTimeEntries = avgRunTimeEntries;
   };
 
   vm.loadData = function() {
