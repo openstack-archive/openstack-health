@@ -114,10 +114,9 @@ function GroupedRunsController(
       });
     });
 
-    vm.chartData = [
-      { key: 'Passes', values: passEntries, color: 'blue' },
-      { key: 'Failures', values: failEntries, color: 'red' }
-    ];
+    vm.passes = passEntries;
+    vm.failures = failEntries;
+    vm.failRates = failRateEntries;
 
     vm.chartDataRate = [
       { key: '% Failures', values: failRateEntries }

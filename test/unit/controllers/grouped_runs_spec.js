@@ -131,21 +131,14 @@ describe('GroupedRunsController', function() {
     });
     $httpBackend.flush();
 
-    var expectedChartData = [{
-      key: 'Passes',
-      values: [{
-        x: 1416355200000, y: 83
-      }],
-      color: 'blue'
-    }, {
-      key: 'Failures',
-      values: [{
-        x: 1416355200000,
-        y: 2
-      }],
-      color: 'red'
-    }];
-    expect(groupedRunsController.chartData).toEqual(expectedChartData);
+    expect(groupedRunsController.passes).toEqual([{
+      x: 1416355200000, y: 83
+    }]);
+
+    expect(groupedRunsController.failures).toEqual([{
+      x: 1416355200000,
+      y: 2
+    }]);
   });
 
   it('should process chart data rate correctly', function() {
@@ -158,13 +151,9 @@ describe('GroupedRunsController', function() {
     });
     $httpBackend.flush();
 
-    var expectedChartDataRate = [{
-      key: '% Failures',
-      values: [{
-        x: 1416355200000,
-        y: 0.023529411764705883
-      }]
-    }];
-    expect(groupedRunsController.chartDataRate).toEqual(expectedChartDataRate);
+    expect(groupedRunsController.failRates).toEqual([{
+      x: 1416355200000,
+      y: 0.023529411764705883
+    }]);
   });
 });

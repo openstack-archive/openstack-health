@@ -77,21 +77,12 @@ describe('HomeController', function() {
     });
 
     it('should contain data for passes and failures', function() {
-      var expectedPasses = {
-        key: 'Passes', values: [{ x: timestamp, y: 3 }], color: 'blue'
-      };
-      var expectedFailures = {
-        key: 'Failures', values: [{ x: timestamp, y: 4 }], color: 'red'
-      };
-      expect(homeController.chartData).toContain(expectedPasses);
-      expect(homeController.chartData).toContain(expectedFailures);
+      expect(homeController.passes).toEqual([{ x: timestamp, y: 3 }]);
+      expect(homeController.failures).toEqual([{ x: timestamp, y: 4 }]);
     });
 
     it('should contain data for failure rate', function() {
-      var expectedChartDataRate = [{
-        key: '% Failures', values: [{ x: 1443729600000, y: 0.57 }]
-      }];
-      expect(homeController.chartDataRate).toEqual(expectedChartDataRate);
+      expect(homeController.failRate).toEqual([{ x: 1443729600000, y: 0.57 }]);
     });
   });
 

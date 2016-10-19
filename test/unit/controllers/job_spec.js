@@ -116,29 +116,20 @@ describe('JobController', function() {
     });
     $httpBackend.flush();
 
-    var expectedChartData = [{
-      key: 'Passes',
-      values: [{
-        x: 1416358800000,
-        y: 52
-      }],
-      color: 'blue'
-    }, {
-      key: 'Failures',
-      values: [{
-        x: 1416358800000,
-        y: 1
-      }],
-      color: 'red'
-    }, {
-      key: 'Skips',
-      values: [{
-        x: 1416358800000,
-        y: 1
-      }],
-      color: 'violet'
-    }];
-    expect(jobController.chartData).toEqual(expectedChartData);
+    expect(jobController.passes).toEqual([{
+      x: 1416358800000,
+      y: 52
+    }]);
+
+    expect(jobController.failures).toEqual([{
+      x: 1416358800000,
+      y: 1
+    }]);
+
+    expect(jobController.skips).toEqual([{
+      x: 1416358800000,
+      y: 1
+    }]);
   });
 
   it('should process chart data rate correctly', function() {
@@ -150,14 +141,10 @@ describe('JobController', function() {
     });
     $httpBackend.flush();
 
-    var expectedChartDataRate = [{
-      key: '% Failures',
-      values: [{
-        x: 1416358800000,
-        y: 0.018867924528301886
-      }]
-    }];
-    expect(jobController.chartDataRate).toEqual(expectedChartDataRate);
+    expect(jobController.failRates).toEqual([{
+      x: 1416358800000,
+      y: 0.018867924528301886
+    }]);
   });
 
   it('should process tests correctly', function() {
