@@ -47,6 +47,8 @@ function chartCanvasLine() {
       }
 
       var ctx = base.ctx;
+      ctx.clearRect(0, 0, base.canvas.width, base.canvas.height);
+
       ctx.strokeStyle = stroke;
       ctx.lineWidth = lineWidth * base.ratio;
 
