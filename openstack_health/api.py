@@ -19,7 +19,6 @@ import datetime
 from dateutil import parser as date_parser
 import itertools
 import os
-import six
 from six.moves import configparser as ConfigParser
 from six.moves.urllib import parse
 import tempfile
@@ -265,7 +264,7 @@ def _group_runs_by_key(runs_by_time, groupby_key):
 
     keyfunc = lambda c: c['metadata'][groupby_key]
     grouped_runs_by = {}
-    for timestamp, runs_by_time in six.iteritems(runs_by_time):
+    for timestamp, runs_by_time in runs_by_time.items():
         if timestamp not in grouped_runs_by:
             grouped_runs_by[timestamp] = {}
         for key, val in itertools.groupby(runs_by_time, keyfunc):
