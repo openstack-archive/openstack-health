@@ -3,7 +3,9 @@
 /**
  * @ngInject
  */
-function OnConfig($stateProvider, $locationProvider, $urlRouterProvider) {
+function OnConfig($stateProvider, $locationProvider, $urlRouterProvider, $sceDelegateProvider) {
+  $sceDelegateProvider.resourceUrlWhitelist(['self','http://health.openstack.org/**']);
+
   $stateProvider
     .state('home', {
       url: '/',

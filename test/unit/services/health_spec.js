@@ -4,6 +4,10 @@ describe('HealthService', function() {
     module('app.services');
   });
 
+  beforeEach(module(function ($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist(['self','http://8.8.4.4:8080/**']);
+  }));
+
   var $httpBackend, healthService;
   var API_ROOT = 'http://8.8.4.4:8080';
   var DEFAULT_START_TIME = '2010-01-01T01:00:00';

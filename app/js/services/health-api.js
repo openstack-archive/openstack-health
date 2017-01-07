@@ -64,7 +64,6 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/build_name/' + buildName + '/runs', {
         params: {
-          callback: 'JSON_CALLBACK'
         }
       });
     });
@@ -74,7 +73,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/build_name/' + buildName + '/test_runs', {
         cache: true,
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -83,7 +82,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/group_by/' + key, {
         cache: true,
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -91,7 +90,7 @@ function HealthService($http, config) {
   service.getRuns = function(options) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs', {
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -99,7 +98,7 @@ function HealthService($http, config) {
   service.getRunsForRunMetadataKey = function(runMetadataKey, value, options) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value, {
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -107,7 +106,7 @@ function HealthService($http, config) {
   service.getTestsFromRun = function(runId) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/run/' + runId + '/tests', {
-        params: { callback: 'JSON_CALLBACK' }
+        params: {}
       });
     });
   };
@@ -115,7 +114,7 @@ function HealthService($http, config) {
   service.getRunTestRuns = function(runId) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/run/' + runId + '/test_runs', {
-        params: { callback: 'JSON_CALLBACK' }
+        params: {}
       });
     });
   };
@@ -124,7 +123,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests', {
         cache: true,
-        params: { callback: 'JSON_CALLBACK' }
+        params: {}
       });
     });
   };
@@ -133,7 +132,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/metadata/keys', {
         cache: true,
-        params: { callback: 'JSON_CALLBACK' }
+        params: {}
       });
     });
   };
@@ -141,7 +140,7 @@ function HealthService($http, config) {
   service.getTestRunList = function(testId, options) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/test_runs/' + testId, {
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -152,7 +151,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value + '/recent', {
         cache: true,
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -163,7 +162,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests/recent/fail', {
         cache: true,
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };
@@ -172,7 +171,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests/prefix', {
         cache: true,
-        params: { callback: 'JSON_CALLBACK' }
+        params: {}
       });
     });
   };
@@ -183,7 +182,7 @@ function HealthService($http, config) {
     return config.get().then(function(config) {
       return $http.jsonp(config.apiRoot + '/tests/prefix/' + prefix, {
         cache: true,
-        params: angular.extend(options, { callback: 'JSON_CALLBACK' })
+        params: angular.extend(options)
       });
     });
   };

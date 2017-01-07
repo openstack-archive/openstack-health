@@ -4,6 +4,10 @@ describe('JobController', function() {
     module('app.controllers');
   });
 
+  beforeEach(module(function ($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist(['self','http://8.8.4.4:8080/**']);
+  }));
+
   var $scope, $httpBackend, $controller, healthService, viewService;
   var API_ROOT = 'http://8.8.4.4:8080';
   var DEFAULT_END_DATE = new Date();
