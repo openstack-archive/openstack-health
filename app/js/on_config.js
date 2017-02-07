@@ -5,6 +5,7 @@
  */
 function OnConfig($stateProvider, $locationProvider, $urlRouterProvider, $sceDelegateProvider) {
   $sceDelegateProvider.resourceUrlWhitelist(['self','http://health.openstack.org/**']);
+  $locationProvider.hashPrefix('');
 
   $stateProvider
     .state('home', {
