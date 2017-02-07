@@ -6,9 +6,9 @@
   "repository": "none",
   "license": "Apache 2.0",
   "devDependencies": {
-    "angular": "^1.5.0",
+    "angular": "1.6.2",
     "angular-fontawesome": "^0.4.0",
-    "angular-mocks": "^1.5.0",
+    "angular-mocks": "1.6.2",
     "angular-ui-bootstrap": "^1.2.3",
     "angular-ui-router": ">=0.2.16 <0.3.0",
     "angularjs-filters": "^0.0.2",
