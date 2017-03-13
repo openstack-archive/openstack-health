@@ -479,6 +479,8 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
                 return abort(make_response(msg, 404))
         for run in failed_runs:
             meta = api.get_run_metadata(run.uuid, session=session)
+            failing_test_runs = api.get_failing_from_run(run.id,
+                                                         session=session)
             uuid = [x.value for x in meta if x.key == 'build_uuid'][0]
             build_name = [x.value for x in meta if x.key == 'build_name'][0]
             entry = fg.add_entry()
@@ -494,6 +496,11 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
             content += '<li><a href="%s">Metadata page</a></li>\n' % (
                 metadata_url)
             content += '<li><a href="%s">Job Page</a></li>' % (job_url)
+            content += '</ul>'
+            content += '<h3>Failed tests</h3>'
+            content += '<ul>'
+            for failing_test_run in failing_test_runs:
+                content += '<li>%s</li>' % (failing_test_run.test.test_id)
             content += '</ul>'
             entry.description(content)
     response = make_response(feeds[run_metadata_key][value].rss_str())
