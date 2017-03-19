@@ -70,7 +70,7 @@ describe('HomeController', function() {
     beforeEach(function() {
       var date = new Date('2015-10-01T20:00:00.000Z');
       timestamp = date.getTime();
-      var metrics = { passes: 3, failures: 4, failRate: 0.57 };
+      var metrics = { passes: 3, failures: 4, failRate: 56.99999999999999 };
       var stats = [{ date: date, metrics: metrics }];
       projectService.getStatsByDate = function() { return stats; };
       homeController.loadData();
@@ -82,7 +82,7 @@ describe('HomeController', function() {
     });
 
     it('should contain data for failure rate', function() {
-      expect(homeController.failRate).toEqual([{ x: 1443729600000, y: 0.57 }]);
+      expect(homeController.failRate).toEqual([{ x: 1443729600000, y: 5699.999999999999 }]);
     });
   });
 

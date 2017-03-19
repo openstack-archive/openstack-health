@@ -69,7 +69,7 @@ function HomeController(
     angular.forEach(dateStats, function(stats) {
       entries.passes.push(generateChartData(stats.date, stats.metrics.passes));
       entries.failures.push(generateChartData(stats.date, stats.metrics.failures));
-      entries.failRate.push(generateChartData(stats.date, stats.metrics.failRate));
+      entries.failRate.push(generateChartData(stats.date, stats.metrics.failRate * 100));
     });
     entries.passes = entries.passes.sort(byDate);
     entries.failures = entries.failures.sort(byDate);
