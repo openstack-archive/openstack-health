@@ -31,7 +31,7 @@ var periodsService = function() {
               'preference': {'hours': 12}},
       'hour': {'min':       {'hours': 12},
                'max':       {'months': 1},
-               'preference': {'months': 1}},
+               'preference': {'weeks': 1}},
       'day': {'min':        {'hours': 48},
               'max':        null,
               'preference': {'months': 3}}
@@ -45,7 +45,7 @@ var periodsService = function() {
               'preference': {'hours': 12}},
       'hour': {'min':       {'hours': 12},
                'max':       {'months': 3},
-               'preference': {'months': 1}},
+               'preference': {'weeks': 1}},
       'day': {'min':        {'hours': 48},
               'max':        null,
               'preference': {'months': 3}}
