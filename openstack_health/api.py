@@ -32,6 +32,7 @@ from flask import make_response
 from flask import request
 from flask_jsonpify import jsonify
 from operator import itemgetter
+from pbr import version
 import pyelasticsearch
 import pytz
 from sqlalchemy import create_engine
@@ -651,10 +652,14 @@ def get_status():
     is_db_available = _check_db_availability()
     is_er_available = _check_er_availability()
 
-    status = {'status': {'availability': {
-        'database': is_db_available,
-        'elastic-recheck': is_er_available
-    }}}
+    status = {'status': {
+        'availability': {
+            'database': is_db_available,
+            'elastic-recheck': is_er_available,
+        },
+        'version': version.VersionInfo(
+            'openstack_health').version_string_with_vcs()
+    }}
     response = jsonify(status)
 
     if not is_db_available:

@@ -21,6 +21,7 @@ from dateutil import parser as date_parser
 import feedparser
 import mock
 import numpy
+from pbr import version
 import six
 from subunit2sql.db import models
 
@@ -686,10 +687,14 @@ class TestRestAPI(base.TestCase):
                 return_value='NotInstalled')
     def test_get_status_failure_er_not_installed(self, status_check_mock,
                                                  er_mock):
-        expected_response = {'status': {'availability': {
-            'database': False,
-            'elastic-recheck': 'NotInstalled'
-        }}}
+        expected_response = {'status': {
+            'availability': {
+                'database': False,
+                'elastic-recheck': 'NotInstalled'
+            },
+            'version': version.VersionInfo(
+                'openstack_health').version_string_with_vcs()
+        }}
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 500)
         self.assertEqual(json.loads(response.data.decode('utf-8')),
@@ -701,10 +706,14 @@ class TestRestAPI(base.TestCase):
                 return_value='NotConfigured')
     def test_get_db_status_success_er_not_configured(self, status_check_mock,
                                                      er_mock):
-        expected_response = {'status': {'availability': {
-            'database': True,
-            'elastic-recheck': 'NotConfigured'
-        }}}
+        expected_response = {'status': {
+            'availability': {
+                'database': True,
+                'elastic-recheck': 'NotConfigured'
+            },
+            'version': version.VersionInfo(
+                'openstack_health').version_string_with_vcs()
+        }}
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 200)
         output = json.loads(response.data.decode('utf-8'))
@@ -715,10 +724,14 @@ class TestRestAPI(base.TestCase):
     @mock.patch('openstack_health.api._check_er_availability',
                 return_value={'Configured': {'elastic-search': 'green'}})
     def test_get_db_status_success_er_green(self, status_check_mock, er_mock):
-        expected_response = {'status': {'availability': {
-            'database': True,
-            'elastic-recheck': {'Configured': {'elastic-search': 'green'}}
-        }}}
+        expected_response = {'status': {
+            'availability': {
+                'database': True,
+                'elastic-recheck': {'Configured': {'elastic-search': 'green'}}
+            },
+            'version': version.VersionInfo(
+                'openstack_health').version_string_with_vcs()
+        }}
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 200)
         output = json.loads(response.data.decode('utf-8'))
