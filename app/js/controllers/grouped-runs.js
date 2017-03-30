@@ -110,7 +110,7 @@ function GroupedRunsController(
 
       failRateEntries.push({
         x: new Date(timedelta.datetime).getTime(),
-        y: failRate
+        y: failRate * 100
       });
     });
 

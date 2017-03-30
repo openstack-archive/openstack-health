@@ -147,7 +147,7 @@ describe('JobController', function() {
 
     expect(jobController.failRates).toEqual([{
       x: 1416358800000,
-      y: 0.018867924528301886
+      y: 1.8867924528301887
     }]);
   });
 

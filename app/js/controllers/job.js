@@ -131,7 +131,7 @@ function JobController(
       failRate = totalFail / (totalFail + totalPass) || DEFAULT_FAIL_RATE;
       failRateEntries.push({
         x: new Date(date).getTime(),
-        y: failRate
+        y: failRate * 100
       });
 
       skipEntries.push({
