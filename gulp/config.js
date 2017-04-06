@@ -22,7 +22,7 @@ module.exports = {
   },
 
   'images': {
-    'src': 'app/images/**/*.{gif,jpg,png}',
+    'src': 'app/images/**/*.{gif,jpg,png,svg}',
     'dest': 'build/images'
   },
 
