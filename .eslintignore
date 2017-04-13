@@ -3,7 +3,6 @@ build
 node_modules
 coverage
 doc
-app/vendor-js
 app/js/templates.js
 gulp
 reports
