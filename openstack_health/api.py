@@ -501,7 +501,10 @@ def get_recent_failed_runs_rss(run_metadata_key, value):
             content += '<h3>Failed tests</h3>'
             content += '<ul>'
             for failing_test_run in failing_test_runs:
-                content += '<li>%s</li>' % (failing_test_run.test.test_id)
+                content += '<li><a href="%s">%s</a></li>' % (
+                    rss_opts['frontend_url'] + '/#/test/' +
+                    failing_test_run.test.test_id,
+                    failing_test_run.test.test_id)
             content += '</ul>'
             entry.description(content)
     response = make_response(feeds[run_metadata_key][value].rss_str())
