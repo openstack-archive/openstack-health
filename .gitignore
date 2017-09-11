@@ -35,7 +35,7 @@ pip-log.txt
 !.coveragerc
 .tox
 nosetests.xml
-.testrepository
+.stestr
 .venv
 
 # Translations
