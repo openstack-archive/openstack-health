@@ -273,7 +273,7 @@ def _group_runs_by_key(runs_by_time, groupby_key):
     return grouped_runs_by
 
 
-@app.route('/build_name/<string:build_name>/test_runs', methods=['GET'])
+@app.route('/build_name/<path:build_name>/test_runs', methods=['GET'])
 def get_test_runs_by_build_name(build_name):
     value = parse.unquote(build_name)
     if not value:
