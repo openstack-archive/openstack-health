@@ -87,13 +87,13 @@ class TestRestAPI(base.TestCase):
                      'start_time': timestamp_a,
                      'stop_time': timestamp_b}
                 ])
-    def test_get_test_runs_by_build_name(self, api_mock):
+    def _test_get_test_runs_by_build_name(self, build_name, api_mock):
         api.region = mock.MagicMock()
         api.region.cache_on_arguments = mock.MagicMock()
         api.region.cache_on_arguments.return_value = lambda x: x
-        res = self.app.get('/build_name/fake_tests/test_runs')
+        res = self.app.get('/build_name/%s/test_runs' % build_name)
         self.assertEqual(200, res.status_code)
-        api_mock.assert_called_once_with('build_name', 'fake_tests', None,
+        api_mock.assert_called_once_with('build_name', build_name, None,
                                          None, api.Session())
         expected_response = {
             six.text_type(timestamp_a.isoformat()): {
@@ -111,6 +111,12 @@ class TestRestAPI(base.TestCase):
         }
         self.assertEqual({u'tests': expected_response},
                          json.loads(res.data.decode('utf-8')))
+
+    def test_get_test_runs_by_build_name(self):
+        self._test_get_test_runs_by_build_name('fake_tests')
+
+    def test_get_test_runs_by_build_name_with_forward_slash(self):
+        self._test_get_test_runs_by_build_name('fake/tests')
 
     def test_list_routes(self):
         res = self.app.get('/')
