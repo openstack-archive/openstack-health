@@ -86,8 +86,9 @@ def _setup():
 def setup():
     global config
     if not config:
+        args = parse_command_line_args()
         config = ConfigParser.ConfigParser()
-        config.read('/etc/openstack-health.conf')
+        config.read(args.config_file)
     # Database Configuration
     global engine
     db_uri = _config_get(config.get, 'default', 'db_uri')
@@ -675,7 +676,8 @@ def parse_command_line_args():
     description = 'Starts the API service for openstack-health'
     parser = argparse.ArgumentParser(description=description)
 
-    parser.add_argument('config_file', type=str,
+    parser.add_argument('config_file', type=str, nargs='?',
+                        default='/etc/openstack-health.conf',
                         help='the path for the config file to be read.')
     return parser.parse_args()
 
