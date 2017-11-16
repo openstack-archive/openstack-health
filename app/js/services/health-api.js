@@ -57,91 +57,101 @@ servicesModule.config(httpProviderInterceptor);
 /**
  * @ngInject
  */
-function HealthService($http, config) {
+function HealthService($http, config, $sce) {
   var service = {};
 
   service.getRunsFromBuildName = function(buildName) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/build_name/' + buildName + '/runs', {
-        params: {
-        }
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/build_name/' + buildName + '/runs'), {
+          params: {
+          }
+        });
     });
   };
 
   service.getTestsFromBuildName = function(buildName, options) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/build_name/' + buildName + '/test_runs', {
-        cache: true,
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/build_name/' + buildName + '/test_runs'), {
+          cache: true,
+          params: angular.extend(options)
+        });
     });
   };
 
   service.getRunsGroupedByMetadataPerDatetime = function(key, options) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/runs/group_by/' + key, {
-        cache: true,
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/runs/group_by/' + key), {
+          cache: true,
+          params: angular.extend(options)
+        });
     });
   };
 
   service.getRuns = function(options) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/runs', {
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/runs'), {
+          params: angular.extend(options)
+        });
     });
   };
 
   service.getRunsForRunMetadataKey = function(runMetadataKey, value, options) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value, {
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value), {
+          params: angular.extend(options)
+        });
     });
   };
 
   service.getTestsFromRun = function(runId) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/run/' + runId + '/tests', {
-        params: {}
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/run/' + runId + '/tests'), {
+          params: {}
+        });
     });
   };
 
   service.getRunTestRuns = function(runId) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/run/' + runId + '/test_runs', {
-        params: {}
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/run/' + runId + '/test_runs'), {
+          params: {}
+        });
     });
   };
 
   service.getTests = function() {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/tests', {
-        cache: true,
-        params: {}
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/tests'), {
+          cache: true,
+          params: {}
+        });
     });
   };
 
   service.getRunMetadataKeys = function() {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/runs/metadata/keys', {
-        cache: true,
-        params: {}
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/runs/metadata/keys'), {
+          cache: true,
+          params: {}
+        });
     });
   };
 
   service.getTestRunList = function(testId, options) {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/test_runs/' + testId, {
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/test_runs/' + testId), {
+          params: angular.extend(options)
+        });
     });
   };
 
@@ -149,30 +159,32 @@ function HealthService($http, config) {
     options = options || {};
 
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value + '/recent', {
-        cache: true,
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/runs/key/' + runMetadataKey + '/' + value + '/recent'), {
+          cache: true,
+          params: angular.extend(options)
+        });
     });
   };
 
   service.getRecentFailedTests = function(options) {
     options = options || {};
-
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/tests/recent/fail', {
-        cache: true,
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/tests/recent/fail'), {
+          cache: true,
+          params: angular.extend(options)
+        });
     });
   };
 
   service.getTestPrefixes = function() {
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/tests/prefix', {
-        cache: true,
-        params: {}
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/tests/prefix'), {
+          cache: true,
+          params: {}
+        });
     });
   };
 
@@ -180,10 +192,11 @@ function HealthService($http, config) {
     options = options || {};
 
     return config.get().then(function(config) {
-      return $http.jsonp(config.apiRoot + '/tests/prefix/' + prefix, {
-        cache: true,
-        params: angular.extend(options)
-      });
+      return $http.jsonp($sce.trustAsResourceUrl(
+        config.apiRoot + '/tests/prefix/' + prefix), {
+          cache: true,
+          params: angular.extend(options)
+        });
     });
   };
 
