@@ -531,35 +531,40 @@ def get_recent_test_status(status):
     def _get_recent(status):
         with session_scope() as session:
             failed_runs = api.get_recent_failed_runs(num_runs, session)
-            global classifier
-            if classifier:
-                for run in failed_runs:
-                    metadata = api.get_run_metadata(run, session=session)
-                    short_uuid = None
-                    change_num = None
-                    patch_num = None
-                    for meta in metadata:
-                        if meta.key == 'build_short_uuid':
-                            short_uuid = meta.value
-                        elif meta.key == 'build_change':
-                            change_num = meta.value
-                        elif meta.key == 'build_patchset':
-                            patch_num = meta.value
-                    # NOTE(mtreinish): If the required metadata fields aren't
-                    # present skip ES lookup
-                    if not short_uuid or not change_num or not patch_num:
-                        continue
-                    query_thread = threading.Thread(
-                        target=_populate_bug_dict, args=(change_num, patch_num,
-                                                         short_uuid, run))
-                    query_threads.append(query_thread)
-                    query_thread.start()
+            job_names = {}
+            for run in failed_runs:
+                metadata = api.get_run_metadata(run, session=session)
+                short_uuid = None
+                change_num = None
+                patch_num = None
+                for meta in metadata:
+                    if meta.key == 'build_short_uuid':
+                        short_uuid = meta.value
+                    elif meta.key == 'build_change':
+                        change_num = meta.value
+                    elif meta.key == 'build_patchset':
+                        patch_num = meta.value
+                    elif meta.key == 'build_name':
+                        job_names[run] = meta.value
+                    global classifier
+                    if classifier:
+                        # NOTE(mtreinish): If the required metadata fields
+                        # aren't present skip ES lookup
+                        if not short_uuid or not change_num or not patch_num:
+                            continue
+                        query_thread = threading.Thread(
+                            target=_populate_bug_dict, args=(change_num,
+                                                             patch_num,
+                                                             short_uuid, run))
+                        query_threads.append(query_thread)
+                        query_thread.start()
             test_runs = api.get_test_runs_by_status_for_run_ids(
                 status, failed_runs, session=session, include_run_id=True)
             output = []
             for run in test_runs:
                 run['start_time'] = run['start_time'].isoformat()
                 run['stop_time'] = run['stop_time'].isoformat()
+                run['job_name'] = job_names.get(run['uuid'])
                 output.append(run)
             for thread in query_threads:
                 thread.join()
