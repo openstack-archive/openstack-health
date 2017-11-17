@@ -121,7 +121,7 @@
                             ng-repeat="(key, value) in home.recentRuns">
 
                             <td><span nest-toggle nest-indicator></span></td>
-                            <td><a href nest-toggle>{{key | split:'/' | last:2 | pick:0}}</a></td>
+                            <td><a href nest-toggle>{{ value.fails[0].job_name }}</a></td>
                             <td>
                                 <a target="_blank" href="{{ key }}">
                                     {{key | split:'/' | last:2 | pick:1}}
