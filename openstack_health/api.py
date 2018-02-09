@@ -264,13 +264,14 @@ def _group_runs_by_key(runs_by_time, groupby_key):
     This function assumes that your runs are already grouped by time.
     """
 
-    keyfunc = lambda c: c['metadata'][groupby_key]
+    keyfunc = lambda c: c['metadata'].get(groupby_key)
     grouped_runs_by = {}
-    for timestamp, runs_by_time in runs_by_time.items():
+    for timestamp, run_by_time in runs_by_time.items():
         if timestamp not in grouped_runs_by:
             grouped_runs_by[timestamp] = {}
-        for key, val in itertools.groupby(runs_by_time, keyfunc):
-            grouped_runs_by[timestamp][key] = list(val)
+        for key, val in itertools.groupby(run_by_time, keyfunc):
+            if val:
+                grouped_runs_by[timestamp][key] = list(val)
     return grouped_runs_by
 
 
