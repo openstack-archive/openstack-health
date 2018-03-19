@@ -3,7 +3,7 @@
 var config       = require('../config');
 var gulp         = require('gulp');
 var gulpif       = require('gulp-if');
-var gutil        = require('gulp-util');
+var log          = require('fancy-log');
 var source       = require('vinyl-source-stream');
 var sourcemaps   = require('gulp-sourcemaps');
 var buffer       = require('vinyl-buffer');
@@ -49,7 +49,7 @@ function buildScript(file) {
     var stream = bundler.bundle();
     var createSourcemap = config.browserify.sourcemap;
 
-    gutil.log('Rebundle...');
+    log('Rebundle...');
 
     return stream.on('error', handleErrors)
       .pipe(source(file))
