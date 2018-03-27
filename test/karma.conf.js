@@ -4,6 +4,8 @@ var istanbul = require('browserify-istanbul');
 var isparta  = require('isparta');
 var ngAnnotate = require('browserify-ngannotate');
 
+process.env.CHROME_BIN = 'chromium-browser'; // eslint-disable-line no-process-env
+
 module.exports = function(config) {
   config.set({
 
@@ -34,7 +36,13 @@ module.exports = function(config) {
 
     autoWatch: true,
 
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadlessNoSandbox'],
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
+    },
 
     singleRun: true,
 

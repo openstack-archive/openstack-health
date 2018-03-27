@@ -58,7 +58,7 @@
     "karma": "~0.12.0",
     "karma-babel-preprocessor": "^4.0.1",
     "karma-browserify": "^4.0.0",
-    "karma-chrome-launcher": "^0.2.2",
+    "karma-chrome-launcher": "^2.1.0",
     "karma-cli": "0.0.4",
     "karma-coverage": "0.2.6",
     "karma-jasmine": "^0.3.6",
