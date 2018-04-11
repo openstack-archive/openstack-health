@@ -421,23 +421,23 @@ class TestRestAPI(base.TestCase):
 
         self.assertEqual(200, res.status_code)
 
-        expected_response_data = {'timedelta': [
-            {'datetime': timestamp_s1.isoformat(),
-             'job_data': [{'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-1',
-                           'mean_run_time': 1.0}]},
-            {'datetime': timestamp_s2.isoformat(),
-             'job_data': [{'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-2',
-                           'mean_run_time': 2.0}]},
-            {'datetime': timestamp_s3.isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 0,
-                           'job_name': 'value-3',
-                           'mean_run_time': 3.0}]},
-        ]}
+        expected_response_data = {u'data': {u'timedelta': [
+            {u'datetime': u'%s' % timestamp_s1.isoformat(),
+             u'job_data': [{u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-1',
+                            u'mean_run_time': 1.0}]},
+            {u'datetime': u'%s' % timestamp_s2.isoformat(),
+             u'job_data': [{u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-2',
+                            u'mean_run_time': 2.0}]},
+            {u'datetime': u'%s' % timestamp_s3.isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 0,
+                            u'job_name': u'value-3',
+                            u'mean_run_time': 3.0}]},
+        ]}, u'numeric': {u'value-3': {u'%s' % timestamp_s3.isoformat(): 3.0}}}
         response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
@@ -466,7 +466,7 @@ class TestRestAPI(base.TestCase):
                                     'skip': 0,
                                     'id': 'abc3',
                                     'run_time': 3.0,
-                                    'metadata': {'build_name': 'value-3'}}],
+                                    'metadata': {'build_name': 'value-3'}}]
                 })
     def test_get_runs_by_project_resolution_min(self, api_mock):
         query = 'datetime_resolution=min'
@@ -475,23 +475,23 @@ class TestRestAPI(base.TestCase):
 
         self.assertEqual(200, res.status_code)
 
-        expected_response_data = {'timedelta': [
-            {'datetime': timestamp_m1.isoformat(),
-             'job_data': [{'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-1',
-                           'mean_run_time': 1.0}]},
-            {'datetime': timestamp_m2.isoformat(),
-             'job_data': [{'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-2',
-                           'mean_run_time': 2.0}]},
-            {'datetime': timestamp_m3.isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 0,
-                           'job_name': 'value-3',
-                           'mean_run_time': 3.0}]},
-        ]}
+        expected_response_data = {u'data': {u'timedelta': [
+            {u'datetime': u'%s' % timestamp_m1.isoformat(),
+             u'job_data': [{u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-1',
+                            u'mean_run_time': 1.0}]},
+            {u'datetime': u'%s' % timestamp_m2.isoformat(),
+             u'job_data': [{'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-2',
+                            u'mean_run_time': 2.0}]},
+            {u'datetime': u'%s' % timestamp_m3.isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 0,
+                            u'job_name': u'value-3',
+                            u'mean_run_time': 3.0}]},
+        ]}, u'numeric': {u'value-3': {u'%s' % timestamp_m3.isoformat(): 3.0}}}
         response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
@@ -520,7 +520,7 @@ class TestRestAPI(base.TestCase):
                                     'skip': 0,
                                     'id': 'abc3',
                                     'run_time': 3.0,
-                                    'metadata': {'build_name': 'value-3'}}],
+                                    'metadata': {'build_name': 'value-3'}}]
                 })
     def test_get_runs_by_project_resolution_hour(self, api_mock):
         query = 'datetime_resolution=hour'
@@ -529,23 +529,23 @@ class TestRestAPI(base.TestCase):
 
         self.assertEqual(200, res.status_code)
 
-        expected_response_data = {'timedelta': [
-            {'datetime': timestamp_h1.isoformat(),
-             'job_data': [{'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-1',
-                           'mean_run_time': 1.0}]},
-            {'datetime': timestamp_h2.isoformat(),
-             'job_data': [{'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-2',
-                           'mean_run_time': 2.0}]},
-            {'datetime': timestamp_h3.isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 0,
-                           'job_name': 'value-3',
-                           'mean_run_time': 3.0}]},
-        ]}
+        expected_response_data = {u'data': {u'timedelta': [
+            {u'datetime': u'%s' % timestamp_h1.isoformat(),
+             u'job_data': [{u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-1',
+                            u'mean_run_time': 1.0}]},
+            {u'datetime': u'%s' % timestamp_h2.isoformat(),
+             u'job_data': [{u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-2',
+                            u'mean_run_time': 2.0}]},
+            {u'datetime': u'%s' % timestamp_h3.isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 0,
+                            u'job_name': u'value-3',
+                            u'mean_run_time': 3.0}]},
+        ]}, u'numeric': {u'value-3': {u'%s' % timestamp_h3.isoformat(): 3.0}}}
         response_data = json.loads(res.data.decode('utf-8'))
 
         self.assertEqual(expected_response_data, response_data)
@@ -589,26 +589,37 @@ class TestRestAPI(base.TestCase):
 
         self.assertEqual(200, res.status_code)
 
-        expected_response_data = {'timedelta': [
-            {'datetime': timestamp_d1.date().isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 1,
-                           'job_name': 'value-1',
-                           'mean_run_time': 5.0},
-                          {'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-2',
-                           'mean_run_time': 2.0},
-                          ]},
-            {'datetime': timestamp_d2.date().isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 0,
-                           'job_name': 'value-3',
-                           'mean_run_time': 20.0},
-                          ]}
-        ]}
+        expected_response_data = {u'data': {u'timedelta': [
+            {u'datetime': u'%s' % timestamp_d1.date().isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 1,
+                            u'job_name': u'value-1',
+                            u'mean_run_time': 5.0},
+                           {u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': 'value-2',
+                            u'mean_run_time': 2.0}]},
+            {u'datetime': u'%s' % timestamp_d2.date().isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 0,
+                            u'job_name': u'value-3',
+                            u'mean_run_time': 20.0}]}
+        ]}, u'numeric': {u'value-1': {u'%s' % timestamp_d1.isoformat(): 9.0,
+                                      u'%s' % timestamp_d2.isoformat():
+                                      numpy.NaN},
+                         u'value-3': {u'%s' % timestamp_d1.isoformat():
+                                      numpy.NaN,
+                                      u'%s' % timestamp_d2.isoformat():
+                                      20.0}}}
         response_data = json.loads(res.data.decode('utf-8'))
-
+        # numpy.NaN == numpy.NaN result is False, a key error here means the
+        # dicts are not equal
+        for project, item in list(expected_response_data['numeric'].items()):
+            for date, run_time in list(item.items()):
+                if (numpy.isnan(run_time) and
+                    numpy.isnan(response_data['numeric'][project][date])):
+                    del expected_response_data['numeric'][project][date]
+                    del response_data['numeric'][project][date]
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
                                          'openstack/trove',
@@ -653,26 +664,36 @@ class TestRestAPI(base.TestCase):
 
         self.assertEqual(200, res.status_code)
 
-        expected_response_data = {'timedelta': [
-            {'datetime': timestamp_d1.date().isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 1,
-                           'job_name': 'value-1',
-                           'mean_run_time': 5.0},
-                          {'pass': 0,
-                           'fail': 1,
-                           'job_name': 'value-2',
-                           'mean_run_time': 2.0},
-                          ]},
-            {'datetime': timestamp_d2.date().isoformat(),
-             'job_data': [{'pass': 1,
-                           'fail': 0,
-                           'job_name': 'value-3',
-                           'mean_run_time': 20.0},
-                          ]}
-        ]}
+        expected_response_data = {u'data': {u'timedelta': [
+            {u'datetime': u'%s' % timestamp_d1.date().isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 1,
+                            u'job_name': u'value-1',
+                            u'mean_run_time': 5.0},
+                           {u'pass': 0,
+                            u'fail': 1,
+                            u'job_name': u'value-2',
+                            u'mean_run_time': 2.0}]},
+            {u'datetime': u'%s' % timestamp_d2.date().isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 0,
+                            u'job_name': u'value-3',
+                            u'mean_run_time': 20.0}]}
+        ]}, u'numeric': {u'value-1': {u'%s' % timestamp_d1.isoformat(): 9.0,
+                                      u'%s' % timestamp_d2.isoformat():
+                                      numpy.NaN},
+                         u'value-3': {u'%s' % timestamp_d1.isoformat():
+                                      numpy.NaN,
+                                      u'%s' % timestamp_d2.isoformat(): 20.0}}}
         response_data = json.loads(res.data.decode('utf-8'))
-
+        # numpy.NaN == numpy.NaN result is False, a key error here means the
+        # dicts are not equal
+        for project, item in expected_response_data['numeric'].items():
+            for date, run_time in list(item.items()):
+                if (numpy.isnan(run_time) and
+                    numpy.isnan(response_data['numeric'][project][date])):
+                    del expected_response_data['numeric'][project][date]
+                    del response_data['numeric'][project][date]
         self.assertEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
                                          'openstack/trove',
@@ -686,6 +707,68 @@ class TestRestAPI(base.TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertEqual('Datetime resolution: century, is not a valid choice',
                          res.data.decode('utf-8'))
+
+    @mock.patch('subunit2sql.db.api.get_time_series_runs_by_key_value',
+                return_value={
+                    timestamp_d1: [{'pass': 1,
+                                    'fail': 0,
+                                    'skip': 0,
+                                    'id': 'abc1',
+                                    'run_time': 4.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}},
+                                   {'pass': 10,
+                                    'fail': 1,
+                                    'skip': 0,
+                                    'id': 'abc1',
+                                    'run_time': 9.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}},
+                                   {'pass': 2,
+                                    'fail': 0,
+                                    'skip': 0,
+                                    'id': 'abc2',
+                                    'run_time': 2.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}}],
+                    timestamp_d2: [{'pass': 100,
+                                    'fail': 0,
+                                    'skip': 0,
+                                    'id': 'abc3',
+                                    'run_time': 20.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}}]
+                })
+    def test_get_runs_by_build_name_and_same_run_at_times(self, api_mock):
+        start_date = timestamp_d1.date().isoformat()
+        stop_date = timestamp_d2.date().isoformat()
+        query = ('datetime_resolution=day&start_date={0}&stop_date={1}'
+                 .format(start_date, stop_date))
+        res = self.app.get('/runs/key/build_name/tempest-dsvm-neutron-full?{0}'
+                           .format(query))
+        self.assertEqual(200, res.status_code)
+        expected_response_data = {u'data': {u'timedelta': [
+            {u'datetime': u'%s' % timestamp_d1.date().isoformat(),
+             u'job_data': [{u'pass': 2,
+                            u'fail': 1,
+                            u'job_name': u'tempest-dsvm-neutron-full',
+                            u'mean_run_time': 5.0}]},
+            {u'datetime': u'%s' % timestamp_d2.date().isoformat(),
+             u'job_data': [{u'pass': 1,
+                            u'fail': 0,
+                            u'job_name': u'tempest-dsvm-neutron-full',
+                            u'mean_run_time': 20.0}]}]},
+            u'numeric': {
+                u'tempest-dsvm-neutron-full': {
+                    u'%s' % timestamp_d1.isoformat(): 3.0,
+                    u'%s' % timestamp_d2.isoformat(): 20.0}}}
+        response_data = json.loads(res.data.decode('utf-8'))
+        self.maxDiff = None
+        self.assertDictEqual(expected_response_data, response_data)
 
     @mock.patch('openstack_health.api._check_db_availability',
                 return_value=False)

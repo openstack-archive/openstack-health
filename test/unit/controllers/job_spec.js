@@ -34,7 +34,7 @@ describe('JobController', function() {
   }));
 
   function mockHealthService() {
-    var expectedResponse = {
+    var testRunsResponse = {
       tests: {
         '2014-11-19T01:00:00.000Z': {
           'tempest.api.compute.admin.test_fixed_ips:FixedIPsTestJson.test_list_fixed_ip_details': {
@@ -58,14 +58,69 @@ describe('JobController', function() {
         }
       }
     };
-    var endpoint = API_ROOT +
+
+    var endpointTestRuns = API_ROOT +
         '/build_name/gate-tempest-dsvm-neutron-full/test_runs?' +
         'callback=JSON_CALLBACK&' +
         'datetime_resolution=hour&' +
         'start_date=' + DEFAULT_START_DATE.toISOString() + '&' +
         'stop_date=' + DEFAULT_END_DATE.toISOString();
 
-    $httpBackend.expectJSONP(endpoint).respond(200, expectedResponse);
+    $httpBackend.expectJSONP(endpointTestRuns).respond(200, testRunsResponse);
+
+    var runMetaResponse = {
+      data: {
+        timedelta: [
+          {
+            'datetime': '2015-10-23T20:00:00',
+            'job_data': [
+              {
+                'fail': 0,
+                'job_name': 'gate-tempest-dsvm-neutron-src-taskflow',
+                'mean_run_time': 4859.3,
+                'pass': 1
+              }
+            ]
+          },
+          {
+            'datetime': '2015-11-10T23:00:00',
+            'job_data': [
+              {
+                'fail': 0,
+                'job_name': 'gate-tempest-dsvm-neutron-src-taskflow',
+                'mean_run_time': 6231.47,
+                'pass': 1
+              }
+            ]
+          }
+        ]
+      },
+      numeric: {
+        'tempest-dsvm-neutron-full': {
+          '2015-10-23T20:00:00': 4859.3,
+          '2015-10-23T21:00:00': NaN,
+          '2015-10-23T22:00:00': NaN,
+          '2015-10-23T23:00:00': NaN,
+          '2015-11-10T23:00:00': 6231.47
+        },
+        'tempest-dsvm-neutron-full-avg': {
+          '2015-10-23T20:00:00': 4859.3,
+          '2015-10-23T21:00:00': NaN,
+          '2015-10-23T22:00:00': NaN,
+          '2015-10-23T23:00:00': NaN,
+          '2015-11-10T23:00:00': 6231.47
+        }
+      }
+    };
+
+    var endpoint = API_ROOT +
+        '/runs/key/build_name/gate-tempest-dsvm-neutron-full?' +
+        'callback=JSON_CALLBACK&' +
+        'datetime_resolution=hour&' +
+        'start_date=' + DEFAULT_START_DATE.toISOString() + '&' +
+        'stop_date=' + DEFAULT_END_DATE.toISOString();
+
+    $httpBackend.expectJSONP(endpoint).respond(200, runMetaResponse);
 
     var recentResponse = [
       {
@@ -102,6 +157,7 @@ describe('JobController', function() {
       '/runs/key/build_name/gate-tempest-dsvm-neutron-full/recent?callback=JSON_CALLBACK';
     $httpBackend.expectJSONP(endpointRecent)
       .respond(200, recentResponse);
+
   }
 
   function mockConfigService() {
@@ -119,7 +175,6 @@ describe('JobController', function() {
       viewService: viewService
     });
     $httpBackend.flush();
-
     expect(jobController.passes).toEqual([{
       x: 1416358800000,
       y: 52

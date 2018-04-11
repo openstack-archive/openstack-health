@@ -16,6 +16,7 @@ function JobController(
   vm.name = decodeURIComponent(jobName);
   vm.recentRuns = [];
   vm.loaded = false;
+  vm.runTimeLoaded = false;
   vm.hold = 0;
 
   pageTitleService.update('Job: ' + vm.name);
@@ -152,6 +153,45 @@ function JobController(
     });
   };
 
+  vm.processRunData = function(data) {
+    if (!data.data.hasOwnProperty('timedelta')) {
+      return;
+    }
+    var jobName = data.data.timedelta[0].job_data[0].job_name;
+    var jobRunTimeEntries = [];
+    var jobMeanRunTimeEntries = [];
+    var runTimeObjs = data.numeric[jobName];
+    var runTimeAvgObjs = data.numeric[jobName + '-avg'];
+    for (var date in runTimeObjs) {
+      // parse dates and create data series
+      if (runTimeObjs.hasOwnProperty(date)) {
+        var runTime = runTimeObjs[date];
+        date = new Date(date).getTime();
+        if (!isNaN(runTime)) {
+          jobRunTimeEntries.push({
+            x: date,
+            y: parseFloat(runTime)
+          });
+        }
+      }
+    }
+    for (var date in runTimeAvgObjs) {
+      // parse dates and create data series
+      if (runTimeAvgObjs.hasOwnProperty(date)) {
+        var runTimeAvg = runTimeAvgObjs[date];
+        date = new Date(date).getTime();
+        if (!isNaN(runTimeAvg)) {
+          jobMeanRunTimeEntries.push({
+            x: date,
+            y: parseFloat(runTimeAvg)
+          });
+        }
+      }
+    }
+    vm.jobMeanRunTimeEntries = jobMeanRunTimeEntries;
+    vm.jobRunTimeEntries = jobRunTimeEntries;
+  };
+
   vm.loadData = function() {
     if (vm.hold > 0) {
       return;
@@ -164,6 +204,14 @@ function JobController(
     }).then(function(response) {
       vm.processData(response.data, vm.searchTest);
       vm.loaded = true;
+    });
+    healthService.getRunsForRunMetadataKey ('build_name', vm.name, {
+      start_date: viewService.periodStart(),
+      stop_date: viewService.periodEnd(),
+      datetime_resolution: viewService.resolution().key
+    }).then(function(response) {
+      vm.processRunData(response.data);
+      vm.runTimeLoaded = true;
     });
     healthService.getRecentGroupedRuns('build_name', vm.name).then(function(response) {
       vm.recentRuns = response.data;
@@ -181,7 +229,7 @@ function JobController(
   });
 
   $scope.$on('view:period', function(event, corrected) {
-    if (vm.loaded && !corrected) {
+    if (vm.loaded && vm.runTimeLoaded && !corrected) {
       vm.loadData();
     }
   });

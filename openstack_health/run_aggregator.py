@@ -11,14 +11,44 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-
 import datetime
 from dateutil import parser
+import pandas as pd
 
-from openstack_health.base_aggregator import BaseAggregator
+from openstack_health import base_aggregator as base
 
 
-class RunAggregator(BaseAggregator):
+def format_output_numeric_dicts(df):
+    numeric_dict = {}
+    temp_dict = df.to_dict()
+    for build_name in temp_dict:
+        numeric_dict[build_name] = {}
+        for run_at in temp_dict[build_name]:
+            numeric_dict[build_name][
+                run_at.isoformat()] = temp_dict[build_name][run_at]
+    return numeric_dict
+
+
+def get_numeric_data(run_times_time_series, sample_rate):
+    temp_dict = {}
+    sample_rate = base.resample_matrix[sample_rate]
+    for run_at, run in run_times_time_series.items():
+        build_name, run_time = list(run.items())[0]
+        if build_name in temp_dict:
+            temp_dict[build_name][run_at] = run_time
+        else:
+            temp_dict[build_name] = {run_at: run_time}
+    df = pd.DataFrame(temp_dict)
+    numeric_df = df.resample(sample_rate).mean()
+    temp_numeric_df = numeric_df.interpolate(method='time', limit=10)
+    for build_name in numeric_df:
+        numeric_df[build_name + '-avg'] = temp_numeric_df[build_name].rolling(
+            10).mean()
+    numeric_df = numeric_df.dropna(how='all', axis=1)
+    return format_output_numeric_dicts(numeric_df)
+
+
+class RunAggregator(base.BaseAggregator):
     def __init__(self, runs):
         self.runs = runs
 

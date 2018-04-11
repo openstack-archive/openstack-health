@@ -137,7 +137,7 @@ function GroupedRunsController(
       stop_date: viewService.periodEnd(),
       datetime_resolution: viewService.resolution().key
     }).then(function(response) {
-      vm.processData(response.data, vm.searchJob);
+      vm.processData(response.data.data, vm.searchJob);
       vm.loaded = true;
     });
     healthService.getRecentGroupedRuns(vm.runMetadataKey, vm.name).then(function(response) {

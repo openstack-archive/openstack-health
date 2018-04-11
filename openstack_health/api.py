@@ -18,6 +18,7 @@ from contextlib import contextmanager
 import datetime
 from dateutil import parser as date_parser
 import itertools
+import numpy
 import os
 from six.moves import configparser as ConfigParser
 from six.moves.urllib import parse
@@ -40,7 +41,7 @@ from sqlalchemy.orm import sessionmaker
 from subunit2sql.db import api
 
 from openstack_health import distributed_dbm
-from openstack_health.run_aggregator import RunAggregator
+from openstack_health import run_aggregator
 from openstack_health import test_run_aggregator
 
 try:
@@ -253,7 +254,8 @@ def get_runs_grouped_by_metadata_per_datetime(key):
             return ('Datetime resolution: %s, is not a valid'
                     ' choice' % datetime_resolution), 400
 
-        runs = RunAggregator(sec_runs).aggregate(datetime_resolution)
+        runs = run_aggregator.RunAggregator(sec_runs).aggregate(
+            datetime_resolution)
 
         return jsonify({'runs': runs})
 
@@ -371,17 +373,34 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
                                                       start_date,
                                                       stop_date,
                                                       session))
+        # prepare run_times to be consumed for producing 'numeric' data.
+        run_times = {}
+        for run_at, run_data in runs.items():
+            for run in run_data:
+                if run['fail'] > 0 or run['pass'] == 0:
+                    continue
+                build_name = run['metadata']['build_name']
+                if run_at in run_times:
+                    run_times[run_at][build_name].append(run['run_time'])
+                else:
+                    run_times[run_at] = {build_name: [run['run_time']]}
+        # if there is more than one run with the same run_at time
+        # and build_name just average the results.
+        for run_at, run_time_data in run_times.items():
+            for build_name, times in run_time_data.items():
+                run_times[run_at][build_name] = numpy.mean(times)
+        numeric = run_aggregator.get_numeric_data(
+            run_times, datetime_resolution)
         # Groups runs by metadata
         group_by = "build_name"
         runs_by_build_name = _group_runs_by_key(runs, group_by)
-
         # Group runs by the chosen data_range.
         # That does not apply when you choose 'sec' since runs are already
         # grouped by it.
-        aggregated_runs = \
-            RunAggregator(runs_by_build_name).aggregate(datetime_resolution)
-
-        return jsonify(_aggregate_runs(aggregated_runs))
+        aggregated_runs = run_aggregator.RunAggregator(
+            runs_by_build_name).aggregate(datetime_resolution)
+        data = _aggregate_runs(aggregated_runs)
+        return jsonify({'numeric': numeric, 'data': data})
 
 
 @app.route('/runs/key/<path:run_metadata_key>/<path:value>/recent',
