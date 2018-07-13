@@ -30,6 +30,8 @@ def format_output_numeric_dicts(df):
 
 
 def get_numeric_data(run_times_time_series, sample_rate):
+    if not run_times_time_series:
+        return {}
     temp_dict = {}
     sample_rate = base.resample_matrix[sample_rate]
     for run_at, run in run_times_time_series.items():

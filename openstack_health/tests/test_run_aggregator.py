@@ -58,6 +58,11 @@ class TestRunAggregatorGetNumericData(base.TestCase):
             }
         }
 
+    def test_get_numeric_data_no_runs(self):
+        expected = {}
+        actual = run_aggregator.get_numeric_data({}, 'day')
+        self.assertEqual(expected, actual)
+
     def test_get_numeric_data(self):
         self.maxDiff = None
         expected = {
