@@ -13,6 +13,7 @@ Contents:
 
    readme
    contributing
+   subunit2sql
 
 Indices and tables
 ==================
