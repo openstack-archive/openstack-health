@@ -63,8 +63,90 @@ class TestRunAggregatorGetNumericData(base.TestCase):
         actual = run_aggregator.get_numeric_data({}, 'day')
         self.assertEqual(expected, actual)
 
+    def test_get_numeric_data_diff_build_name(self):
+        self.runs[datetime.datetime(2018, 6, 14, 3, 52, 24)][
+            'openstack-tox-py27-trove'] = 321.304
+        expected = {
+            'tempest-dsvm-neutron-full': {
+                '2018-06-13T00:00:00': 5391.195,
+                '2018-06-14T00:00:00': 4768.1,
+                '2018-06-15T00:00:00': np.nan,
+                '2018-06-16T00:00:00': np.nan,
+                '2018-06-17T00:00:00': np.nan,
+                '2018-06-18T00:00:00': 4183.85,
+                '2018-06-19T00:00:00': 4545.41,
+                '2018-06-20T00:00:00': 4133.03,
+                '2018-06-21T00:00:00': np.nan,
+                '2018-06-22T00:00:00': 5592.295,
+                '2018-06-23T00:00:00': 6150.95,
+                '2018-06-24T00:00:00': np.nan,
+                '2018-06-25T00:00:00': 6047.95
+            },
+            'tempest-dsvm-neutron-full-avg': {
+                '2018-06-13T00:00:00': np.nan,
+                '2018-06-14T00:00:00': np.nan,
+                '2018-06-15T00:00:00': np.nan,
+                '2018-06-16T00:00:00': np.nan,
+                '2018-06-17T00:00:00': np.nan,
+                '2018-06-18T00:00:00': np.nan,
+                '2018-06-19T00:00:00': np.nan,
+                '2018-06-20T00:00:00': np.nan,
+                '2018-06-21T00:00:00': np.nan,
+                '2018-06-22T00:00:00': 4690.44675,
+                '2018-06-23T00:00:00': 4766.42225,
+                '2018-06-24T00:00:00': 4899.55725,
+                '2018-06-25T00:00:00': 5042.148499999999
+            },
+            'openstack-tox-py27-trove': {
+                '2018-06-13T00:00:00': np.nan,
+                '2018-06-14T00:00:00': 321.304,
+                '2018-06-15T00:00:00': np.nan,
+                '2018-06-16T00:00:00': np.nan,
+                '2018-06-17T00:00:00': np.nan,
+                '2018-06-18T00:00:00': np.nan,
+                '2018-06-19T00:00:00': np.nan,
+                '2018-06-20T00:00:00': np.nan,
+                '2018-06-21T00:00:00': np.nan,
+                '2018-06-22T00:00:00': np.nan,
+                '2018-06-23T00:00:00': np.nan,
+                '2018-06-24T00:00:00': np.nan,
+                '2018-06-25T00:00:00': np.nan
+            },
+            'openstack-tox-py27-trove-avg': {
+                '2018-06-13T00:00:00': np.nan,
+                '2018-06-14T00:00:00': np.nan,
+                '2018-06-15T00:00:00': np.nan,
+                '2018-06-16T00:00:00': np.nan,
+                '2018-06-17T00:00:00': np.nan,
+                '2018-06-18T00:00:00': np.nan,
+                '2018-06-19T00:00:00': np.nan,
+                '2018-06-20T00:00:00': np.nan,
+                '2018-06-21T00:00:00': np.nan,
+                '2018-06-22T00:00:00': np.nan,
+                '2018-06-23T00:00:00': 321.30400000000003,
+                '2018-06-24T00:00:00': 321.30400000000003,
+                '2018-06-25T00:00:00': np.nan
+            }
+
+        }
+        actual = run_aggregator.get_numeric_data(self.runs, 'day')
+        self.assertItemsEqual(expected, actual)
+        self.assertItemsEqual(
+            expected['tempest-dsvm-neutron-full'].keys(),
+            actual['tempest-dsvm-neutron-full'].keys())
+        self.assertItemsEqual(
+            expected['tempest-dsvm-neutron-full-avg'].keys(),
+            actual['tempest-dsvm-neutron-full-avg'].keys())
+        # np.nan == np.nan is False, remove the key entries with np.nan values,
+        # if a key error is thrown then expected does not equal actual.
+        for key in expected:
+            for date, run_time in list(expected[key].items()):
+                if np.isnan(run_time) and np.isnan(actual[key][date]):
+                    del actual[key][date]
+                    del expected[key][date]
+        self.assertDictEqual(expected, actual)
+
     def test_get_numeric_data(self):
-        self.maxDiff = None
         expected = {
             'tempest-dsvm-neutron-full': {
                 '2018-06-13T00:00:00': 5391.195,
