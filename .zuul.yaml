@@ -1,0 +1,5 @@
+- project:
+    templates:
+      - openstack-python-jobs
+      - nodejs4-jobs
+      - openstack-python35-jobs
