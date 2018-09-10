@@ -381,7 +381,10 @@ def get_runs_by_run_metadata_key(run_metadata_key, value):
                     continue
                 build_name = run['metadata']['build_name']
                 if run_at in run_times:
-                    run_times[run_at][build_name].append(run['run_time'])
+                    if build_name in run_times[run_at]:
+                        run_times[run_at][build_name].append(run['run_time'])
+                    else:
+                        run_times[run_at][build_name] = [run['run_time']]
                 else:
                     run_times[run_at] = {build_name: [run['run_time']]}
         # if there is more than one run with the same run_at time

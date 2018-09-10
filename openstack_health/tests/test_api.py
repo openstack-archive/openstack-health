@@ -614,13 +614,13 @@ class TestRestAPI(base.TestCase):
         response_data = json.loads(res.data.decode('utf-8'))
         # numpy.NaN == numpy.NaN result is False, a key error here means the
         # dicts are not equal
-        for project, item in list(expected_response_data['numeric'].items()):
+        for project, item in expected_response_data['numeric'].items():
             for date, run_time in list(item.items()):
                 if (numpy.isnan(run_time) and
                     numpy.isnan(response_data['numeric'][project][date])):
                     del expected_response_data['numeric'][project][date]
                     del response_data['numeric'][project][date]
-        self.assertEqual(expected_response_data, response_data)
+        self.assertDictEqual(expected_response_data, response_data)
         api_mock.assert_called_once_with('project',
                                          'openstack/trove',
                                          None,
@@ -768,6 +768,85 @@ class TestRestAPI(base.TestCase):
                     u'%s' % timestamp_d2.isoformat(): 20.0}}}
         response_data = json.loads(res.data.decode('utf-8'))
         self.maxDiff = None
+        self.assertDictEqual(expected_response_data, response_data)
+
+    @mock.patch('subunit2sql.db.api.get_time_series_runs_by_key_value',
+                return_value={
+                    timestamp_d1: [{'pass': 1,
+                                    'fail': 0,
+                                    'skip': 0,
+                                    'id': 'abc1',
+                                    'run_time': 4.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}},
+                                   {'pass': 10,
+                                    'fail': 1,
+                                    'skip': 0,
+                                    'id': 'abc1',
+                                    'run_time': 9.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}},
+                                   {'pass': 2,
+                                    'fail': 0,
+                                    'skip': 0,
+                                    'id': 'abc2',
+                                    'run_time': 2.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'openstack-tox-py27-trove'}}],
+                    timestamp_d2: [{'pass': 100,
+                                    'fail': 0,
+                                    'skip': 0,
+                                    'id': 'abc3',
+                                    'run_time': 20.0,
+                                    'metadata': {
+                                        'build_name':
+                                            'tempest-dsvm-neutron-full'}}]
+                })
+    def test_get_runs_by_project_diff_build_and_same_run_at(self, api_mock):
+        start_date = timestamp_d1.date().isoformat()
+        stop_date = timestamp_d2.date().isoformat()
+        query = ('datetime_resolution=day&start_date={0}&stop_date={1}'
+                 .format(start_date, stop_date))
+        res = self.app.get('/runs/key/project/trove?{0}'
+                           .format(query))
+        self.assertEqual(200, res.status_code)
+        expected_response_data = {
+            u'data': {
+                u'timedelta': [
+                    {u'datetime': u'%s' % timestamp_d1.date().isoformat(),
+                     u'job_data': [{u'pass': 1,
+                                    u'fail': 0,
+                                    u'job_name': u'openstack-tox-py27-trove',
+                                    u'mean_run_time': 2.0},
+                                   {u'pass': 1,
+                                    u'fail': 1,
+                                    u'job_name': u'tempest-dsvm-neutron-full',
+                                    u'mean_run_time': 6.5}]},
+                    {u'datetime': u'%s' % timestamp_d2.date().isoformat(),
+                     u'job_data': [{u'pass': 1,
+                                    u'fail': 0,
+                                    u'job_name': u'tempest-dsvm-neutron-full',
+                                    u'mean_run_time': 20.0}]}]},
+            u'numeric': {
+                u'tempest-dsvm-neutron-full': {
+                    u'%s' % timestamp_d1.isoformat(): 4.0,
+                    u'%s' % timestamp_d2.isoformat(): 20.0},
+                u'openstack-tox-py27-trove': {
+                    u'%s' % timestamp_d1.isoformat(): 2.0,
+                    u'%s' % timestamp_d2.isoformat(): numpy.NaN}}}
+        response_data = json.loads(res.data.decode('utf-8'))
+        self.maxDiff = None
+        # numpy.NaN == numpy.NaN result is False, a key error here means the
+        # dicts are not equal
+        for project, item in expected_response_data['numeric'].items():
+            for date, run_time in list(item.items()):
+                if (numpy.isnan(run_time) and
+                    numpy.isnan(response_data['numeric'][project][date])):
+                    del expected_response_data['numeric'][project][date]
+                    del response_data['numeric'][project][date]
         self.assertDictEqual(expected_response_data, response_data)
 
     @mock.patch('openstack_health.api._check_db_availability',

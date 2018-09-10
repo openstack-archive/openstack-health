@@ -35,11 +35,11 @@ def get_numeric_data(run_times_time_series, sample_rate):
     temp_dict = {}
     sample_rate = base.resample_matrix[sample_rate]
     for run_at, run in run_times_time_series.items():
-        build_name, run_time = list(run.items())[0]
-        if build_name in temp_dict:
-            temp_dict[build_name][run_at] = run_time
-        else:
-            temp_dict[build_name] = {run_at: run_time}
+        for build_name, run_time in list(run.items()):
+            if build_name in temp_dict:
+                temp_dict[build_name][run_at] = run_time
+            else:
+                temp_dict[build_name] = {run_at: run_time}
     df = pd.DataFrame(temp_dict)
     numeric_df = df.resample(sample_rate).mean()
     temp_numeric_df = numeric_df.interpolate(method='time', limit=10)
