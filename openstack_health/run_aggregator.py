@@ -81,7 +81,7 @@ class RunAggregator(base.BaseAggregator):
                                         updated_datetime,
                                         aggregated_runs)
         # Pad the data to have a uniform sampling
-        time_date_list = [parser.parse(x) for x in aggregated_runs.keys()]
+        time_date_list = [parser.parse(x) for x in aggregated_runs]
         if not time_date_list:
             return aggregated_runs
         start_date = min(time_date_list)
