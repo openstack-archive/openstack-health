@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: health-database-external
+  namespace: default
+spec:
+  hosts:
+  - logstash.openstack.org
+  addresses:
+  - 104.239.141.90
+  ports:
+  - name: tcp
+    number: 3306
+    protocol: tcp

@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: source-to-image
+  labels:
+    app: dev-pipeline  
+spec:
+  inputs:
+    resources:
+      - name: workspace
+        type: git
+    params:
+      - name: pathToDockerFile
+        description: The path to the dockerfile to build (relative to the context)
+        default: Dockerfile
+      - name: pathToContext
+        description:
+          The path to the build context, used by Kaniko - within the workspace
+          (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts).
+          The git clone directory is set by the GIT init container which setup the git input resource - see https://github.com/knative/build-pipeline/blob/master/pkg/reconciler/v1alpha1/taskrun/resources/pod.go#L107
+        default: .
+      - name: useImageCache
+        description: Whether to Kaniko remotely cached layers and
+          locally cached base images.
+        default: "true"
+      - name: imageTag
+        description: Tag of the images to be used.
+        default: "default"
+  outputs:
+    resources:
+      - name: builtImage
+        type: image
+  volumes:
+    - name: kaniko-base-image-cache
+      persistentVolumeClaim:
+        claimName: kaniko-base-image-cache
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor
+      command:
+        - /kaniko/executor
+      args:
+        - --cache=${inputs.params.useImageCache}
+        - --cache-dir=/cache
+        - --dockerfile=${inputs.params.pathToDockerFile}
+        - --reproducible
+        - --destination=${outputs.resources.builtImage.url}:${inputs.params.imageTag}
+        - --context=/workspace/workspace/${inputs.params.pathToContext}
+      volumeMounts:
+        - name: kaniko-base-image-cache
+          mountPath: /cache

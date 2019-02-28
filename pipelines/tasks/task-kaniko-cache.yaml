@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kaniko-base-image-cache
+  annotations:
+    volume.beta.kubernetes.io/storage-class: ibmc-file-silver
+  labels:
+    app: dev-pipeline
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: kaniko-cache-base-images
+  labels:
+    app: dev-pipeline
+spec:
+  volumes:
+    - name: kaniko-base-image-cache
+      persistentVolumeClaim:
+        claimName: kaniko-base-image-cache
+  steps:
+    - name: prepare-cache
+      image: gcr.io/kaniko-project/warmer
+      args:
+        - --cache-dir=/cache
+        - --image=python:3.6-slim-stretch
+        - --image=postgres:alpine
+        - --image=nginx:latest
+      volumeMounts:
+        - name: kaniko-base-image-cache
+          mountPath: /cache

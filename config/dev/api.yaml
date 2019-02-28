@@ -1,0 +1,73 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: health-api
+  labels:
+    app: health
+    component: api
+    tag: __TAG__
+spec:
+  runLatest:
+    configuration:
+      build:
+        apiVersion: tekton.dev/v1alpha1
+        kind: TaskRun
+        metadata:
+          labels:
+            app: health
+            component: api
+            tag: __TAG__
+        spec:
+          taskRef:
+            name: source-to-image
+          trigger:
+            type: manual
+          inputs:
+            resources:
+              - name: workspace
+                resourceRef:
+                  name: __GIT_RESOURCE_NAME__
+            params:
+              - name: pathToContext
+                value: .
+              - name: pathToDockerFile
+                value: images/api/Dockerfile
+              - name: imageTag
+                value: __TAG__
+          outputs:
+            resources:
+              - name: builtImage
+                resourceRef:
+                  name: __IMAGE_RESOURCE_NAME__
+      revisionTemplate:  # template for building Revision
+        spec:
+          container:
+            image: registry.ng.bluemix.net/andreaf/health-api:__TAG__
+            imagePullPolicy: Always
+            env:
+              - name: DB_PROTOCOL
+                value: mysql
+              - name: DB_HOST
+                value: logstash.openstack.org
+              - name: DB_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: openstack-subunit2sql-production
+                    key: username
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: openstack-subunit2sql-production
+                    key: password
+              - name: DB_NAME
+                value: subunit2sql
+            ports:
+              - name: http1
+                containerPort: 80
+                protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /status
+            livenessProbe:
+              httpGet:
+                path: /status

@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: kaniko-cache-base-images-run
+spec:
+  taskRef:
+    name: kaniko-cache-base-images
+  trigger:
+    type: manual
