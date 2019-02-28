@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: tox
+  labels:
+    app: dev-pipeline
+spec:
+  inputs:
+    resources:
+      - name: workspace
+        type: git
+    params:
+      - name: environment
+        description: The tox environment to execute
+      - name: pathToToxIni
+        description: Folder where to run tox in
+  steps:
+    - name: run-tox
+      image: n42org/tox
+      command: ["tox"]
+      workingDir: "${inputs.params.pathToToxIni}"
+      env:
+        - name: "TOXENV"
+          value: "${inputs.params.environment}"

@@ -1,0 +1,52 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: health-frontend
+  labels:
+    app: health
+    component: frontend
+    tag: __TAG__
+spec:
+  runLatest:
+    configuration:
+      build:
+        apiVersion: tekton.dev/v1alpha1
+        kind: PipelineRun
+        metadata:
+          labels:
+            app: health
+            component: frontend
+            tag: __TAG__
+        spec:
+          pipelineRef:
+            name: dev-test-build-frontend
+          params:
+            - name: imageTag
+              value: __TAG__
+          trigger:
+            type: manual
+          resources:
+            - name: src
+              resourceRef:
+                name: __GIT_RESOURCE_NAME__
+            - name: builtImage
+              resourceRef:
+                name: __IMAGE_RESOURCE_NAME__
+      revisionTemplate:  # template for building Revision
+        spec:
+          container:
+            image: registry.ng.bluemix.net/andreaf/health-frontend:__TAG__
+            imagePullPolicy: Always
+            env:
+              - name: API_URL
+                value: http://health-api.dev.af-health.sjc03.containers.appdomain.cloud/
+            ports:
+              - name: http1
+                containerPort: 80
+                protocol: TCP
+            livenessProbe:
+              httpGet:
+                path: /
+            readinessProbe:
+              httpGet:
+                path: /

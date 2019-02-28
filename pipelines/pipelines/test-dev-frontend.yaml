@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: dev-test-build-frontend
+spec:
+  params:
+    - name: imageTag
+      description: Tag of the images to be used.
+      default: "default"
+  resources:
+    - name: src
+      type: git
+    - name: builtImage
+      type: image
+  tasks:
+  - name: source-to-image-task
+    taskRef:
+      name: source-to-image
+    params:
+      - name: pathToContext
+        value: .
+      - name: pathToDockerFile
+        value: images/frontend/Dockerfile
+      - name: imageTag
+        value: "${params.imageTag}"
+    resources:
+      inputs:
+        - name: workspace
+          resource: src
+      outputs:
+        - name: builtImage
+          resource: builtImage
+  # - name: tox-npm-lint
+  #   taskRef:
+  #     name: tox
+  #   params:
+  #     # npm lint requires npm which is not installed on the tox
+  #     # image, so this fails for now. I need to build a custom
+  #     # image that can run all the tox tests
+  #     - name: environment
+  #       value: npm-lint
+  #     - name: pathToToxIni
+  #       value: /workspace/workspace
+  #   resources:
+  #     inputs:
+  #       - name: workspace
+  #         resource: src

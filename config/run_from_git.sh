@@ -7,10 +7,13 @@
 # Optional (with defaults)
 GIT_REFERENCE=${GIT_REFERENCE:-$(git rev-parse HEAD)}
 GIT_URL=${GIT_URL:-https://github.com/afrittoli/openstack-health}
-IMAGES_BASE_URL=${IMAGES_BASE_URL:-registry.ng.bluemix.net/tektonhackathon}
+IMAGES_BASE_URL=${IMAGES_BASE_URL:-registry.ng.bluemix.net/andreaf}
 IMAGE_TAG=${IMAGE_TAG:-$(git rev-parse --short HEAD)}
 USE_IMAGE_CACHE=${USE_IMAGE_CACHE:-"true"}
 TARGET_NAMESPACE=${TARGET_NAMESPACE:-dev}
+# Pipeline type is dev (build) or dev-test (build and run tests)
+PIPELINE_TYPE=${PIPELINE_TYPE:-dev}
+COMPONENTS=${COMPONENTS:-"api frontend"}
 
 BASEDIR=$(ROOT=$(dirname $0); cd $ROOT; pwd)
 
@@ -40,7 +43,7 @@ EOF
 )
 
 # Images
-for COMPONENT in api frontend; do
+for COMPONENT in $COMPONENTS; do
   IMAGE_RESOURCES[$COMPONENT]=$(cat <<EOF | kubectl create -n dev -o jsonpath='{.metadata.name}' -f -
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -60,10 +63,10 @@ EOF
 done
 
 ## Apply the service definition
-for COMPONENT in api frontend; do
+for COMPONENT in $COMPONENTS; do
   sed -e 's/__GIT_RESOURCE_NAME__/'$GIT_RESOURCE'/g' \
       -e 's/__IMAGE_RESOURCE_NAME__/'${IMAGE_RESOURCES[$COMPONENT]}'/g' \
-      -e 's/__TAG__/'$IMAGE_TAG'/g' ${BASEDIR}/dev/${COMPONENT}.yaml | kubectl apply -f - -n dev
+      -e 's/__TAG__/'$IMAGE_TAG'/g' ${BASEDIR}/${PIPELINE_TYPE}/${COMPONENT}.yaml | kubectl apply -f - -n dev
 done
 
 # Watch command
