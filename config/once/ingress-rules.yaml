@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   namespace: istio-system
-  name: health-knative-ingress
+  name: dev-knative-ingress
 spec:
   rules:
     - host: health-frontend.dev.af-health.sjc03.containers.appdomain.cloud

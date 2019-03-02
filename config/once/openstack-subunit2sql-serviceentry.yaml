@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: health-database-external
+  name: dev-database-external
   namespace: default
 spec:
   hosts:
