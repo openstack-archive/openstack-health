@@ -11,6 +11,11 @@ RUN curl -sLO https://deb.nodesource.com/setup_6.x \
 # Install gulp
 RUN npm install -g gulp
 
+# Install packages first
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
+RUN mkdir -p openstack-health/app && mv /tmp/node_modules openstack-health/app
+
 # Install, build and deploy
 COPY . openstack-health
 RUN cd openstack-health; npm install; gulp prod; cd ..; \

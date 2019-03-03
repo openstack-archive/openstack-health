@@ -19,8 +19,9 @@ RUN rm -f /etc/nginx/conf.d/default.conf; \
     echo "daemon off;" >> /etc/nginx/nginx.conf
 
 # Install requirements first to avoid reinstalling on code changes
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 COPY . openstack-health
-RUN pip3 install --no-cache-dir -r openstack-health/requirements.txt
 RUN pip3 install --no-cache-dir -U openstack-health/.
 
 # Cleanup

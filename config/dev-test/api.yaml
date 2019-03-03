@@ -5,7 +5,7 @@ metadata:
   labels:
     app: health
     component: api
-    tag: __TAG__
+    tag: "__TAG__"
 spec:
   runLatest:
     configuration:
@@ -16,13 +16,13 @@ spec:
           labels:
             app: health
             component: api
-            tag: __TAG__
+            tag: "__TAG__"
         spec:
           pipelineRef:
             name: dev-test-build-api
           params:
             - name: imageTag
-              value: __TAG__
+              value: "__TAG__"
           trigger:
             type: manual
           resources:

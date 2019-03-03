@@ -5,7 +5,7 @@ metadata:
   labels:
     app: health
     component: api
-    tag: __TAG__
+    tag: "__TAG__"
 spec:
   runLatest:
     configuration:
@@ -16,7 +16,7 @@ spec:
           labels:
             app: health
             component: api
-            tag: __TAG__
+            tag: "__TAG__"
         spec:
           taskRef:
             name: source-to-image
@@ -33,7 +33,9 @@ spec:
               - name: pathToDockerFile
                 value: images/api/Dockerfile
               - name: imageTag
-                value: __TAG__
+                value: "__TAG__"
+              - name: dockerIgnoreFile
+                value: images/api/.dockerignore
           outputs:
             resources:
               - name: builtImage

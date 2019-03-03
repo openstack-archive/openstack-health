@@ -31,7 +31,7 @@ metadata:
   generateName: health-helm-git-knative-
   labels:
     app: health
-    tag: $IMAGE_TAG
+    tag: "$IMAGE_TAG"
 spec:
   type: git
   params:
@@ -51,7 +51,7 @@ metadata:
   generateName: health-$COMPONENT-image-
   labels:
     app: health
-    tag: $IMAGE_TAG
+    tag: "$IMAGE_TAG"
 spec:
   type: image
   params:

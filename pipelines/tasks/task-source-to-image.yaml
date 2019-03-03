@@ -3,7 +3,7 @@ kind: Task
 metadata:
   name: source-to-image
   labels:
-    app: dev-pipeline  
+    app: dev-pipeline
 spec:
   inputs:
     resources:
@@ -26,6 +26,12 @@ spec:
       - name: imageTag
         description: Tag of the images to be used.
         default: "default"
+      - name: dockerIgnoreFile
+        description:
+          Path within the git repo to the gitignore file to be used. By default
+          it's in the root of the default context location, but it could be
+          in a different folder to support multi-docker-image repos.
+        default: ./.dockerignore
   outputs:
     resources:
       - name: builtImage
@@ -35,6 +41,10 @@ spec:
       persistentVolumeClaim:
         claimName: kaniko-base-image-cache
   steps:
+    - name: deploy-dockerignore
+      image: alpine
+      command: ["/bin/sh"]
+      args: ["-x", "-c", "cp /workspace/workspace/${inputs.params.dockerIgnoreFile} /workspace/workspace/${inputs.params.pathToContext}/.dockerignore"]
     - name: build-and-push
       image: gcr.io/kaniko-project/executor
       command:

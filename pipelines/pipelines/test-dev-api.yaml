@@ -42,15 +42,15 @@ spec:
       inputs:
         - name: workspace
           resource: src
-  - name: tox-py27
-    taskRef:
-      name: tox
-    params:
-      - name: environment
-        value: py27
-      - name: pathToToxIni
-        value: /workspace/workspace
-    resources:
-      inputs:
-        - name: workspace
-          resource: src
+  # - name: tox-py27
+  #   taskRef:
+  #     name: tox
+  #   params:
+  #     - name: environment
+  #       value: py27
+  #     - name: pathToToxIni
+  #       value: /workspace/workspace
+  #   resources:
+  #     inputs:
+  #       - name: workspace
+  #         resource: src

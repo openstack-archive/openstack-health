@@ -1,0 +1,15 @@
+# This .dockerignore file is in the wrong place, to be taken in account it
+# must be place in the root of the context. This repo includes two docker files
+# which require different exclusion lists for efficient building, so it's up
+# to the build pipeline to copy it to the root of the context before passing
+# the context to the build process.
+app/
+config/
+doc/
+gulp/
+pipelines/
+package.json
+gulpfile.js
+.zuul.yaml
+*.rst
+!README.rst
