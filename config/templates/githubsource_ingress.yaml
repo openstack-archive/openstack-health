@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: istio-system
+  name: __GITHUBSOURCE_ROUTE_NAME__
+spec:
+  rules:
+    - host: __GITHUBSOURCE_ROUTE_DOMAIN__
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: istio-ingressgateway
+              servicePort: 80
