@@ -826,7 +826,7 @@ def main():
         port = config.getint('default', 'port')
     except ConfigParser.NoOptionError:
         port = 5000
-    app.run(debug=True, host=host, port=port)
+    app.run(debug=False, host=host, port=port)
 
 
 if __name__ == '__main__':
