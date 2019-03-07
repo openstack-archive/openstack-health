@@ -44,7 +44,7 @@ spec:
     - name: deploy-dockerignore
       image: alpine
       command: ["/bin/sh"]
-      args: ["-x", "-c", "cp /workspace/workspace/${inputs.params.dockerIgnoreFile} /workspace/workspace/${inputs.params.pathToContext}/.dockerignore"]
+      args: ["-x", "-c", "cp /workspace/workspace/${inputs.params.dockerIgnoreFile} /workspace/workspace/${inputs.params.pathToContext}/.dockerignore || true"]
     - name: build-and-push
       image: gcr.io/kaniko-project/executor
       command:

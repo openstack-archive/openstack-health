@@ -1,19 +1,14 @@
 #!/usr/bin/env bash
-# Updates the build and revision template to a new git reference
-
-# - Service accounts, roles and secrets must exist in the target
-# - kubectl is configured to point to the cluster where the pipeline is executed
+# Build test images, tag as "latest" by default
 
 # Optional (with defaults)
 GIT_REFERENCE=${GIT_REFERENCE:-$(git rev-parse HEAD)}
 GIT_URL=${GIT_URL:-https://github.com/afrittoli/openstack-health}
 IMAGES_BASE_URL=${IMAGES_BASE_URL:-registry.ng.bluemix.net/andreaf}
-IMAGE_TAG=${IMAGE_TAG:-$(git rev-parse --short HEAD)}
+IMAGE_TAG=${IMAGE_TAG:-latest}
 USE_IMAGE_CACHE=${USE_IMAGE_CACHE:-"true"}
-TARGET_NAMESPACE=${TARGET_NAMESPACE:-dev}
-# Pipeline type is dev (build) or dev-test (build and run tests)
-PIPELINE_TYPE=${PIPELINE_TYPE:-dev}
-COMPONENTS=${COMPONENTS:-"api frontend"}
+# Test Images
+TESTIMAGES=${TESTIMAGES:-"node"}
 
 BASEDIR=$(ROOT=$(dirname $0); cd $ROOT; pwd)
 
@@ -43,12 +38,12 @@ EOF
 )
 
 # Images
-for COMPONENT in $COMPONENTS; do
-  IMAGE_RESOURCES[$COMPONENT]=$(cat <<EOF | kubectl create -n dev -o jsonpath='{.metadata.name}' -f -
+for TESTIMAGE in $TESTIMAGES; do
+  IMAGE_RESOURCES[$TESTIMAGE]=$(cat <<EOF | kubectl create -n dev -o jsonpath='{.metadata.name}' -f -
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  generateName: health-$COMPONENT-image-
+  generateName: health-test-$TESTIMAGE-image-
   labels:
     app: health
     tag: "$IMAGE_TAG"
@@ -57,18 +52,43 @@ spec:
   params:
     - name: url
       description: The target URL
-      value: $IMAGES_BASE_URL/health-$COMPONENT
+      value: $IMAGES_BASE_URL/health-test-$TESTIMAGE
 EOF
 )
 done
 
-## Apply the service definition
-for COMPONENT in $COMPONENTS; do
-  sed -e 's/__GIT_RESOURCE_NAME__/'$GIT_RESOURCE'/g' \
-      -e 's/__IMAGE_RESOURCE_NAME__/'${IMAGE_RESOURCES[$COMPONENT]}'/g' \
-      -e 's/__TAG__/'$IMAGE_TAG'/g' \
-      -e 's,__NODE_IMAGE_NAME__,'$IMAGES_BASE_URL'/health-test-node,g' \
-      ${BASEDIR}/${PIPELINE_TYPE}/${COMPONENT}.yaml | kubectl apply -f - -n dev
+## Source to image
+for TESTIMAGE in $TESTIMAGES; do
+  cat <<EOF | kubectl create -n dev -f -
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  generateName: source-to-image-health-test-$TESTIMAGE-
+  labels:
+    app: health
+    component: test-$TESTIMAGE
+    tag: "$IMAGE_TAG"
+spec:
+  taskRef:
+    name: source-to-image
+  trigger:
+    type: manual
+  inputs:
+    resources:
+      - name: workspace
+        resourceRef:
+          name: $GIT_RESOURCE
+    params:
+      - name: pathToContext
+        value: images/test/$TESTIMAGE
+      - name: imageTag
+        value: "$IMAGE_TAG"
+  outputs:
+    resources:
+      - name: builtImage
+        resourceRef:
+          name: ${IMAGE_RESOURCES[$TESTIMAGE]}
+EOF
 done
 
 # Watch command

@@ -23,6 +23,8 @@ spec:
           params:
             - name: imageTag
               value: "__TAG__"
+            - name: nodeTestImage
+              value: __NODE_IMAGE_NAME__
           trigger:
             type: manual
           resources:

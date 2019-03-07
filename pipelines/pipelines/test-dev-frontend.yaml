@@ -7,6 +7,9 @@ spec:
     - name: imageTag
       description: Tag of the images to be used.
       default: "default"
+    - name: nodeTestImage
+      description: Image to be used to node tests
+      default: health-test-node
   resources:
     - name: src
       type: git
@@ -30,18 +33,31 @@ spec:
       outputs:
         - name: builtImage
           resource: builtImage
-  # - name: tox-npm-lint
-  #   taskRef:
-  #     name: tox
-  #   params:
-  #     # npm lint requires npm which is not installed on the tox
-  #     # image, so this fails for now. I need to build a custom
-  #     # image that can run all the tox tests
-  #     - name: environment
-  #       value: npm-lint
-  #     - name: pathToToxIni
-  #       value: /workspace/workspace
-  #   resources:
-  #     inputs:
-  #       - name: workspace
-  #         resource: src
+  - name: tox-npm-lint
+    taskRef:
+      name: tox
+    params:
+      - name: environment
+        value: npm-lint
+      - name: pathToToxIni
+        value: /workspace/workspace
+      - name: testImage
+        value: ${params.nodeTestImage}
+    resources:
+      inputs:
+        - name: workspace
+          resource: src
+  - name: tox-npm-test
+    taskRef:
+      name: tox
+    params:
+      - name: environment
+        value: npm-test
+      - name: pathToToxIni
+        value: /workspace/workspace
+      - name: testImage
+        value: ${params.nodeTestImage}
+    resources:
+      inputs:
+        - name: workspace
+          resource: src

@@ -7,7 +7,6 @@ config/
 doc/
 openstack_health/
 pipelines/
-.git/
 .zuul.yaml
 *.rst
 setup.*

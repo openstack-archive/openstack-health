@@ -14,9 +14,12 @@ spec:
         description: The tox environment to execute
       - name: pathToToxIni
         description: Folder where to run tox in
+      - name: testImage
+        description: Base image to run the tests
+        default: n42org/tox
   steps:
     - name: run-tox
-      image: n42org/tox
+      image: "${inputs.params.testImage}"
       command: ["tox"]
       workingDir: "${inputs.params.pathToToxIni}"
       env:
