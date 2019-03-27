@@ -5,14 +5,14 @@ metadata:
   name: dev-knative-ingress
 spec:
   rules:
-    - host: health-frontend.dev.af-health.sjc03.containers.appdomain.cloud
+    - host: health-frontend.dev.af-tekton-knative.sjc04.containers.appdomain.cloud
       http:
         paths:
           - path: /
             backend:
               serviceName: istio-ingressgateway
               servicePort: 80
-    - host: health-api.dev.af-health.sjc03.containers.appdomain.cloud
+    - host: health-api.dev.af-tekton-knative.sjc04.containers.appdomain.cloud
       http:
         paths:
           - path: /
