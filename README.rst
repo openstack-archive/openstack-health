@@ -12,7 +12,7 @@ openstack-health
 ================
 webclient for visualizing test results of OpenStack CI jobs.
 
-- Source: http://git.openstack.org/cgit/openstack/openstack-health
+- Source: https://opendev.org/openstack/openstack-health/
 - Bugs: http://bugs.launchpad.net/openstack-health
 - Blueprints: https://blueprints.launchpad.net/openstack-health
 
@@ -137,7 +137,7 @@ configuration option. By default it is configured to talk to openstack-infra's
 elasticsearch server at http://logstash.openstack.org/elasticsearch
 
 
-.. _elastic-recheck: http://git.openstack.org/cgit/openstack-infra/elastic-recheck/
+.. _elastic-recheck: https://opendev.org/opendev/elastic-recheck/
 
 
 Caching Configuration
