@@ -17,7 +17,7 @@ import os
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'sphinx.ext.viewcode',
-              'oslosphinx'
+              'openstackdocstheme'
              ]
 
 todo_include_todos = True
