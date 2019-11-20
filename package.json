@@ -6,7 +6,7 @@
   "repository": "none",
   "license": "Apache 2.0",
   "devDependencies": {
-    "angular": "1.7.5",
+    "angular": "1.7.9",
     "angular-fontawesome": "^1.0.0",
     "angular-mocks": "1.7.5",
     "angular-ui-bootstrap": "^2.5.0",
