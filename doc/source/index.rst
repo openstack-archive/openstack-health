@@ -4,16 +4,25 @@
    contain the root `toctree` directive.
 
 Welcome to openstack-health's documentation!
-========================================================
+============================================
 
-Contents:
-
+Contents
+--------
 .. toctree::
    :maxdepth: 2
 
    readme
-   contributing
    subunit2sql
+
+For Contributor
+---------------
+If you are a new contributor to openstack-health please refer: :doc:`contributor/contributing`
+
+.. toctree::
+   :hidden:
+
+   contributor/contributing
+
 
 Indices and tables
 ==================
