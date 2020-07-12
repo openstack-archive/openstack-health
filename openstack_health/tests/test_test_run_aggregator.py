@@ -55,7 +55,7 @@ class TestTestRunAggregator(base.TestCase):
             }
         }
 
-        self.assertItemsEqual(expected_response, aggregated_test_runs)
+        self.assertCountEqual(expected_response, aggregated_test_runs)
         expected_sahara_test = (expected_response['2015-01-02T12:23:56']
                                                  ['sahara_test'])
         actual_sahara_test = (aggregated_test_runs['2015-01-02T12:23:56']
@@ -92,7 +92,7 @@ class TestTestRunAggregator(base.TestCase):
             }
         }
 
-        self.assertItemsEqual(expected_response, aggregated_test_runs)
+        self.assertCountEqual(expected_response, aggregated_test_runs)
         expected_sahara_test = (expected_response['2015-01-02T12:23:00']
                                                  ['sahara_test'])
         actual_sahara_test = (aggregated_test_runs['2015-01-02T12:23:00']
@@ -129,7 +129,7 @@ class TestTestRunAggregator(base.TestCase):
             }
         }
 
-        self.assertItemsEqual(expected_response, aggregated_test_runs)
+        self.assertCountEqual(expected_response, aggregated_test_runs)
         expected_sahara_test = (expected_response['2015-01-02T12:00:00']
                                                  ['sahara_test'])
         actual_sahara_test = (aggregated_test_runs['2015-01-02T12:00:00']
@@ -166,7 +166,7 @@ class TestTestRunAggregator(base.TestCase):
             }
         }
 
-        self.assertItemsEqual(expected_response, aggregated_test_runs)
+        self.assertCountEqual(expected_response, aggregated_test_runs)
         expected_sahara_test = (expected_response['2015-01-02']
                                                  ['sahara_test'])
         actual_sahara_test = (aggregated_test_runs['2015-01-02']

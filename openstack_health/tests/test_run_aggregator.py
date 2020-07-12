@@ -130,11 +130,11 @@ class TestRunAggregatorGetNumericData(base.TestCase):
 
         }
         actual = run_aggregator.get_numeric_data(self.runs, 'day')
-        self.assertItemsEqual(expected, actual)
-        self.assertItemsEqual(
+        self.assertCountEqual(expected, actual)
+        self.assertCountEqual(
             expected['tempest-dsvm-neutron-full'].keys(),
             actual['tempest-dsvm-neutron-full'].keys())
-        self.assertItemsEqual(
+        self.assertCountEqual(
             expected['tempest-dsvm-neutron-full-avg'].keys(),
             actual['tempest-dsvm-neutron-full-avg'].keys())
         # np.nan == np.nan is False, remove the key entries with np.nan values,
@@ -180,11 +180,11 @@ class TestRunAggregatorGetNumericData(base.TestCase):
             }
         }
         actual = run_aggregator.get_numeric_data(self.runs, 'day')
-        self.assertItemsEqual(expected, actual)
-        self.assertItemsEqual(
+        self.assertCountEqual(expected, actual)
+        self.assertCountEqual(
             expected['tempest-dsvm-neutron-full'].keys(),
             actual['tempest-dsvm-neutron-full'].keys())
-        self.assertItemsEqual(
+        self.assertCountEqual(
             expected['tempest-dsvm-neutron-full-avg'].keys(),
             actual['tempest-dsvm-neutron-full-avg'].keys())
         # np.nan == np.nan is False, remove the key entries with np.nan values,
@@ -246,7 +246,7 @@ class TestRunAggregator(base.TestCase):
             }
         }
 
-        self.assertItemsEqual(expected_response, aggregated_runs)
+        self.assertCountEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_minute_and_project(self):
         aggregator = run_aggregator.RunAggregator(self.runs)
@@ -263,7 +263,7 @@ class TestRunAggregator(base.TestCase):
                 ]
             }
         }
-        self.assertItemsEqual(expected_response, aggregated_runs)
+        self.assertCountEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_hour_and_project(self):
         aggregator = run_aggregator.RunAggregator(self.runs)
@@ -280,7 +280,7 @@ class TestRunAggregator(base.TestCase):
                 ]
             }
         }
-        self.assertItemsEqual(expected_response, aggregated_runs)
+        self.assertCountEqual(expected_response, aggregated_runs)
 
     def test_that_runs_will_be_aggregated_by_day_and_project(self):
         aggregator = run_aggregator.RunAggregator(self.runs)
@@ -297,4 +297,4 @@ class TestRunAggregator(base.TestCase):
                 ]
             }
         }
-        self.assertItemsEqual(expected_response, aggregated_runs)
+        self.assertCountEqual(expected_response, aggregated_runs)
