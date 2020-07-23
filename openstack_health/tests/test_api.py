@@ -15,11 +15,11 @@
 import datetime
 import json
 import tempfile
+from unittest import mock
 import uuid
 
 from dateutil import parser as date_parser
 import feedparser
-import mock
 import numpy
 from pbr import version
 import six

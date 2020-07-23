@@ -6,6 +6,5 @@ hacking>=3.0,<3.1.0 # Apache-2.0
 coverage!=4.4,>=4.0 # Apache-2.0
 docutils>=0.11 # OSI-Approved Open Source, Public Domain
 stestr>=1.0.0 # Apache-2.0
-mock>=2.0 # BSD
 fixtures>=3.0.0 # Apache-2.0/BSD
 feedparser>=5.2.1
