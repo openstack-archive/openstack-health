@@ -13,13 +13,13 @@ with openstack-health.
 
 Communication
 ~~~~~~~~~~~~~
-* IRC channel #openstack-qa at FreeNode
+* IRC channel ``#openstack-qa`` at FreeNode
 * Mailing list (prefix subjects with ``[qa]`` for faster responses)
   http://lists.openstack.org/cgi-bin/mailman/listinfo/openstack-discuss
 
 Contacting the Core Team
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Please refer the `openstack-health Core Team
+Please refer to the `openstack-health Core Team
 <https://review.opendev.org/#/admin/groups/1078,members>`_ contacts.
 
 New Feature Planning
@@ -52,7 +52,7 @@ Project Team Lead Duties
 All common PTL duties are enumerated in the `PTL guide
 <https://docs.openstack.org/project-team-guide/ptl.html>`_.
 
-Release Process fir QA is documented in `QA Release Process
-<https://wiki.openstack.org/wiki/QA#Releases_Process>`_.
+The Release Process for QA is documented in `QA Release Process
+<https://wiki.openstack.org/wiki/QA/releases>`_.
 
 .. _Feature Proposal Process: https://wiki.openstack.org/wiki/QA#Feature_Proposal_.26_Design_discussions
