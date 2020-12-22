@@ -4,7 +4,7 @@ var istanbul = require('browserify-istanbul');
 var isparta  = require('isparta');
 var ngAnnotate = require('browserify-ngannotate');
 
-process.env.CHROME_BIN = 'chromium-browser'; // eslint-disable-line no-process-env
+process.env.FIREFOX_BIN = 'firefox'; // eslint-disable-line no-process-env
 
 module.exports = function(config) {
   config.set({
@@ -36,13 +36,7 @@ module.exports = function(config) {
 
     autoWatch: true,
 
-    browsers: ['ChromeHeadlessNoSandbox'],
-    customLaunchers: {
-      ChromeHeadlessNoSandbox: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox']
-      }
-    },
+    browsers: ['Firefox'],
 
     singleRun: true,
 
@@ -52,7 +46,7 @@ module.exports = function(config) {
       'karma-coverage',
       'karma-jasmine',
       'karma-spec-reporter',
-      'karma-chrome-launcher',
+      'karma-firefox-launcher',
       'karma-subunit-reporter'
     ],
 

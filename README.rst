@@ -226,19 +226,19 @@ To test python code, run::
 Frontend
 --------
 
-The frontend tests ``npm test`` and ``npm run unit`` use a headless chrome
-driver and the driver requires the chromium-browser package to be installed on
+The frontend tests ``npm test`` and ``npm run unit`` use a firefox
+driver and the driver requires the firefox package to be installed on
 the system, you can do this by running::
 
-    $ sudo apt-get install chromium-browser
+    $ sudo apt-get install firefox
 
 .. note::
     When using an operating system that is not ubuntu 16.04 the
     process.env.CHROME_BIN variable may need to be updated in
-    openstack-health/test/karma.conf.js to reflect your system's chromium
+    openstack-health/test/karma.conf.js to reflect your system's firefox
     path.
 
-    For example on SUSE Leap OS, process.env.CHROME_BIN = '/usr/bin/chromium'
+    For example on SUSE Leap OS, process.env.CHROME_BIN = '/usr/bin/firefox'
     must be set.
 
 To test javascript code, run::
