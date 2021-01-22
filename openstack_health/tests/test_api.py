@@ -73,7 +73,7 @@ class TestRestAPI(base.TestCase):
             u'project',
             u'build_uuid'
         ]
-        self.assertItemsEqual(expected_response,
+        self.assertCountEqual(expected_response,
                               json.loads(res.data.decode('utf-8')))
 
     @mock.patch('subunit2sql.db.api.get_test_run_dict_by_run_meta_key_value',
