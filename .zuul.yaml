@@ -21,7 +21,7 @@
       - openstack/openstack-health
 - project:
     templates:
-      - openstack-python3-victoria-jobs
+      - openstack-python3-xena-jobs
       - build-openstack-docs-pti
     check:
       jobs:
