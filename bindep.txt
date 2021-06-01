@@ -1,0 +1,2 @@
+# PDF Docs package dependencies
+tex-gyre [doc platform:dpkg]
