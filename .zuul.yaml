@@ -21,13 +21,22 @@
       - openstack/openstack-health
 - project:
     templates:
-      - openstack-python3-yoga-jobs
       - build-openstack-docs-pti
     check:
       jobs:
-      - openstack-health-nodejs10-run-lint
-      - openstack-health-nodejs10-run-test-browser
+        - openstack-tox-pep8
+        - openstack-tox-py36
+        - openstack-tox-py37
+        - openstack-tox-py38
+        - openstack-tox-py39
+        - openstack-health-nodejs10-run-lint
+        - openstack-health-nodejs10-run-test-browser
     gate:
       jobs:
-      - openstack-health-nodejs10-run-lint
-      - openstack-health-nodejs10-run-test-browser
+        - openstack-tox-pep8
+        - openstack-tox-py36
+        - openstack-tox-py37
+        - openstack-tox-py38
+        - openstack-tox-py39
+        - openstack-health-nodejs10-run-lint
+        - openstack-health-nodejs10-run-test-browser
