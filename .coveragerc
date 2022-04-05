@@ -1,7 +1,0 @@
-[run]
-branch = True
-source = openstack_health
-omit = openstack_health/tests/*,test/*
-
-[report]
-ignore_errors = True
